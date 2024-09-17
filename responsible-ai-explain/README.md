@@ -9,7 +9,7 @@
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
-
+ 
 ## Introduction
 
 **Explainability** offers comprehensive explanations for traditional machine learning and deep learning models. It supports both local and global explainable AI methods, including anchors and feature importance, across classification, regression, and time series tasks. This ensures transparency and insight into model behavior, facilitating better decision-making and trust.
