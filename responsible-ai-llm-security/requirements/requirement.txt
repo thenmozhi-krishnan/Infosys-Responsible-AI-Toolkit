@@ -1,0 +1,22 @@
+# Usage: pip install -r requirements.txt
+#for fatapi
+fastapi==0.99.1
+uvicorn
+python-multipart
+pyyaml
+
+#for promptbench
+autocorrect==2.6.1
+accelerate==0.25.0
+datasets==2.15.0
+nltk==3.8.1
+openai==1.3.7
+sentencepiece==0.1.99
+tokenizers==0.15.0
+tqdm==4.66.1
+transformers==4.36.2
+lru-dict
+tensorflow 
+tensorflow_hub
+python-dotenv
+pymongo
