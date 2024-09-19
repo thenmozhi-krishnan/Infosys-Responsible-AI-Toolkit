@@ -1,0 +1,477 @@
+# Copyright 2024 Infosys Ltd.
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+openapi: 3.0.1
+info:
+  title: Infosys Responsible AI - responsible-ai-fairness - OpenAPI 3.0
+  description: |-
+    API specs for Infosys Responsible AI Fairness pillar in OpenAPI 3.0 format
+
+servers:
+  - url: https://<tba>/api/v0d1
+tags:
+  - name: Structured Dataset Bias
+    description: Operations for detecting and mitigating bias of a structured dataset and its ML model
+    externalDocs:
+      description: Find out more
+paths:
+  /api/v1/structuredDatasetBias/analyze:
+    post:
+      tags:
+        - Infosys Responsible AI - fairness
+      summary: Analyze
+      operationId: analyze-api-v1-fairness-bias-analyze-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BiasAnalyzeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BiasAnalyzeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/structuredDatasetBias/mitigate:
+    post:
+      tags:
+        - Infosys Responsible AI - fairness
+      summary: Migrate
+      operationId: migrate-api-v1-fairness-bias-mitigate-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MitigateBiasRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MitigationAnalyzeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+
+components:
+  schemas:
+    BiasAnalyzeRequest:
+      title: BiasAnalyzeRequest
+      required:
+        - methods
+        - biasStage
+        - trainingDataset
+        - predictionDataset
+        - taskType
+        - features
+        - categoricalAttributes
+        - favourableOutcome
+        - facet
+        - outputPath
+      type: object
+      properties:
+        methods:
+          title: Method
+          type: array
+          items:
+            type: string
+            enum: ['all', 'STATISTICAL-PARITY-DIFFERENCE', 'EQUAL-OPPORTUNITY-DIFFERENCE', 'AVERAGE-ODDS-DIFFERENCE', 'DISPARATE-IMPACT']
+          example: ['STATISTICAL-PARITY-DIFFERENCE']
+        biasStage:
+          title: Biastype
+          type: string
+          enum: ['PRETRAIN','POSTTRAIN']
+          example: PRETRAIN
+        trainingDataset:
+          $ref: '#/components/schemas/PreDataset'
+        predictionDataset:
+          $ref: '#/components/schemas/PostDataset'
+        taskType:
+          title: Tasktype
+          type: string
+          example: CLASSIFICATION
+        features:
+          title: Features
+          type: string
+          example: age,workclass,hours-per-week,education,native-country,race,sex,income-per-year
+        categoricalAttributes:
+          title: Categoricalattributes
+          type: string
+          example: education,native-country,workclass,sex
+        favourableOutcome:
+          title: Favourableoutcome
+          type: array
+          items: {}
+          example:
+            - '>50K'
+        labelMaps:
+          title: Labelmaps
+          type: object
+          default:
+            '>50K': 1
+            <=50K: 0
+        facet:
+          title: Facet
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtetedAttribute'
+        outputPath:
+          $ref: '#/components/schemas/outputPath'
+    BiasAnalyzeResponse:
+      title: BiasAnalyzeResponse
+      required:
+        - biasResults
+      type: object
+      properties:
+        biasResults:
+          title: Biasresults
+          type: array
+          items:
+            $ref: '#/components/schemas/BiasResults'
+    BiasResults:
+      title: BiasResults
+      required:
+        - biasDetected
+        - protectedAttribute
+        - metrics
+      type: object
+      properties:
+        biasDetected:
+          title: Biasdetected
+          type: boolean
+          example: true
+        protectedAttribute:
+          title: Protectedattribute
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtetedAttribute'
+        metrics:
+          title: Metrics
+          type: array
+          items:
+            $ref: '#/components/schemas/metricsEntity'
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    MitigateBiasRequest:
+      title: MitigateBiasRequest
+      required:
+        - biasType
+        - mitigationType
+        - mitigationTechnique
+        - trainingDataset
+        - predictionDataset
+        - taskType
+        - features
+        - categoricalAttributes
+        - favourableOutcome
+        - facet
+        - outputPath
+      type: object
+      properties:
+        biasType:
+          title: Biastype
+          type: string
+          example: PRETRAIN
+        mitigationType:
+          allOf:
+            - $ref: '#/components/schemas/MitigationType'
+          example: PREPROCESSING
+        mitigationTechnique:
+          allOf:
+            - $ref: '#/components/schemas/MitigationTechnique'
+          example: REWEIGHING
+        trainingDataset:
+          $ref: '#/components/schemas/PreDataset'
+        predictionDataset:
+          $ref: '#/components/schemas/PostDataset'
+        taskType:
+          title: Tasktype
+          type: string
+          example: CLASSIFICATION
+        features:
+          title: Features
+          type: string
+          example: age,workclass,hours-per-week,education,native-country,race,sex,income-per-year
+        categoricalAttributes:
+          title: Categoricalattributes
+          type: string
+          example: education,native-country,workclass,sex
+        favourableOutcome:
+          title: Favourableoutcome
+          type: array
+          items: {}
+          example:
+            - '>50K'
+        labelMaps:
+          title: Labelmaps
+          type: object
+          default:
+            '>50K': 1
+            <=50K: 0
+        facet:
+          title: Facet
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtetedAttribute'
+        outputPath:
+          $ref: '#/components/schemas/outputPath'
+    MitigationAnalyzeResponse:
+      title: MitigationAnalyzeResponse
+      required:
+        - mitigationResults
+      type: object
+      properties:
+        mitigationResults:
+          title: Mitigationresults
+          type: array
+          items:
+            $ref: '#/components/schemas/MitigationResults'
+    MitigationResults:
+      title: MitigationResults
+      required:
+        - mitigationType
+        - mitigationTechnique
+        - metricsBeforeMitigation
+        - biasDetectedOriginally
+        - metricsAfterMitigation
+        - biasDetectedAfterMitigation
+      type: object
+      properties:
+        mitigationType:
+          allOf:
+            - $ref: '#/components/schemas/MitigationType'
+          example: PREPROCESSING
+        mitigationTechnique:
+          allOf:
+            - $ref: '#/components/schemas/MitigationTechnique'
+          example: REWEIGHING
+        metricsBeforeMitigation:
+          title: Metricsbeforemitigation
+          type: array
+          items:
+            $ref: '#/components/schemas/metricsEntity'
+        biasDetectedOriginally:
+          title: Biasdetectedoriginally
+          type: boolean
+          example: true
+        metricsAfterMitigation:
+          title: Metricsaftermitigation
+          type: array
+          items:
+            $ref: '#/components/schemas/metricsEntity'
+        biasDetectedAfterMitigation:
+          title: Biasdetectedaftermitigation
+          type: boolean
+          example: false
+    MitigationTechnique:
+      title: MitigationTechnique
+      enum:
+        - REWEIGHING
+        - LFR
+        - DISPARATE_IMPACT_REMOVER
+        - OPTIM_PREPROCESSOR
+      type: string
+      description: An enumeration.
+    MitigationType:
+      title: MitigationType
+      enum:
+        - PREPROCESSING
+        - INPROCESSING
+        - POSTPROCESSING
+      type: string
+      description: An enumeration.
+    trainPath:
+      title: TrainPath
+      required:
+        - storage
+        - uri
+      type: object
+      properties:
+        storage:
+          title: Storage
+          type: string
+          example: INFY_AICLD_NUTANIX
+        uri:
+          title: Uri
+          type: string
+          example: responsible-ai//responsible-ai-fairness//
+    testPath:
+      title: TestPath
+      required:
+        - storage
+        - uri
+      type: object
+      properties:
+        storage:
+          title: Storage
+          type: string
+          example: INFY_AICLD_NUTANIX
+        uri:
+          title: Uri
+          type: string
+          example: responsible-ai//responsible-ai-fairness//
+    outputPath:
+      title: outputPath
+      required:
+        - storage
+        - uri
+      type: object
+      properties:
+        storage:
+          title: Storage
+          type: string
+          example: INFY_AICLD_NUTANIX
+        uri:
+          title: Uri
+          type: string
+          example: responsible-ai//responsible-ai-fairness//
+    PostDataset:
+      title: PostDataset
+      required:
+        - id
+        - name
+        - fileType
+        - path
+        - label
+        - predictedLabel
+      type: object
+      properties:
+        id:
+          title: Id
+          type: integer
+          example: 32
+        name:
+          title: Name
+          type: string
+          example: Adult
+        fileType:
+          title: Filetype
+          type: string
+          example: text/csv
+        path:
+          $ref: '#/components/schemas/testPath'
+        label:
+          title: Label
+          type: string
+          example: income-per-year
+        predictedLabel:
+          title: PredctedLabel
+          type: string
+          example: labels_pred
+    PreDataset:
+      title: PreDataset
+      required:
+        - id
+        - name
+        - fileType
+        - path
+        - label
+      type: object
+      properties:
+        id:
+          title: Id
+          type: integer
+          example: 32
+        name:
+          title: Name
+          type: string
+          example: Adult
+        fileType:
+          title: Filetype
+          type: string
+          example: text/csv
+        path:
+          $ref: '#/components/schemas/trainPath'
+        label:
+          title: Label
+          type: string
+          example: income-per-year
+    ProtetedAttribute:
+      title: ProtetedAttribute
+      type: object
+      properties:
+        name:
+          title: Name
+          type: string
+          default: race
+        privileged:
+          title: Privileged
+          type: array
+          items: {}
+          default:
+            - White
+        unprivileged:
+          title: Unprivileged
+          type: array
+          items: {}
+          default:
+            - Black
+            - Amer-Indian-Eskimo
+            - Asian-Pac-Islander
+            - Other
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+    metricsEntity:
+      title: metricsEntity
+      required:
+        - name
+        - description
+        - value
+      type: object
+      properties:
+        name:
+          title: Name
+          type: string
+          example: STATISTICAL-PARITY-DIFFERENCE
+        description:
+          title: Description
+          type: string
+          example: Computed as the difference of the rate of favorable outcomes received by the unprivileged group to the privileged group.The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1
+        value:
+          title: Value
+          type: string
+          example: 0.25
