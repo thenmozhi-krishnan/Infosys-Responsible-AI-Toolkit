@@ -105,33 +105,6 @@ class NoAccountException(Exception):
 
     
     
-@router.get('/rai/admin/getRecognizer')
-def analyze():
-    id = uuid.uuid4().hex
-    request_id_var.set(id)
-    log.info("Entered create usecase routing method")
-    try:
-        response = response = PrivacyData.getEntitiesList()
-        # response = DataRecogGrp.getDataEntry()
-        
-        log.debug("response : "+ str(response))
-        log.info("exit create usecase routing method")
-        return response
-    except RaiAdminException as cie:
-        log.error(cie.__dict__)
-        log.info("exit create usecase routing method")
-        raise HTTPException(**cie.__dict__)
-    except Exception as e:
-        log.error(str(e))
-        ExceptionDb.create({"UUID":request_id_var.get(),"function":"DataRecogGrplistRouter","msg":str(e),"description":str(e)+"Line No:"+str(e.__traceback__.tb_lineno)})
-        raise HTTPException(
-            status_code=500,
-            detail="Please check with administration!!",
-            headers={"X-Error": "Please check with administration!!"})
-    
-    
-
-
 
 @router.get('/rai/admin/getAccount')
 def analyze():
@@ -1579,7 +1552,7 @@ async def analyze(payload:CustomeTemplateReq):
 
 
 @modRouter.get('/rai/admin/getCustomeTemplate/{userId}', response_model=CustomeTemplateRes)
-async def analyze(userId,category):
+async def analyze(userId):
     id = uuid.uuid4().hex
     request_id_var.set(id)
     log.info("Entered create usecase routing method")
@@ -1587,8 +1560,7 @@ async def analyze(userId,category):
     
         
         # log.debug("request payload: "+ str(payload))
-        payload=AttributeDict({"userId":userId,"category":category})
-        print("payload",payload)
+        payload=AttributeDict({"userId":userId})
         response = ModerationService.getTemplate(payload)
         # response=PtrnRecogStatus
         # response.status="true"
@@ -1797,74 +1769,6 @@ async def analyze(payload:AccTempMapReq):
             detail="Please check with administration!!",
             headers={"X-Error": "Please check with administration!!"})
 
-@modRouter.get('/rai/admin/getModMaps')
-async def analyze(userid,portfolio,account):
-    id = uuid.uuid4().hex
-    request_id_var.set(id)
-    log.info("Entered create usecase routing method")
-    try:
-        payload=AttributeDict({"userid":userid,"portfolio": portfolio,"account": account})
-        response = TempMap.getAccModMap(payload)
-        log.debug("response : "+ str(response))
-        log.info("exit create usecase routing method")
-        return response
-    except RaiAdminException as cie:
-        log.error(cie.__dict__)
-        log.info("exit create usecase routing method")
-        raise HTTPException(**cie.__dict__)
-    except Exception as e:
-        log.error(str(e))
-        ExceptionDb.create({"UUID":request_id_var.get(),"function":"AccMasterEntryRouter","msg":str(e),"description":str(e)+"Line No:"+str(e.__traceback__.tb_lineno)})
-        raise HTTPException(
-            status_code=500,
-            detail="Please check with administration!!",
-            headers={"X-Error": "Please check with administration!!"})
-
-@modRouter.get('/rai/admin/getModMap')
-async def analyze(category,portfolio,account):
-    id = uuid.uuid4().hex
-    request_id_var.set(id)
-    log.info("Entered create usecase routing method")
-    try:
-        payload=AttributeDict({"category":category,"portfolio": portfolio,"account": account})
-        response = TempMap.getModMap(payload)
-        log.debug("response : "+ str(response))
-        log.info("exit create usecase routing method")
-        return response
-    except RaiAdminException as cie:
-        log.error(cie.__dict__)
-        log.info("exit create usecase routing method")
-        raise HTTPException(**cie.__dict__)
-    except Exception as e:
-        log.error(str(e))
-        ExceptionDb.create({"UUID":request_id_var.get(),"function":"AccMasterEntryRouter","msg":str(e),"description":str(e)+"Line No:"+str(e.__traceback__.tb_lineno)})
-        raise HTTPException(
-            status_code=500,
-            detail="Please check with administration!!",
-            headers={"X-Error": "Please check with administration!!"})
-
-@modRouter.get('/rai/admin/getModConfig')
-async def analyze(category,subcategory,portfolio,account):
-    id = uuid.uuid4().hex
-    request_id_var.set(id)
-    log.info("Entered create usecase routing method")
-    try:
-        payload=AttributeDict({"category":category,"subcategory":subcategory,"portfolio": portfolio,"account": account})
-        response = TempMap.getModConfig(payload)
-        log.debug("response : "+ str(response))
-        log.info("exit create usecase routing method")
-        return response
-    except RaiAdminException as cie:
-        log.error(cie.__dict__)
-        log.info("exit create usecase routing method")
-        raise HTTPException(**cie.__dict__)
-    except Exception as e:
-        log.error(str(e))
-        ExceptionDb.create({"UUID":request_id_var.get(),"function":"AccMasterEntryRouter","msg":str(e),"description":str(e)+"Line No:"+str(e.__traceback__.tb_lineno)})
-        raise HTTPException(
-            status_code=500,
-            detail="Please check with administration!!",
-            headers={"X-Error": "Please check with administration!!"})
 
 @modRouter.get('/rai/admin/getAccTemplate/{userId}')
 async def analyze(userId):

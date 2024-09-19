@@ -14,9 +14,6 @@ import os
 import time
 from datetime import datetime
 
-from fastapi import Response
-from fastapi.responses import FileResponse
-
 
 
 from rai_admin.dao.AuthorityDb import AuthorityDb
@@ -692,33 +689,6 @@ class PrivacyData:
         obj.datalist=(newEntityType,datalsit,preEntity,recogList,encrList,[thresholdScore])
         return obj
     
-    
-    def getEntitiesList():
-        try:
-            recogList=RecogDb.findall({"isPreDefined":"No"})
-            # rec = {}
-            json_file_path = "recogList.json"
-            for i in recogList:
-                recValue=EntityDb.mycol.distinct("EntityName",{"RecogId":i.RecogId})
-                # EntityDb.findall({"RecogId":i.RecogId})
-                i.update({"EntityValue":recValue})
-                del i["LastUpdatedDateTime"]
-                del i["CreatedDateTime"]
-                # print(i)
-           
-            # print("recogList_dict===",recogList_dict)
-            with open(json_file_path, 'w') as json_file:
-                json.dump(recogList, json_file)
-            json_file=open(json_file_path)
-            print("recogList saved to recogList.json")
-            response = Response(content=json_file.read(), media_type="application/json")
-            response.headers["Content-Disposition"] = "attachment; filename="+json_file_path
-            
-            return response
-        except Exception as e:
-            log.info(str(e))
-            return {"message": "Error in getting Entities List"}
-            
 
 class SafetyData:
     def getDataList(payload)->AccSafetyParameterResponse :

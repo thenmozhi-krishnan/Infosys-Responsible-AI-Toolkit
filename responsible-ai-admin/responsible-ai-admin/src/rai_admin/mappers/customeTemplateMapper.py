@@ -17,7 +17,6 @@ class subTemplate(BaseModel):
 class CustomeTemplateReq(BaseModel):
         userId:str=Field(example="123")
         mode:str=Field(example="Master_Template/Private_Template")
-        category:str=Field(example="SingleModel/MultiModel")
         # templateType:str=Field(example="request")
         templateName:str=Field(example="Template1")
         description:str=Field(example="Template1")
@@ -28,7 +27,6 @@ class CustomeTemplate(BaseModel):
         templateId:float=Field(example="123")
         userId:str=Field(example="123")
         mode:str=Field(example="private")
-        category:str=Field(example="SingleModel")
         uniqueId:str=Field(example="123")
         # templateType:str=Field(example="request")
         templateName:str=Field(example="Template1")
@@ -76,28 +74,10 @@ class AccTempMapReq(BaseModel):
         userId:str=Field(example="123")
         portfolio:str=Field(example="Infosys")
         account:str=Field(example="IMPACT")
-        category:str
-        subcategory:str
         requestTemplate:List[str]
         responseTemplate:List[str]
         comparisonTemplate:List[str]
 
-class AccModMapsReq(BaseModel):
-        userId:str=Field(example="123")
-        portfolio:str=Field(example="Infosys")
-        account:str=Field(example="IMPACT")
-
-class ModMapReq(BaseModel):
-        category:str=Field(example="SingleModel")
-        portfolio:str=Field(example="Infosys")
-        account:str=Field(example="IMPACT")
-        
-class ModConfigReq(BaseModel):
-        category:str=Field(example="SingleModel")
-        subcategory:str=Field(example="Template")
-        portfolio:str=Field(example="Infosys")
-        account:str=Field(example="IMPACT")
-        
 class AccTempMapv(BaseModel):
         mapId:float=Field(example="123"),
         # "userId":value.userId,
@@ -109,8 +89,6 @@ class AccTempMapv(BaseModel):
         
         portfolio:str=Field(example="Infosys")
         account:str=Field(example="IMPACT")
-        category:str=Field(example="SingleModel")
-        subcategory:str=Field(example="Template")
         requestTemplate:List[str]
         responseTemplate:List[str]
         comparisonTemplate:List[str]
@@ -126,24 +104,16 @@ class TempMapDelete(BaseModel):
         account:str=Field(example="IMPACT")
      
 class AddTempMap(BaseModel):
-        # mapId:str=Field(example="123")
+        mapId:str=Field(example="123")
         userId:str=Field(example="123")
-        portfolio:str=Field(example="Infosys")
-        account:str=Field(example="IMPACT")
-        category:str=Field(example="SingleModel")
-        subcategory:str=Field(example="Template")
         requestTemplate:List[str]
         responseTemplate:List[str]
         comparisonTemplate:List[str]
         class Config:
                 orm_mode = True
 class RemoveTempMap(BaseModel):
-        # mapId:str=Field(example="123")
+        mapId:str=Field(example="123")
         userId:str=Field(example="123")
-        portfolio:str=Field(example="Infosys")
-        account:str=Field(example="IMPACT")
-        category:str=Field(example="SingleModel")
-        subcategory:str=Field(example="Template")
         tempType:str=Field(example="request")
         templateName:str=Field(example="template1")
         class Config:

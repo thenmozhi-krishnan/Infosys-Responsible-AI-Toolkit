@@ -102,9 +102,9 @@ class UserDb:
                         "createdBy":'system',
                         "lastModifiedBy":'system', 
                         "lastModifiedDate":datetime.datetime.now(),
-                        "authorities":["ROLE_USER"]
+                        "authorities":["ROLE_EMPTY"]
                         }
-                    UserDb.myuserauth.insert_one({"user_id":new_id,"authority_name":"ROLE_USER"})
+                    UserDb.myuserauth.insert_one({"user_id":new_id,"authority_name":"ROLE_ML"})
                     # if count_value > 100:
                     #     myDoc["activated"] = False  # Set activated to false
                     # count_value += 1

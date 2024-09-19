@@ -36,25 +36,16 @@ metadata_config = read_config_yaml('../config/metadata.yaml')
 app = FastAPI(**metadata_config)
 
 allow_origins = os.getenv("allow_origin")
-allow_methods = os.getenv("allow_methods")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
     allow_credentials=True,
-    allow_methods = allow_methods,
+    allow_methods=["GET", "POST", "OPTIONS", "HEAD"],  # restrict allowed methods
     allow_headers=["Content-Type", "Authorization", "X-Pingsession"],  # specify allowed headers
     max_age=31536000,
     expose_headers=["Vary"]  
 )
-
-
-@app.middleware("http")
-async def add_allowed_methods(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Methods"] = allow_methods
-    return response
-
 
 class XSSProtectionMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
@@ -63,13 +54,6 @@ class XSSProtectionMiddleware(BaseHTTPMiddleware):
         return response
 
 app.add_middleware(XSSProtectionMiddleware)
-
-
-# @app.middleware("http")
-# async def add_allowed_methods(request: Request, call_next):
-#     response = await call_next(request)
-#     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, HEAD, DELETE"
-#     return response
 
 class DisallowNullOriginMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

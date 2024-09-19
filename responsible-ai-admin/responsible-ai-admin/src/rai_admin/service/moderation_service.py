@@ -7,7 +7,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-from collections import defaultdict
 from io import BytesIO
 import io
 import json
@@ -64,8 +63,8 @@ class ModerationService:
         try:
             log.info(f"createTemplate: {payload}")
             obj=CustomeTemplateStatus
-            if(len(CustomeTemplateDB.findall({"templateName":payload.templateName,"userId":payload.userId,"mode":payload.mode,"category":payload.category}))>0):
-                obj.status="Template Name already exists for user {} and mode {} and category {}".format(str(payload.userId),str(payload.mode),str(payload.category))
+            if(len(CustomeTemplateDB.findall({"templateName":payload.templateName,"userId":payload.userId,"mode":payload.mode}))>0):
+                obj.status="Template Name already exists for user {} and mode {}".format(str(payload.userId),str(payload.mode))
                 return obj
             # if payload.templateData.file:
                 # payload.templateData=payload.templateData.file.read().decode("utf-8")
@@ -79,8 +78,10 @@ class ModerationService:
                 templatevalue={"templateId":temp_id,"template":templates.subtemplate,"templateData":templates.templateData}
                 print("Template Value",templatevalue)
                 res=TemplatDataeDB.create(templatevalue)  
-                  
-            log.debug("createTemplate status: "+str(res))   
+     
+                 
+            log.debug("createTemplate status: "+str(res))
+            
             obj.status=str(res)
             return obj
         except Exception as e:
@@ -94,23 +95,23 @@ class ModerationService:
         try:
             log.info(f"getTemplate")
             res=CustomeTemplateDB.findall({"$or": [{"userId":payload.userId,"mode":"Private_Template"},{"mode":"Master_Template"}]})
-            result=[]
+            # print(res)
             for i in res:
                 subres=TemplatDataeDB.findall({"templateId":i.templateId})
+                print(subres)
+                # subres=[subTemplate({t}) for t in subres]
                 i.subTemplates=subres
-                i.category=i.category                
-                if i.category == payload.category:
-                    if i.category == "SingleModel" or i.category == "MultiModel":
-                        result.append(i)
-                    elif i.category == "AllModel":
-                        pass
-            if payload.category == "SingleModel" or payload.category == "MultiModel":
-                res=result
+   
+            
+            log.debug("Template List"+str(res))
             obj=CustomeTemplateRes(templates=res)
+            # print("Template List===========",obj)
             return obj
         except Exception as e:
             log.error(str(e))
-            return e      
+            # obj=CustomeTemplateStatus
+            return e
+        
         
     def getTempData(payload)->CustomeTemplateRes:
         try:
@@ -137,27 +138,22 @@ class ModerationService:
         try:
             log.info(f"createTemplate: {payload}")
             obj=CustomeTemplateStatus
-            
+            # if(payload.mode=="Master"):
+                
                 
             tempres=CustomeTemplateDB.findall({"templateName":payload.templateName,"userId":payload.userId,"mode":payload.mode})
-            # print("tempres====",tempres)
+            # print(tempres)
             if(len(tempres)==0):
                 obj.status="Template dosent exists"
                 return obj
-            # print("tempres",tempres)
+            subtempres=TemplatDataeDB.findall({"templateId":tempres[0].templateId,"template":payload.subTemplates[0].subtemplate})
+            # print("=====",subtempres)
+            if(len(subtempres)==0):
+                obj.status="Template subtemplates not exists"
+                return obj
             
-            descUpdateVale = CustomeTemplateDB.update(tempres[0]._id,{"description":payload.description})
-           
-            for i in range(len(payload.subTemplates)):
-                
-                subtempres=TemplatDataeDB.findall({"templateId":tempres[0].templateId,"template":payload.subTemplates[i].subtemplate})
-                
-                if(len(subtempres)==0):
-                    obj.status="Template subtemplates not exists"
-                    return obj
-                
-                res=TemplatDataeDB.update(subtempres[0]._id,{"templateData":payload.subTemplates[i].templateData})
-                log.debug("UpdateTemplate status: "+str(res))
+            res=TemplatDataeDB.update(subtempres[0]._id,{"templateData":payload.subTemplates[0].templateData})
+            log.debug("UpdateTemplate status: "+str(res))
             
             obj.status=str(res)
             return obj
@@ -244,13 +240,13 @@ class TempMap:
                 obj.status="Account Name dosent exists"
                 return obj
             accId=acc[0].accMasterId
-            accTempMap = AccTemplateMap.findall({"accMasterId":accId,"catogery":payload.category,"subcategory":payload.subcategory})
+            accTempMap = AccTemplateMap.findall({"accMasterId":accId})
             if(len(accTempMap)>0):
                 #  obj=CustomeTemplateStatus
                  obj.status="False"
                  return obj
  
-            grpValue={"accMasterId":accId,"userId":payload.userId,"category":payload.category,"subcategory":payload.subcategory,"requestTemplate":payload.requestTemplate,"responseTemplate":payload.responseTemplate,"comparisonTemplate":payload.comparisonTemplate}
+            grpValue={"accMasterId":accId,"userId":payload.userId,"requestTemplate":payload.requestTemplate,"responseTemplate":payload.responseTemplate,"comparisonTemplate":payload.comparisonTemplate}
             res=AccTemplateMap.create(grpValue)
             
             # res=MasterTemplateMap.create(payload)
@@ -264,154 +260,26 @@ class TempMap:
   
             obj.status="False"
             return obj
-    
-    def getAccModMap(payload: AccModMapsReq) :
-        try:
-            payload=AttributeDict(payload)
-            log.info(f"getAccModMap: {payload}")
-            acc = AccMasterDb.findall({"account": payload.account, "portfolio": payload.portfolio})
-            if len(acc) == 0:
-                obj= "Account Name does not exist"
-                return obj
-            accId = acc[0].accMasterId
-            accTempMap = AccTemplateMap.findall({"accMasterId": accId})
-            if len(accTempMap) == 0:
-                obj = {}
-                return obj
-            result = {}
-            result={"userId": payload.userid, "portfolio": payload.portfolio, "account": payload.account}
-            SingleModel = {}
-            MultiModel = {}
-            for item in accTempMap:
-                if item.category == "SingleModel":
-                        SingleModel[item.subcategory] = {
-                            "requestTemplate": item.requestTemplate,
-                            "responseTemplate": item.responseTemplate,
-                            "comparisonTemplate": item.comparisonTemplate
-                        }
-                elif item.category == "MultiModel":
-                    MultiModel[item.subcategory] = {
-                        "requestTemplate": item.requestTemplate,
-                        "responseTemplate": item.responseTemplate,
-                        "comparisonTemplate": item.comparisonTemplate
-                    }
-            if SingleModel:
-                result["SingleModel"] = SingleModel
-            if MultiModel:
-                result["MultiModel"] = MultiModel
-            return result
-        except Exception as e:
-            log.error(str(e))
-            return "False"
         
-    def getModMap(payload: ModMapReq) :
-        try:
-            payload=AttributeDict(payload)
-            log.info(f"getAccModMap: {payload}")
-            acc = AccMasterDb.findall({"account": payload.account, "portfolio": payload.portfolio})
-            if len(acc) == 0:
-                obj= "Account Name does not exist"
-                return obj
-            accId = acc[0].accMasterId
-            accTempMap = AccTemplateMap.findall({"accMasterId": accId,"category":payload.category})
-            if len(accTempMap) == 0:
-                obj = {}
-                return obj
-            result = {}
-            for item in accTempMap:
-                if item.category == payload.category:
-                     result[item.subcategory] = {
-                        "requestTemplate": item.requestTemplate,
-                        "responseTemplate": item.responseTemplate,
-                        "comparisonTemplate": item.comparisonTemplate
-                    }
-
-            return result
-        except Exception as e: 
-            log.error(str(e))
-            return "False"
-        
-    def getModConfig(payload: ModConfigReq) :
-        try:
-            payload=AttributeDict(payload)
-            log.info(f"getAccModMap: {payload}")
-            acc = AccMasterDb.findall({"account": payload.account, "portfolio": payload.portfolio})
-            if len(acc) == 0:
-                obj= "Account Name does not exist"
-                return obj
-            accId = acc[0].accMasterId
-            accTempMap = AccTemplateMap.findall({"accMasterId": accId,"category":payload.category,"subcategory":payload.subcategory})
-            if len(accTempMap) == 0:
-                obj = {}
-                return obj
-            result=[]
-            for item in accTempMap:
-                if item.category == payload.category and item.subcategory==payload.subcategory:
-                    result.append({ 
-                        "requestTemplate": item.requestTemplate,
-                        "responseTemplate": item.responseTemplate,
-                        "comparisonTemplate": item.comparisonTemplate
-                    })
-            result = {
-                "requestTemplate": [item['requestTemplate'][0] for item in result],
-                "responseTemplate": [item['responseTemplate'][0] for item in result],
-                "comparisonTemplate": [item['comparisonTemplate'][0] for item in result],
-            }
-                    
-            return result
-        except Exception as e: 
-            log.error(str(e))
-            return "False"
-        
-    def getAccTempMap(payload):
+    def getAccTempMap(payload)->AccTempMap:
         try:
             log.info(f"getAccTempMap")
             res=AccTemplateMap.findall({"userId":payload.userId})
-            acc_list = []
-            grouped_res = defaultdict(list)
             for i in res:
-                grouped_res[i.accMasterId].append(i)
-            results = []
-            for accMasterId, items in grouped_res.items():
-                categories = set()
-                SingleModel = {}
-                MultiModel = {}
-                for i in items:
-                    subres = AccMasterDb.findall({"accMasterId": i.accMasterId})
-                    i.account = subres[0].account
-                    i.portfolio = subres[0].portfolio
-                    if i.category == "SingleModel":
-                        categories.add("SingleModel")
-                        SingleModel[i.subcategory] = {
-                            "requestTemplate": i.requestTemplate,
-                            "responseTemplate": i.responseTemplate,
-                            "comparisonTemplate": i.comparisonTemplate
-                        }
-                    elif i.category == "MultiModel":
-                        categories.add("MultiModel")
-                        MultiModel[i.subcategory] = {
-                            "requestTemplate": i.requestTemplate,
-                            "responseTemplate": i.responseTemplate,
-                            "comparisonTemplate": i.comparisonTemplate
-                        }
-                result = {
-                    "mapId": items[0].mapId,
-                    "accMasterId": accMasterId,
-                    "userId": items[0].userId,
-                    "portfolio": items[0].portfolio,
-                    "account": items[0].account,
-                    "category": ",".join(categories)
-                }
-                if SingleModel:
-                    result["SingleModel"] = SingleModel
-                if MultiModel:
-                    result["MultiModel"] = MultiModel
-                results.append(result)
-                acc_list.append(result)         
-            log.debug("Template List" + str(acc_list))
-            return {"accList": acc_list}
+                subres=AccMasterDb.findall({"accMasterId":i.accMasterId})
+                print(subres)
+                # subres=[subTemplate({t}) for t in subres]
+                i.account=subres[0].account
+                i.portfolio=subres[0].portfolio
+
+            
+            log.debug("Template List"+str(res))
+            obj=AccTempMap(accList=res)
+            # print("Template List===========",obj)
+            return obj
         except Exception as e:
             log.error(str(e))
+            # obj=CustomeTemplateStatus
             return e
     
     def getTempMap(payload):
@@ -445,57 +313,69 @@ class TempMap:
             log.error(str(e))
             # obj=CustomeTemplateStatus
             return
-        
     def addTempMap(payload:AccTempMapReq)->CustomeTemplateStatus:
         try:
             log.info(f"createTemplate: {payload}")
-            
             obj=CustomeTemplateStatus
-            acc=AccMasterDb.findall({"account":payload.account,"portfolio":payload.portfolio})
-            if(len((acc))==0):
-                obj.status="Account Name dosent exists"
-                return obj
-            accTempMap = AccTemplateMap.findall({"userId":payload.userId, "category": payload.category, "subcategory": payload.subcategory})
+            # acc=AccMasterDb.findall({"account":payload.account,"portfolio":payload.portfolio})
+            # if(len((acc))==0):
+            #     obj.status="Account Name dosent exists"
+            #     return obj
+            # accId=acc[0].accMasterId
+            accTempMap = AccTemplateMap.findall({"mapId":float(payload.mapId),"userId":payload.userId})
+            print(accTempMap)
             if(len(accTempMap)==0):
-                    obj.status="False"
-                    return obj
+                #  obj=CustomeTemplateStatus
+                 obj.status="False"
+                 return obj
+ 
             value={"requestTemplate":accTempMap[0]["requestTemplate"]+payload.requestTemplate,"responseTemplate":accTempMap[0]["responseTemplate"]+payload.responseTemplate,"comparisonTemplate":accTempMap[0]["comparisonTemplate"]+payload.comparisonTemplate} 
-            res=AccTemplateMap.update({"userId":payload.userId, "category": payload.category, "subcategory": payload.subcategory}, value)
+            print(value)
+            res=AccTemplateMap.update(float(payload.mapId),value)
+            
             log.debug("AccTempMap status: "+str(res))
-            print("accTempMap=======",accTempMap)
+            
             obj.status=str(res)
             return obj
         except Exception as e:
             log.error(str(e))
             obj=CustomeTemplateStatus
+  
             obj.status="False"
             return obj
-        
     def removeTempMap(payload:RemoveTempMap)->CustomeTemplateStatus:
         try:
             log.info(f"createTemplate: {payload}")
             obj=CustomeTemplateStatus
-            acc=AccMasterDb.findall({"account":payload.account,"portfolio":payload.portfolio})
-            if(len((acc))==0):
-                obj.status="Account Name dosent exists"
-                return obj
-            accTempMap = AccTemplateMap.findall({"userId":payload.userId, "category": payload.category, "subcategory": payload.subcategory})
+            # acc=AccMasterDb.findall({"account":payload.account,"portfolio":payload.portfolio})
+            # if(len((acc))==0):
+            #     obj.status="Account Name dosent exists"
+            #     return obj
+            # accId=acc[0].accMasterId
+            accTempMap = AccTemplateMap.findall({"mapId":float(payload.mapId),"userId":payload.userId})
+            print(accTempMap)
             if(len(accTempMap)==0):
+                #  obj=CustomeTemplateStatus
                  obj.status="False"
                  return obj
+            print(payload.templateName)
             l=accTempMap[0][payload.tempType]
             l.remove(payload.templateName)
+            
             value={payload.tempType:l} 
-            res=AccTemplateMap.update({"userId":payload.userId, "category": payload.category, "subcategory": payload.subcategory},value)
+            print(value)
+            res=AccTemplateMap.update(float(payload.mapId),value)
+            # res=False
             log.debug("AccTempMap status: "+str(res))
+            
             obj.status=str(res)
             return obj
         except Exception as e:
             log.error(str(e))
             obj=CustomeTemplateStatus
+  
             obj.status="False"
             return obj
-
     def deleteTempMap(payload)->CustomeTemplateStatus:
         try:
             log.info(f"createTemplate: {payload}")

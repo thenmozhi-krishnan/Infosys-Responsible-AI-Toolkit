@@ -85,18 +85,18 @@ def token_required(func):
     def decorated(request: Request, *args, **kwargs):
         print("request")
         print(str(request))
-        authorization_header = request.headers.get("authorization")
-        if authorization_header:
-            if authorization_header.startswith("Bearer "):
-                token = authorization_header.split()[1]
-                if token == "null":
+
+        if "authorization" in dict(request.headers):
+            authorization_header = dict(request.headers)["authorization"]
+            parts = authorization_header.split()
+            if len(parts) == 2 and parts[0] == 'Bearer' and parts[1] != 'null':
+                token = parts[1]
+                print("inside")
+                # Pass the extracted token to the AuthService for validation
+                user = AuthService.accountService(token)
+                if user is None:
                     raise HTTPException(status_code=401, detail="Unauthorized")
-                res = AuthService.accountService(globalUsername)
-                print('ressss::')
-                print(res)
-                if res is None:
-                    raise HTTPException(status_code=401, detail="Unauthorized")
-                return res
+                return func(request, *args, **kwargs)
             else:
                 raise HTTPException(status_code=401, detail="Unauthorized")
         else:

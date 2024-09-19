@@ -50,8 +50,6 @@ class AccTemplateMap:
         "mapId":localTime,
         "userId":value.userId,
         "accMasterId":value.accMasterId,
-        "category":value.category,
-        "subcategory":value.subcategory,
         "requestTemplate":value.requestTemplate,  
         "responseTemplate":value.responseTemplate,
         "comparisonTemplate":value.comparisonTemplate,
@@ -66,11 +64,11 @@ class AccTemplateMap:
          print(PtrnRecogCreatedData)
          return PtrnRecogCreatedData.acknowledged
     
-    def update(query,value:dict):
+    def update(id,value:dict):
       
         newvalues = { "$set": value }
         print(newvalues)
-        PtrnRecogUpdatedData=AccTemplateMap.mycol.update_one(query,newvalues)
+        PtrnRecogUpdatedData=AccTemplateMap.mycol.update_one({"_id":id},newvalues)
         log.debug(str(newvalues)) 
         return PtrnRecogUpdatedData.acknowledged
     

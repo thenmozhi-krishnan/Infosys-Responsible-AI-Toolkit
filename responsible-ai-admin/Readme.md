@@ -18,3 +18,9 @@ User can create recognizer, configure Thresholds and map it to created account a
 4. Open .env file in vscode and configure the entries in it
 5. In the virtual environment go to src folder of cloned repository and run below command to run the module-
    `py main.py`
+
+## License
+The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
+
+## Contact
+If you have more questions or need further insights please feel free to connect with us @ Infosysraitoolkit@infosys.com

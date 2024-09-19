@@ -17,47 +17,60 @@ from rai_backend.config.logger import CustomLogger
 from rai_backend.dao.DatabaseConnection import DB
 from rai_backend.dao.Userdb import UserDb
 from rai_backend.domain.userEntity import User
-from werkzeug.security import check_password_hash
-
+from passlib.hash import pbkdf2_sha256
 
 log = CustomLogger()
-mydb=DB.connect()
+mydb = DB.connect()
 
 class AuthService():
     mycol = mydb['User']
 
+    @staticmethod
     def accountService(globalUsername):
         try:
             log.debug(globalUsername)
             return UserDb.getUserByName(globalUsername)
         except Exception as e:
             log.error("Error in Account Service", exc_info=True)
-           # raise HTTPException(status_code=401, detail="Unauthorized")
-        
-    def loginPostService(username,password):
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
+    @staticmethod
+    def loginPostService(username, password):
         try:
-            # DATA INSERTION AFTER LOGIN
+            if not AuthService.validate_credentials(username, password):
+                return "Invalid credentials", 400
+
+          
             UserDb.add_initial_data()
             PageauthorityDb.add_initial_data()
             PageauthorityDbNew.add_initial_data()
-            user=AuthService.mycol.find_one({'login':username},{"_id":0})
-            if not user or not check_password_hash(user['passwordHash'],password) or user['activated'] is not True:
-                return "User not found or Incorrect Password or not activated", 404
-            
-            # user_obj = User(username=user['login'])
-            # login_user(user_obj, remember=rememberMe, force=True)
-            access_token = UserInDB.login_for_access_token(username)           
+
+            user = AuthService.mycol.find_one({'login': username}, {"_id": 0})
+            if not user:
+                return "User not found", 404
+
+            if not user['activated']:
+                return "User account is not activated", 403
+
+            if not AuthService.verify_password(password, user['passwordHash']):
+                return "Authentication failed", 401
+
+            access_token = UserInDB.login_for_access_token(username)
             return {"id_token": access_token}
         except Exception as e:
             log.error("Error in Account Service", exc_info=True)
-            #raise HTTPException(status_code=404, detail="Error")
-        
-    #def logoutService():
-        # yet to implement
+            raise HTTPException(status_code=500, detail="Internal server error")
 
+    @staticmethod
     def signupPostService(newUser):
         try:
-            # DATA INSERTION AFTER SIGNUP
+            if not AuthService.validate_new_user(newUser):
+                return {"message": "Invalid user data", "status_code": 400}
+
+            newUser['passwordHash'] = AuthService.get_password_hash(newUser['password'])
+            del newUser['password']  
+
+        
             UserDb.add_initial_data()
             success = UserDb.create(newUser)
             PageauthorityDb.add_initial_data()
@@ -66,17 +79,19 @@ class AuthService():
             else:
                 return {"message": "User already exists", "status_code": 400}
         except Exception as e:
-            log.debug(e)
+            log.error(f"Error in signup service: {str(e)}")
             return {"message": "An error occurred", "status_code": 500}
-        
-    def newUserRole(loginName,role):
+
+    @staticmethod
+    def newUserRole(loginName, role):
         try:
-            res = UserDb.update_newUser_role(loginName,role)
+            res = UserDb.update_newUser_role(loginName, role)
             return res
         except Exception as e:
-            log.debug(e)
-            #raise HTTPException(status_code=404, detail="Error")
+            log.error(f"Error updating user role: {str(e)}")
+            raise HTTPException(status_code=404, detail="Error updating user role")
 
+    @staticmethod
     def resetCount():
         UserDb.myCount.update_one({},{'$set': {'counter':0}})
 
@@ -85,7 +100,19 @@ class AuthService():
        return auth
 
 
+    @staticmethod
+    def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return pbkdf2_sha256.verify(plain_password, hashed_password)
 
+    @staticmethod
+    def get_password_hash(password: str) -> str:
+        return pbkdf2_sha256.hash(password)
 
-        
-        
+    @staticmethod
+    def validate_credentials(username: str, password: str) -> bool:
+        return bool(username and password)
+
+    @staticmethod
+    def validate_new_user(user_data: dict) -> bool:
+        required_fields = ['username', 'password', 'email']
+        return all(field in user_data and user_data[field] for field in required_fields)
