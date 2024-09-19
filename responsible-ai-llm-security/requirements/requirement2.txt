@@ -1,0 +1,6 @@
+-i https://download.pytorch.org/whl/cu118
+torch
+-i https://download.pytorch.org/whl/cu118
+torchvision
+-i https://download.pytorch.org/whl/cu118
+torchaudio 
