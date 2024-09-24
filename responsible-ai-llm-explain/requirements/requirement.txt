@@ -16,4 +16,4 @@ beautifulsoup4
 uptrain
 rouge_score
 pip-system-certs
-../lib/aicloudlibs-0.1.0-py3-none-any.whl
+#../lib/aicloudlibs-0.1.0-py3-none-any.whl

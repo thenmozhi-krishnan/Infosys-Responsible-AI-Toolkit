@@ -1,7 +1,7 @@
 uvicorn
 pyyaml
 fastapi
-lib/aicloudlibs-0.1.0-py3-none-any.whl
+#lib/aicloudlibs-0.1.0-py3-none-any.whl
 pandas
 detoxify==0.5.0
 pymongo

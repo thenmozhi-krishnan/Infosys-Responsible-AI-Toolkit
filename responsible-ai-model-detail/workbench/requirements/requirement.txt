@@ -13,5 +13,5 @@ scikit-learn==1.3.0
 xgboost==2.1.0
 statsmodels==0.14.2
 fastapi_csrf_protect
-lib/aicloudlibs-0.1.0-py3-none-any.whl
+#lib/aicloudlibs-0.1.0-py3-none-any.whl
 # ../lib/aicloudlibs-0.1.0-py3-none-any.whl  # Un-Comment this line and comment above line to run locally

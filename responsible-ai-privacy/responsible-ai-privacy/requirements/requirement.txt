@@ -119,7 +119,7 @@ seaborn>=0.11.0
 thop  # FLOPs computation
 #https://huggingface.co/spacy/en_core_web_lg/resolve/main/en_core_web_lg-any-py3-none-any.whl
 # lib/presidio_analyzer-4.1.0-py3-none-any.whl
-lib/aicloudlibs-0.1.0-py3-none-any.whl
+# lib/aicloudlibs-0.1.0-py3-none-any.whl
 lib/en_core_web_lg-3.7.1-py3-none-any.whl
 
 presidio_analyzer
