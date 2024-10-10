@@ -6,9 +6,15 @@ Safety is an application which detects and masks any unsafe or harmful content p
 ## Requirements
 1. Python 3.9 - 3.11
 2. VSCode
-# Model 
- 1. Detoxify model for Unstructured text.
- 2. NFSW model for image : https://github.com/GantMan/nsfw_model
+3. MongoDB
+
+   
+# Models needed
+ 1. Detoxify model for Unstructured text: Download from https://huggingface.co/unitary/toxic-bert/tree/main 
+ 2. NFSW model for image : https://github.com/GantMan/nsfw_model . You can download models from https://s3.amazonaws.com/ir_public/ai/nsfw_models/nsfw.299x299.h5
+    
+Place the above folders in a folder named 'models' in the following way: 'responsible-ai-toxicity/models'.
+
 ## Steps to run this module :
 1. Clone this repository in vscode
 2. Create a virtual environment for python using cmd -
@@ -17,7 +23,21 @@ Safety is an application which detects and masks any unsafe or harmful content p
    `pip install -r path/to/requirements.txt`
 4. Open .env file in vscode and configure the entries in it
 5. In the virtual environment go to src folder of cloned repository and run below command to run the module-
-   `py main.py`
+   ```sh
+    python main.py
+     ```
+
+3. Open the following URL in your browser:
+   [http://localhost:8001/api/v1/safety/docs](http://localhost:8001/api/v1/safety/docs)
+
+
+  
+## License
+The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
+
+## Open Source tools Used:
+1. Detoxify model for Unstructured text
+2. NFSW model for image
 ## Contact
 If you have more questions or need further insights please feel free to connect with us @
 Infosysraitoolkit@infosys.com
