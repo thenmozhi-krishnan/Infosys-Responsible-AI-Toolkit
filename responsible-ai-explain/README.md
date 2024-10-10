@@ -50,7 +50,7 @@ To run the application, first we need to install Python and the necessary packag
 2. Install MongoDB by following the instructions on the [official MongoDB website](https://docs.mongodb.com/manual/installation/).
     ### Importing JSON Data into MongoDB
 
-    1. Ensure MongoDB is running on your system. You can start MongoDB using the following command:
+    1. Ensure MongoDB is running on your system. Open a command prompt and start MongoDB using the following command:
         ```sh
         mongod
         ```
@@ -86,10 +86,16 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-7. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
+7. Install `pip` if it's not already installed:
+    ```sh
+    python -m ensurepip --upgrade
+    ```
+
+8. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
+    
 ## Set Configuration Variables
 
 After installing all the required packages, configure the variables necessary to run the APIs.
@@ -112,11 +118,13 @@ After installing all the required packages, configure the variables necessary to
     DB_TYPE ="${dbtype}"                      # [Mandatory] DB_TYPE = "mongo"
     MONGO_PATH = "mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"    # [Mandatory] MONGO_PATH = "mongodb://localhost:27017/"
     COSMOS_PATH = "${cosmos_path}"            # [Optional]
+    REPORT_URL = "${reporturl}"               # [Mandatory] REPORT_URL = "http://localhost/v1/report/htmltopdfconversion" # You can get this from the reporting tool repository
     ```
     ```sh
     ALLOWED_ORIGINS= "${allowed_origins}"     # ALLOWED_ORIGINS ="*"         
     To allow access to all sites, use the value *. Alternatively, you can specify a list of sites that should have access.
     ```
+
 
 3. Replace the placeholders with your actual values.
 
@@ -137,7 +145,7 @@ Once we have completed all the aforementioned steps, we can start the service.
 3. Open the following URL in your browser:
     [http://localhost:8002/rai/v1/explainability/docs](http://localhost:8002/rai/v1/explainability/docs)
 
-For API calls, please refer to the [API Document](responsible-ai-explain/docs/API_Doc.pdf)
+For API calls, please refer to the [API Documnet](responsible-ai-explain/docs/API_Doc.pdf)
 
   
 ## License

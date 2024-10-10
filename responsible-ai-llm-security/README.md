@@ -1,4 +1,4 @@
-## Table of Contents 
+## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
@@ -18,33 +18,41 @@ To run the application, first we need to install Python and the necessary packag
 
 1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
-2. Clone the repository:
+2. Install MongoDB by following the instructions on the [official MongoDB website](https://docs.mongodb.com/manual/installation/).
+
+3. Install `pip` if it is not already installed. You can download and install it by following the instructions on the [official pip website](https://pip.pypa.io/en/stable/installation/).
+
+4. Clone the repository:
     ```sh
     git clone <repository-url>
     ```
 
-3. Create a virtual environment:
+5. Create a virtual environment:
     ```sh
     python -m venv venv
     ```
 
-4. Activate the virtual environment:
+6. Activate the virtual environment:
     - On Windows:
         ```sh
         .\venv\Scripts\activate
          ```
+    - On Linux/Mac:
+        ```sh
+        source venv/bin/activate
+        ```
 
-5. Navigate to the `responsible-ai-llm-security` directory:
+7. Navigate to the `responsible-ai-llm-security` directory:
     ```sh
     cd responsible-ai-llm-security
     ```
 
-6. Navigate to `src` directory:
+8. Navigate to `src` directory:
     ```sh
     cd src
     ```
 
-7. Now, install the requirements:
+9. Now, install the requirements:
     ```sh
     pip install -r ../requirements/requirement.txt
     ```
@@ -55,22 +63,22 @@ After installing all the required packages, configure the variables necessary to
 1. Locate the `.env` file, which contains keys like the following:
 
     ```sh
-    DB_NAME="${dbname}"
-    DB_USERNAME="${username}"
-    DB_PWD="${password}"
-    DB_IP="${ipaddress}"
-    DB_PORT="${port}"
-    MONGO_PATH="mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"
-    COSMOS_PATH ="${cosmos_path}"
-    DB_TYPE="${dbtype}"
-    DATASETCONTAINERNAME ="${dataset_container}"
-    MODELCONTAINERNAME ="${model_container}"
-    ADDFILEURL ="${add_file_url}"
-    DELETEFILEURL ="${delete_file_url}"
-    GETFILEURL ="${get_data_url}"
-    ERRORLOGAPI = "${error_log_api}"
-    TELEMETRY_FLAG = "${telemetry_flag}"
-    ALLOW_ORIGINS ="${allow_origins}"
+    DB_NAME="${dbname}"         # [Mandatory] DB_NAME = "raillm"
+    DB_USERNAME="${username}"   # [Optional]
+    DB_PWD="${password}"        # [Optional]
+    DB_IP="${ipaddress}"        # [Optional]
+    DB_PORT="${port}"           # [Optional]
+    MONGO_PATH="mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"  # [Mandatory] MONGO_PATH = "mongodb://localhost:27017/"
+    COSMOS_PATH ="${cosmos_path}"   # [Optional]
+    DB_TYPE="${dbtype}"             # [Mandatory] DB_TYPE = "mongo"
+    DATASETCONTAINERNAME ="${dataset_container}"   # [Optional]
+    MODELCONTAINERNAME ="${model_container}"       # [Optional]
+    ADDFILEURL ="${add_file_url}"                  # [Optional]
+    DELETEFILEURL ="${delete_file_url}"            # [Optional]
+    GETFILEURL ="${get_data_url}"                  # [Optional]
+    ERRORLOGAPI = "${error_log_api}"               # [Optional]
+    TELEMETRY_FLAG = "${telemetry_flag}"           # [Optional] False if do not want to connect with telemetry
+    ALLOW_ORIGINS ="${allow_origins}"              # ALLOW_ORIGINS ="*"
     ```
     ```sh
     To allow access to all sites, use the value *. Alternatively, you can specify a list of sites that should have access.

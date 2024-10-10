@@ -2,9 +2,9 @@
 
 ## Table of content
 - [Introduction](#introduction)
+- [Requirements](#requirements)
 - [Features](#features)
-- [Installation](#installation)
-- [Set Configuration Variables](#set-configuration-variables)
+- [Installation & set configuration variables](#installation)
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
@@ -15,17 +15,37 @@ Responsible-ai-fairness offers solutions for Traditional AI and LLM's fairness a
 
 ## Requirements
 1. Python 3.9 and above
-2. VSCode
-3. Download bart model from [Model](https://huggingface.co/facebook/bart-large-mnli) and place it in models folder under responsible-ai-fairness
+2. pip
+3. Mongo DB
+4. VSCode
+5. infosys_responsible_ai_fairness-1.1.5-py2.py3-none-any.whl file having code to calculate metrics scores for bias analysis using [aif360](https://aif360.readthedocs.io/en/stable/), [Holistic AI](https://github.com/holistic-ai/holisticai), [Fairlearn](https://github.com/fairlearn/fairlearn). run requirements.txt using pip install -r requirements.txt command at requirements folder path for installation.
+6. aicloudlibs-0.1.0-py3-none-any.whl file having code for logging and exception handling and run requirements.txt using pip install -r requirements.txt command at requirements folder path for installation.
+7. BART-large-mnli is a variant of the BART model specifically fine-tuned for multi-label natural language inference (MNLI) tasks. It features 406 million parameters, a maximum token size of 1024, 24 transformer layers, and a hidden size of 1024.  
+Steps to Download BART-large-mnli:
+   1.	Identify the Model URL: Navigate to the BART model page on the Hugging Face Model Hub. For example, for facebook/bart-large, the URL is:
+      https://huggingface.co/facebook/bart-large
+   2.	Find the Model Files: On the model page, you can see the available model files:
+      
+       •	pytorch_model.bin (the model weights)
+      	
+       •	config.json (model configuration)
+ 
+       •	tokenizer.json or other tokenizer file.
+   
+   3.	Download the Files: You can use curl or wget to download the files directly from the command line.
+     	
+       curl -L -o pytorch_model.bin https://huggingface.co/facebook/bart-large/resolve/main/pytorch_model.bin
+ 
+       curl -L -o config.json https://huggingface.co/facebook/bart-large/resolve/main/config.json
+ 
+       curl -L -o tokenizer.json https://huggingface.co/facebook/bart-large/resolve/main/tokenizer.json
+
 
 ## Features
-For more details refer our [User Guide](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-fairness/blob/IP-2.0.0.0-Merge/responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
+For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
  
 ## Installation
-For more details refer our [Setup Document](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-fairness/blob/IP-2.0.0.0-Merge/responsible-ai-fairness/docs/Setup%20document.pdf)
-
-## Set Configuration Variables
-For more details refer our [Setup Document](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-fairness/blob/IP-2.0.0.0-Merge/responsible-ai-fairness/docs/Setup%20document.pdf)
+For more details refer our [Setup Document](responsible-ai-fairness/docs/Setup%20document.pdf)
 
 ## Running the Application
 1. Clone this repository in vscode
@@ -43,5 +63,5 @@ The source code for the project is licensed under the MIT license, which you can
 ## Contact
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
 
-For more details refer our [Setup Document](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-fairness/blob/IP-2.0.0.0-Merge/responsible-ai-fairness/docs/Setup%20document.pdf) and [User Guide](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-fairness/blob/IP-2.0.0.0-Merge/responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
+For more details refer our [Setup Document](responsible-ai-fairness/docs/Setup%20document.pdf) and [User Guide](responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
 

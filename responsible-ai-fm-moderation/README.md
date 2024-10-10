@@ -1,3 +1,5 @@
+# responsible-ai-fm-moderation
+Repo for Infosys - Responsible AI Foundation Model Moderation
 # Responsible-AI-Hallucination
 
 ## Table of Contents
@@ -83,8 +85,55 @@ After installing all the required packages, configure the variables necessary to
     OPENAI_API_BASE = "${apibase}"
     OPENAI_API_KEY = "${apikey}"
     OPENAI_API_VERSION = "${apiversion}"
+    OPENAI_API_BASE_GPT4_O = "${api_base_o}"
+    OPENAI_API_KEY_GPT4_O = "${api_key_o}"
+    OPENAI_API_VERSION_GPT4_O = "${api_version_o}"  
+    OPENAI_MODEL_GPT4_O = "${model_o}"
+    AZUREADDFILE = "${azureaddfile}"   
+    CONTAINERNAME = "${containername}"
+    COLLECTIONNAME = "${collectionname}"
+    AZUREBLOBNAME = "${azureBlobname}"
+    SIMILARITYMODEL="${similaritymodel}"
+    DB_NAME="${dbname}"
+    DEFAULT_DB_NAME="${defaultdbname}"
+    DB_USERNAME="${username}"
+    DB_PWD="${password}"
+    DB_IP="${ipaddress}"
+    DB_PORT="${port}"
+    MONGO_PATH="mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"
+    COSMOS_PATH = "${cosmos_path}"
     ```
+    Example Values
+    ```sh
+    # Database Configuration
+    DB_TYPE="mongo"
+    DB_NAME="rai_database"
+    DEFAULT_DB_NAME="default_database"
+    DB_USERNAME="user"
+    DB_PWD="password123"
+    DB_IP="127.0.0.1"
+    DB_PORT="27017"
+    MONGO_PATH="mongodb://user:password123@127.0.0.1:27017/"
+    COSMOS_PATH="your_cosmos_path"
 
+    # OpenAI Configuration
+    OPENAI_MODEL="text-davinci-003"
+    OPENAI_API_TYPE="openai"
+    OPENAI_API_BASE="https://api.openai.com/v1"
+    OPENAI_API_KEY="your_openai_api_key"
+    OPENAI_API_VERSION="v1"
+
+    # OpenAI GPT-4o Configuration
+    OPENAI_API_BASE_GPT4_O="https://api.openai.com/v1"
+    OPENAI_API_KEY_GPT4_O="your_openai_api_key_gpt4_o"
+    OPENAI_API_VERSION_GPT4_O="v1"
+    OPENAI_MODEL_GPT4_O="gpt-4o"
+
+    # Cosmos Configuration
+    CONTAINERNAME="your_cosmos_container_name"
+    COLLECTIONNAME="your_cosmos_collection_name"
+    
+    ```
 3. Replace the placeholders with your actual values.
 
 ## Running the Application

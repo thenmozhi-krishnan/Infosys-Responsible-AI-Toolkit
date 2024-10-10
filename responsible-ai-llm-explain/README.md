@@ -64,7 +64,12 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-6. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
+6. Install `pip` if it's not already installed:
+    ```sh
+    python -m ensurepip --upgrade
+    ```
+    
+7. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
