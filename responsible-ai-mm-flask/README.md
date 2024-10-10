@@ -6,6 +6,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Set Configuration Variables](#set-configuration-variables)
+- [Models Required](#models-required)
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
@@ -70,6 +71,22 @@ After installing all the required packages, configure the variables necessary to
   ```
 
 3. Replace the placeholders with your actual values.
+
+## Models Required
+The following models are required to run the application. Download all the model files from the links provided, and place it in the folder name provided.
+
+1. Prompt Injection - [https://huggingface.co/deepset/deberta-v3-base-injection/tree/main](HuggingFace)
+Name the folder as 'dbertaInjection'.
+2. Sentence Encoding Model - [https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2/tree/main](HuggingFace)
+Name the folder as 'paraphrase-mpnet-base-v2'.
+3. Restricted Topic - [https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v2.0/tree/main](HuggingFace)
+Name the folder as 'restricted-dberta-large-zeroshot'.
+4. Sentence Transformer Model - [https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main](HuggingFace)
+Name the folder as 'multi-qa-mpnet-base-dot-v1'.
+5. Detoxify - [https://huggingface.co/unitary/toxic-bert/tree/main](HuggingFace)
+Name the folder as 'detoxify'.
+
+Place the above folders in a folder named 'models' in the following way: 'responsible-ai-mm-flask-main/models'.
 
 ## Running the Application
 Once we have completed all the aforementioned steps, we can start the service.
