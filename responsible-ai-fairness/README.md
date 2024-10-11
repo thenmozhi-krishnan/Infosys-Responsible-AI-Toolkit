@@ -7,6 +7,7 @@
 - [Installation & set configuration variables](#installation)
 - [Running the Application](#running-the-application)
 - [License](#license)
+- [Open Source Tools used](#open-source-tools-used)
 - [Contact](#contact)
 
 
@@ -43,6 +44,15 @@ Steps to Download BART-large-mnli:
 
 ## Features
 For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
+
+| Model Type                      | Phase         | Function  | Description                                                                 |
+|---------------------------------|---------------|-----------|-----------------------------------------------------------------------------|
+| Traditional Binary classification | Pretrain      | Analyze   | Analyze for bias in structured dataset based on ground truth                |
+| Traditional Binary classification | Posttrain     | Analyze   | Analyze for bias in structured dataset based on model's predictions         |
+| Traditional Binary classification | In-processing | Mitigation | Create a fairness aware classification model based on sensitive attributes in the pretrain dataset |
+| Traditional Binary classification | Pretrain      | Mitigation | Mitigate the bias in the pretrain dataset                                   |
+| Traditional Binary classification | Individual Metric | Analyze   | Analyze for bias in structured dataset based on individuals in the dataset   |
+| Large Language Model            | NA            | Analyze   | Analyze bias in given unstructured text using Open AI GPT model             |
  
 ## Installation
 For more details refer our [Setup Document](responsible-ai-fairness/docs/Setup%20document.pdf)
@@ -59,6 +69,15 @@ For more details refer our [Setup Document](responsible-ai-fairness/docs/Setup%2
 
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.
+
+## Open Source Tools used
+| Open Source Tools Used | Link |
+|------------------------|------|
+| IBM AiF360             | https://github.com/Trusted-AI/AIF360 |
+| Holistic AI            | https://github.com/holistic-ai/holisticai |
+| Microsoft Fairlearn    | https://github.com/fairlearn/fairlearn |
+| Facebook BART model    | https://huggingface.co/facebook/bart-large-mnli |
+
 
 ## Contact
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
