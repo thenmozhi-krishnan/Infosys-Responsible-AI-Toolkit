@@ -135,15 +135,22 @@ This will start downloading the latest nltk package (Version : 3.9). You will ge
 `Finished downloading collection 'all'` once everything gets downloaded.
 
 
-**Step 3**  : Clone the repository `responsible-ai-fm-ext-flask`:
+**Step 2**  : Clone the repository `responsible-ai-fm-ext-flask`:
 ```sh
 git clone <repository-url>
 ```
 
-**Step 4**  : Navigate to the `responsible-ai-fm-ext-flask` directory:
+**Step 3**  : Navigate to the `responsible-ai-fm-ext-flask` directory:
 ```sh
 cd responsible-ai-fm-ext-flask
 ```
+
+**Step 4**  : Use the below link to download `en_core_web_lg` whl file -
+
+[Download Link](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
+This will take 30-40 mins. 
+Once done, put this inside `lib` folder of the repo `responsible-ai-fm-ext-flask`.
+
 
 **Step 5**  : Activate the virtual environment for different OS.
 
@@ -199,7 +206,20 @@ source ./myenv/bin/activate
 ```
 
 
-**Step 6** : Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
+**Step 6** : Go to the `requirements` directory where the `requirement.txt` file is present :
+
+Remember to change `../lib` to `lib`[ **Note :** Needed if you are cloning the repository in your local system ]
+
+For example :
+```sh
+../lib/better_profanity-2.0.0-py3-none-any.whl
+```
+change it to
+```sh
+lib/better_profanity-2.0.0-py3-none-any.whl
+```
+
+Now, install the requirements as shown below :
 ```sh
 pip install -r requirement.txt
 ```
