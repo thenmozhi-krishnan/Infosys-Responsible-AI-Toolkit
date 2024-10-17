@@ -73,10 +73,10 @@ After installing all the required packages, configure the variables necessary to
     DB_TYPE ="${dbtype}"                      # [Mandatory] DB_TYPE = "mongo"
     MONGO_PATH = "mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"    # [Mandatory] MONGO_PATH = "mongodb://localhost:27017/"
     COSMOS_PATH = "${cosmos_path}"            # [Optional]
-    SECRET_KEY = "${your_secret_key}"         # [Optional] SECRET_KEY= "your_secret_key"
-    ALGORITHM = "${your_algorithm}"           # [Optional] ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = "${minutes}" # [Optional] 30 minutes
-    TOKEN_URL = "${your_token_url}"            # [Optional] TOKEN_URL =  "/token"
+    SECRET_KEY = "${your_secret_key}"         # [Mandatory] SECRET_KEY= "your_secret_key" eg : you can give some random value like rai123
+    ALGORITHM = "${your_algorithm}"           # [Mandatory] ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = "${minutes}" # [Mandatory] ACCESS_TOKEN_EXPIRE_MINUTES = 30 
+    TOKEN_URL = "${your_token_url}"            # [Mandatory] TOKEN_URL =  "/token"
     AUTHENTICATE_TELEMETRY_URL = "${authenticateTelemetryUrl}"            # [Optional]
     TELEMETRY_FLAG = "${telemetryFlag}"                                    # [Optional] False if do not want to connect with telemetry 
 

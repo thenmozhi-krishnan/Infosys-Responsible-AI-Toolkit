@@ -40,6 +40,8 @@ Steps to Download BART-large-mnli:
        curl -L -o config.json https://huggingface.co/facebook/bart-large/resolve/main/config.json
  
        curl -L -o tokenizer.json https://huggingface.co/facebook/bart-large/resolve/main/tokenizer.json
+   
+   4. place model in the models folder under responsible-ai-fairness(responsible-ai-fairness/responsible-ai-fairness/models).
 
 
 ## Features

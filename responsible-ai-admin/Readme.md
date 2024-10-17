@@ -37,7 +37,7 @@ To run the application, first we need to install Python and the necessary packag
 
 5. Navigate to the `responsible-ai-admin` directory:
     ```sh
-    cd responsible-ai-privacy
+    cd responsible-ai-admin
     ```
 
 6. Create a virtual environment:
@@ -57,10 +57,8 @@ To run the application, first we need to install Python and the necessary packag
         ```
 8. Now go back to `responsible-ai-admin\responsible-ai-admin` to install the requirements by running the following command : 
    ```sh
-     cd ..
-     cd ..
      cd responsible-ai-admin
-     pip install -r .\requirements\requirement.txt
+     pip install -r .\requirement\requirement.txt
      ```
 
 ## Set Configuration Variables

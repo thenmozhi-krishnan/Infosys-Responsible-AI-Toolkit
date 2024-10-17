@@ -46,9 +46,9 @@ To run the application, first we need to install Python and the necessary packag
         source venv/bin/activate
         ```
 
-7. Navigate to the `responsible-ai-llm-security` directory:
+5. Navigate to the `responsible-ai-security-text-detector` directory:
     ```sh
-    cd responsible-ai-llm-security
+    cd responsible-ai-security-text-detector
     ```
 
 8. Navigate to `src` directory:
@@ -59,6 +59,7 @@ To run the application, first we need to install Python and the necessary packag
 9. Now, install the requirements:
     ```sh
     pip install -r ../requirements/requirement.txt
+    pip install spacy
     ```
 
 ## Set Configuration Variables
@@ -68,6 +69,7 @@ After installing all the required packages, configure the variables necessary to
 
     ```sh
     DB_NAME="${dbname}"        # [Mandatory] DB_NAME = "raitext"
+    WORKERS="${workers}"       # [Mandatory] WORKERS = "1"
     DB_USERNAME="${username}"  # [Optional]
     DB_TYPE ="${dbtype}"       # [Mandatory] DB_TYPE = "mongo"
     DB_PWD="${password}"       # [Optional]
@@ -91,7 +93,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     ```
 
 2. Open the following URL in your browser:
-    [http://localhost:80/v1/infosys/llm/security/docs](http://localhost:80/v1/infosys/llm/security/docs)
+    [http://localhost:8000/rai/v1/models/docs](http://localhost:8000/rai/v1/models/docs)
 
 ## License
 The source code for the project is licensed under MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.

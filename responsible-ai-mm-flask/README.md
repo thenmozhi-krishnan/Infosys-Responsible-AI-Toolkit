@@ -43,11 +43,29 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-6. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
+6. Go to the `requirements` directory where the `requirement.txt` file is present.
+    In the `requirement.txt` file comment the 
+    ```sh
+    lib/torch-2.2.0+cu118-cp39-cp39-linux_x86_64.whl
+    ``` 
+    if working in windows as this is for linux and replace 
+    ```sh
+    lib/
+    ```
+    with 
+    ```sh
+    ../lib/
+    ``` 
+    Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
+    [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
+    and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
-
+    Install the fastapi library as well, use the following command:
+    ```sh
+    pip install fastapi
+    ```
 ## Set Configuration Variables
 After installing all the required packages, configure the variables necessary to run the APIs.
 
@@ -75,18 +93,28 @@ After installing all the required packages, configure the variables necessary to
 ## Models Required
 The following models are required to run the application. Download all the model files from the links provided, and place it in the folder name provided.
 
-1. Prompt Injection - [https://huggingface.co/deepset/deberta-v3-base-injection/tree/main](HuggingFace)
+1. [Prompt Injection](https://huggingface.co/deepset/deberta-v3-base-injection/tree/main)
+Files required to download here are : model.safetensors, config.json, tokenizer_config.json, tokenizer.json, special_tokens_map.json.
 Name the folder as 'dbertaInjection'.
-2. Sentence Encoding Model - [https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2/tree/main](HuggingFace)
-Name the folder as 'paraphrase-mpnet-base-v2'.
-3. Restricted Topic - [https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v2.0/tree/main](HuggingFace)
+
+2. [Restricted Topic](https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v1/tree/main)
+Files required to download here are : pytorch_model.bin, added_tokens.json, config.json, special_tokens_map.json, spm.model, tokenizer.json, tokenizer_config.json.
 Name the folder as 'restricted-dberta-large-zeroshot'.
-4. Sentence Transformer Model - [https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main](HuggingFace)
+3. [Sentence Transformer Model](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main)
+Files required to download here are : 1_Pooling folder, pytorch_model.bin, vocal.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
 Name the folder as 'multi-qa-mpnet-base-dot-v1'.
-5. Detoxify - [https://huggingface.co/unitary/toxic-bert/tree/main](HuggingFace)
+4. [Detoxify](https://huggingface.co/FacebookAI/roberta-base/tree/main)
+Files required to download here are : vocab.json, tokenizer.json, merges.txt, config.json.
+Now download the model checkpoint file from this url and keep it under this folder -
+[toxic_model_ckpt_file](https://github.com/unitaryai/detoxify/releases/download/v0.3-alpha/toxic_debiased-c7548aa0.ckpt)
 Name the folder as 'detoxify'.
 
-Place the above folders in a folder named 'models' in the following way: 'responsible-ai-mm-flask-main/models'.
+Place the above folders in a folder named 'models' in the following way: 'responsible-ai-mm-flask/models'.
+
+In main.py comment the following lines:
+from routing.safety_router import img_router
+app.register_blueprint(img_router,url_prefix='/rai/v1/raimoderationmodels')
+
 
 ## Running the Application
 Once we have completed all the aforementioned steps, we can start the service.

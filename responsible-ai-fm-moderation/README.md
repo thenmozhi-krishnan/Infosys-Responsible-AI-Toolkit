@@ -1,5 +1,3 @@
-# responsible-ai-fm-moderation
-Repo for Infosys - Responsible AI Foundation Model Moderation
 # Responsible-AI-Hallucination
 
 ## Table of Contents
@@ -63,7 +61,7 @@ To run the application, first we need to install Python and the necessary packag
     pip install -r requirement.txt
     ```
 
-7. Download the following open source model: "all-MiniLM-L6-v2"
+7. Download the following open source model: ["nreimers/MiniLM-L6-H384-uncased"] (https://huggingface.co/nreimers/MiniLM-L6-H384-uncased)
     Replace the relative path for the similarity_model variable in the `service.py` file.
 
 ## Set Configuration Variables
