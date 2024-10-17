@@ -10,10 +10,17 @@ Safety is an application which detects and masks any unsafe or harmful content p
 
    
 # Models needed
- 1. Detoxify model for Unstructured text: Download from https://huggingface.co/unitary/toxic-bert/tree/main 
- 2. NFSW model for image : https://github.com/GantMan/nsfw_model . You can download models from https://s3.amazonaws.com/ir_public/ai/nsfw_models/nsfw.299x299.h5
-    
-Place the above folders in a folder named 'models' in the following way: 'responsible-ai-toxicity/models'.
+
+1. Detoxify model for Unstructured text: Download from https://huggingface.co/FacebookAI/roberta-base/tree/main 
+
+ Now download the model checkpoint file from this url and keep it under this folder -
+ toxic_model_ckpt_file (https://github.com/unitaryai/detoxify/releases/download/v0.3-alpha/toxic_debiased-c7548aa0.ckpt) .
+
+ Add this models inside folder named as 'detoxify'.
+
+2. NFSW model for image : https://github.com/GantMan/nsfw_model . You can download models from https://s3.amazonaws.com/ir_public/ai/nsfw_models/nsfw.299x299.h5
+
+ Place the above folder and model in a new folder named 'models' in the following way: 'responsible-ai-toxicity/models'.
 
 ## Steps to run this module :
 1. Clone this repository in vscode
