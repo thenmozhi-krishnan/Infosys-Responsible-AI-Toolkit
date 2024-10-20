@@ -55,10 +55,29 @@ To run the application, first we need to install Python and the necessary packag
         mongod
         ```
 
-    2. Import your JSON data into MongoDB using the `mongoimport` command. Replace `<database>` and `<collection>` with your actual database name and collection name. The JSON file to be imported is `Tbl_Explanation_Methods.json` located in the `responsible-ai-explain/docs` folder:
+    2. Import your JSON data into MongoDB using one of the following methods:
+
+        **Method 1: Using the `mongoimport` command**
+        Replace `<database>` and `<collection>` with your actual database name and collection name. The JSON file to be imported is `Tbl_Explanation_Methods.json` located in the `responsible-ai-explain/docs` folder:
+
         ```sh
         mongoimport --db <database> --collection <collection> --file responsible-ai-explain/docs/Tbl_Explanation_Methods.json --jsonArray
         ```
+
+        **Method 2: Using MongoDB Compass**
+
+        1. Open MongoDB Compass:
+            - Launch MongoDB Compass on your machine.
+        2. Connect to Your MongoDB Instance:
+            - Enter your connection string as `mongodb://localhost:27017/` and click **Connect**.
+        3. Create a New Database and Collection:
+            - Click on the **Create Database** button.
+            - Enter your database name (it can be anything) and collection name as **Tbl_Explanation_Methods**, then click **Create Database**.
+        4. Import JSON Data:
+            - Navigate to the newly created collection.
+            - Click on the **Add Data** button and select **Import File**.
+            - Choose the **Tbl_Explanation_Methods.json** file located in the **responsible-ai-explain/docs** folder.
+            - Select **JSON** as the file type and click **Import**.
 
     3. Ensure the same database name is added to the `RAI_EXPLAIN_DB` configuration variable in your `.env` file:
         ```sh
@@ -86,13 +105,14 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-7. Install `pip` if it's not already installed:
+7. Install `pip`:
     ```sh
-    python -m ensurepip --upgrade
+    python -m pip install pip==24.2
     ```
 
 8. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
     ```sh
+    cd responsible-ai-explain\requirements
     pip install -r requirement.txt
     ```
     
@@ -127,6 +147,27 @@ After installing all the required packages, configure the variables necessary to
 
 
 3. Replace the placeholders with your actual values.
+
+4. Adding New Environment Variables in Windows
+    1. Search for Environment Variables:
+
+        - Type **Environment Variables** in the Windows search bar and select "Edit the system environment variables for your account
+
+    1. In the Environment Variables window, under "User variables" click "New."
+
+        - Variable name: **ACCESS_KEY**
+        - Variable value: use any dummy value like ABC
+        - Click OK.
+
+    2. Repeat the process for the second variable:
+
+        - Variable name: **SECRET_KEY**
+        - Variable value: use any dummy value like XYZ
+        - Click OK.
+
+    3. Confirm Changes:
+
+        - Click OK on all windows to close them.
 
 ## Running the Application
 
