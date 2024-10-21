@@ -11,4 +11,4 @@ The Infosys Responsible AI toolkit incorporates various features including safet
 
 
 
-If you have more questions or need further insights please feel free to connect with us @ Infosysraitoolkit@infosys.com
+If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
