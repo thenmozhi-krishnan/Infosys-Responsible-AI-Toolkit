@@ -68,9 +68,24 @@ Link provided above will directly download the model version 3.7.1.
 *If you download and use the other version of en_core_web_lg then make sure to change the name in the requirement.txt too. To download other version, visit [spaCy](https://spacy.io/models/en/#en_core_web_lg)
 
 9. Now go back to `responsible-ai-privacy\responsible-ai-privacy` to install the requirements by running the following command : 
-   ```sh
+  Update the pip :
+  ```sh
+  python -m pip install pip==24.2
+  ```
+  Dowload the requirements : 
+    ```sh
      pip install -r .\requirements\requirement.txt
     ```
+    
+   Special installations : 
+     ```sh
+     pip install datasets==2.15.0
+     pip install numpy==1.26.2
+     pip install torch==2.3.1
+     ```
+  Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe)
+  Different versions of tesseract : [Versions](https://digi.bib.uni-mannheim.de/tesseract/)
+  Tesseract Github : [Github](https://github.com/tesseract-ocr/tessdoc)
 
 10. Download the ner model from [StarPII](https://huggingface.co/bigcode/starpii/tree/main), place it in a folder named nermodel and place it in the path : `src/privacy/util/code_detect/ner/pii_inference/nermodel`
    (Also mentioned in the Models section)
