@@ -20,6 +20,6 @@ google-generativeai
 transformers
 python-jose
 torch==2.3.0
-#lib/aicloudlibs-0.1.0-py3-none-any.whl
+lib/aicloudlibs-0.1.0-py3-none-any.whl
 lib/infosys_responsible_ai_fairness-1.1.5-py2.py3-none-any.whl
 lib/nutanix_object_storage-0.0.2-py3-none-any.whl

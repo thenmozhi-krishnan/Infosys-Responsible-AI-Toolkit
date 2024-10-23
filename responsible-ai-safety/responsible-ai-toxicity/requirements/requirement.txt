@@ -11,7 +11,7 @@ faiss-cpu
 sentence_transformers
 httpx
 lib/better_profanity-2.0.0-py3-none-any.whl
-#lib/aicloudlibs-0.1.0-py3-none-any.whl
+lib/aicloudlibs-0.1.0-py3-none-any.whl
 tensorflow==2.15.0 
 # tensorflow_macos>=2.5.0;sys_platform == 'darwin'
 tensorflow-hub
