@@ -9,6 +9,7 @@
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
+- [Issues](#issues)
 
 ## Introduction
 
@@ -41,36 +42,37 @@
 ## Installation
 To run the application, first we need to install Python and the necessary packages:
 
-1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
+1. Install Python (version >= 3.9 and <= 3.12) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
 2. Clone the repository:
     ```sh
     git clone <repository-url>
     ```
 
-3. Navigate to the `responsible-ai-llm-explain` directory:
-    ```sh
-    cd responsible-ai-llm-explain
-    ```
-
-4. Create a virtual environment:
+3. Create a virtual environment:
     ```sh
     python -m venv venv
     ```
 
-5. Activate the virtual environment:
+4. Activate the virtual environment:
     - On Windows:
         ```sh
         .\venv\Scripts\activate
          ```
 
-6. Install `pip` if it's not already installed:
+5. Install `pip` if it's not already installed:
     ```sh
     python -m ensurepip --upgrade
+    ```
+
+6. Navigate to the `responsible-ai-llm-explain` directory:
+    ```sh
+    cd responsible-ai-llm-explain
     ```
     
 7. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
     ```sh
+    cd responsible-ai-llm-explain\requirements
     pip install -r requirement.txt
     ```
 ## Set Configuration Variables
@@ -127,3 +129,7 @@ The source code for the project is licensed under MIT license, which you can fin
 ## Contact
 
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
+
+## Issues
+
+- The token Importance feature is currently not functioning and will be updated in the upcoming release.

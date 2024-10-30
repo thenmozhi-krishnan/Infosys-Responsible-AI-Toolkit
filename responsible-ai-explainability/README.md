@@ -9,6 +9,7 @@
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
+- [Issues](#issues)
 
 ## Introduction
 
@@ -45,7 +46,7 @@ aims to provide a comprehensive understanding of the overall behavior and struct
 ## Installation
 To run the application, first we need to install Python and the necessary packages:
 
-1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
+1. Install Python (version >= 3.9 and <= 3.10>) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
 2. Install MongoDB by following the instructions on the [official MongoDB website](https://docs.mongodb.com/manual/installation/).
     ### Importing JSON Data into MongoDB
@@ -55,17 +56,9 @@ To run the application, first we need to install Python and the necessary packag
         mongod
         ```
 
-    2. Import your JSON data into MongoDB using one of the following methods:
+    2. Import your JSON data into MongoDB:
 
-        **Method 1: Using the `mongoimport` command**
-        Replace `<database>` and `<collection>` with your actual database name and collection name. The JSON file to be imported is `Tbl_Explanation_Methods.json` located in the `responsible-ai-explain/docs` folder:
-
-        ```sh
-        mongoimport --db <database> --collection <collection> --file responsible-ai-explain/docs/Tbl_Explanation_Methods.json --jsonArray
-        ```
-
-        **Method 2: Using MongoDB Compass**
-
+        **Using MongoDB Compass**
         1. Open MongoDB Compass:
             - Launch MongoDB Compass on your machine.
         2. Connect to Your MongoDB Instance:
@@ -89,25 +82,25 @@ To run the application, first we need to install Python and the necessary packag
     git clone <repository-url>
     ```
 
-4. Navigate to the `responsible-ai-explain` directory:
-    ```sh
-    cd responsible-ai-explain
-    ```
-
-5. Create a virtual environment:
+4. Create a virtual environment:
     ```sh
     python -m venv venv
     ```
 
-6. Activate the virtual environment:
+5. Activate the virtual environment:
     - On Windows:
         ```sh
         .\venv\Scripts\activate
          ```
 
-7. Install `pip`:
+6. Install `pip`:
     ```sh
     python -m pip install pip==24.2
+    ```
+
+7. Navigate to the `responsible-ai-explain` directory:
+    ```sh
+    cd responsible-ai-explain
     ```
 
 8. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
@@ -138,13 +131,16 @@ After installing all the required packages, configure the variables necessary to
     DB_TYPE ="${dbtype}"                      # [Mandatory] DB_TYPE = "mongo"
     MONGO_PATH = "mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"    # [Mandatory] MONGO_PATH = "mongodb://localhost:27017/"
     COSMOS_PATH = "${cosmos_path}"            # [Optional]
-    REPORT_URL = "${reporturl}"               # [Mandatory] REPORT_URL = "http://localhost/v1/report/htmltopdfconversion" # You can get this from the reporting tool repository
     ```
     ```sh
     ALLOWED_ORIGINS= "${allowed_origins}"     # ALLOWED_ORIGINS ="*"         
     To allow access to all sites, use the value *. Alternatively, you can specify a list of sites that should have access.
     ```
-
+    ```sh
+    REPORT_URL = "${reporturl}"               # [Mandatory] REPORT_URL = "http://localhost/v1/report/htmltopdfconversion"  
+    You can obtain this from the reporting tool repository. Ensure that the reporting tool is running and you use the same database name for that repository,specifically `DB_NAME = ${dbname}`. 
+    You should use the same database name in the explain, reporting tool and model deatils repository.
+    ```
 
 3. Replace the placeholders with your actual values.
 
@@ -187,8 +183,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     [http://localhost:8002/rai/v1/explainability/docs](http://localhost:8002/rai/v1/explainability/docs)
 
 For API calls, please refer to the [API Documnet](responsible-ai-explain/docs/API_Doc.pdf)
-
-  
+ 
 ## License
 
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.
@@ -196,3 +191,8 @@ The source code for the project is licensed under the MIT license, which you can
 ## Contact
 
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
+
+## Issues
+
+- APIs listed under the Explainability and Mask PDF section in the docs are currently non-functional and will be updated in the next release. 
+- AnchorText explanation is not functional due to some dependencies and will also be updated in the next release.

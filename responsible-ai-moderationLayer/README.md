@@ -465,7 +465,48 @@ Once we have completed all the aforementioned steps, we can start the service.
 
    [http://localhost:<PORT_NO>/rai/v1/moderations/docs](http://localhost:<PORT_NO>/rai/v1/moderations/docs)
 
+4. **For PII Entity Detection and Blocking :**
+For `rai/vi/moderations` and `rai/vi/moderations/coupledmoderations` APIs , we have configured parameters to be blocked under `PiientitiesConfiguredToBlock` coming in `ModerationCheckThresholds` in the Request Payload.
 
+These parameters are configurable. For instance, I have provided here some list of entities to block
+```sh
+"AADHAR_NUMBER" : to block Aadhar Number (Aadhar number should not have spaces in between)
+"PAN_Number" : to block PAN Card Number
+"IN_AADHAAR" : to block Indian Aadhar number ( this is added due to updated presidio analyzer, which has wide set of entities to detect, make sure Indian Aadhar number should not have spaces in between)
+```
+```sh
+"IN_PAN" : to block Indian PAN Card number ( this is added due to updated presidio analyzer, which has wide set of entities to detect)
+```
+```sh
+"US_PASSPORT" : to block US Passport Number
+"US_SSN" : to block US SSN Number
+```
+which can be added as below :
+```sh
+"ModerationCheckThresholds": {
+    "PiientitiesConfiguredToBlock": [
+      "AADHAR_NUMBER",
+      "PAN_Number",
+      "IN_PAN",
+      "IN_AADHAAR",
+      "US_PASSPORT",
+      "US_SSN"
+    ]
+}
+```
+
+5. **Using Bearer Token for OAuth2 for coupledModeration**
+- You need to use the OAuth2 Authentication Token provided Azure or GCP Platform ( Please refer step 3 under **Optional Parameters** in section `Set Configuration Variables` on how to generate OAuth2 token)
+- Use that token in 2 places :
+  
+     a) `Authorize` at the top of the Swagger UI : On clicking on it, you will get an option as **BearerAuth  (http, Bearer)** and then **Value**, in the empty text box , just pass the token and click on `Authorize` and then `Close`.
+
+     b) For Coupled Moderation API : On expanding it, you will get an option as `Parameters`. There, you will find a text box beside `autorization`. Mention the token in below format :
+  ```sh
+  Bearer <token>
+  ```
+
+  
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
