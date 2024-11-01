@@ -194,5 +194,5 @@ If you have more questions or need further insights, feel free to Connect with u
 
 ## Issues
 
-- APIs listed under the Explainability and Mask PDF section in the docs are currently non-functional and will be updated in the next release. 
-- AnchorText explanation is not functional due to some dependencies and will also be updated in the next release.
+- APIs listed under the Explainability and Mask PDF section in the docs are currently non-functional and will be deprecated in the next release. 
+- AnchorText explanation is not functional due to some dependencies and will also be deprecated in the next release.
