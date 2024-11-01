@@ -101,6 +101,15 @@ After installing all the required packages, configure the variables necessary to
     ALLOWED_ORIGINS = "${allowed_origins}"     # ALLOWED_ORIGINS ="*"         
     To allow access to all sites, use the value *. Alternatively, you can specify a list of sites that should have access.
     ```
+    ```sh
+    SERPER_KEY = "${serperkey}"            
+    Steps to get serper key:
+    1. Signup to "https://serper.dev/" with required details.
+    2. Signin into account. go to the "API Keys" section in your account dashboard.
+    3. Click on generate button to create new API key.
+    3. Copy and assign it to SERPER_KEY variable in configuration.
+    ```
+    
 
 3. Replace the placeholders with your actual values.
 
