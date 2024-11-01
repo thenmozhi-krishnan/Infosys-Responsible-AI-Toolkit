@@ -450,7 +450,10 @@ LOGCHECK="${log}"
 
 
 ## Running the Application
-Once we have completed all the aforementioned steps, we can start the service.
+
+**Note** : Please don't run the api for feedback i.e. `/rai/vi/moderations/feedback` as this endpoint will be deprecated from the next release onwards.
+
+Once we have completed all the above mentioned steps, we can start the service.
 
 1. Navigate to the `src` directory:
 
