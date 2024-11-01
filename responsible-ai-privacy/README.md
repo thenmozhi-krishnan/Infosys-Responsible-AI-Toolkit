@@ -73,19 +73,20 @@ Link provided above will directly download the model version 3.7.1.
   python -m pip install pip==24.2
   ```
   Dowload the requirements : 
-    ```sh
+  ```sh
      pip install -r .\requirements\requirement.txt
-    ```
-    
-   Special installations : 
-     ```sh
-     pip install datasets==2.15.0
-     pip install numpy==1.26.2
-     pip install torch==2.3.1
-     ```
-  Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe)
-  Different versions of tesseract : [Versions](https://digi.bib.uni-mannheim.de/tesseract/)
-  Tesseract Github : [Github](https://github.com/tesseract-ocr/tessdoc)
+  ```
+  Special installations : 
+  ```sh
+      pip install datasets==2.15.0
+      pip install numpy==1.26.2
+      pip install torch==2.3.1
+  ```
+  Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe).
+  
+  Different versions of tesseract : [Versions](https://digi.bib.uni-mannheim.de/tesseract/).
+  
+  Tesseract Github : [Github](https://github.com/tesseract-ocr/tessdoc).
 
 10. Download the ner model from [StarPII](https://huggingface.co/bigcode/starpii/tree/main), place it in a folder named nermodel and place it in the path : `src/privacy/util/code_detect/ner/pii_inference/nermodel`
    (Also mentioned in the Models section)
@@ -152,6 +153,15 @@ Once we have completed all the aforementioned steps, we can start the service.
     For privacyfiles_main :
     [http://localhost:30003/rai/v1/privacy-files/docs#/](http://localhost:30003/rai/v1/privacy-files/docs#/)
         User can also change the port which is mentioned in privacyfiles_main.py file
+
+Note:
+ 1. User will face "500 - Error: Internal Server Error" for the endpoint  `/v1/privacy/image/analyze` . This will be 
+    corrected and running fine in the upcoming release.
+ 2. Also, following two endpoints will be removed in the upcoming release :
+    ```sh
+    /v1/privacy/image/masking
+    /v1/privacy/privacyShield
+    ```
   
 
 ## Features
@@ -239,4 +249,4 @@ The source code for the project is licensed under the MIT license, which you can
 
 ## Contact
 
-If you have more questions or need further insights, feel free to Connect with us @ ResponsibleAI@infosys.com
+If you have more questions or need further insights, feel free to Connect with us @ Infosysraitoolkit@infosys.com
