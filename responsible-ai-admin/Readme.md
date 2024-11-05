@@ -107,6 +107,11 @@ Once we have completed all the aforementioned steps, we can start the service.
 
     User can also change the port which is mentioned in main.py file
 
+   NOTE : 
+    Following Apis will be working fine in the upcoming release :
+       `/api/v1/rai/admin/UpdateOpenAI` , `/api/v1/rai/admin/UpdateReminder` , `/api/v1/rai/admin/UpdateGoalPriority` , `/api/v1/rai/admin/getOpenAI` , 
+       `/api/v1/rai/admin/userRole` , `/api/v1/rai/admin/getRole` .
+
 ## License
 
 The source code for the project is licensed under the MIT license, which you can find in the [License.md](License.md) file.

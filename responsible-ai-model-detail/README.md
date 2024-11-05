@@ -40,6 +40,11 @@ To run the application, first we need to install Python and the necessary packag
     ```
 
 6. Go to the `workbench` directory and then `requirements` directory where the `requirement.txt` file is    present and install the requirements:
+
+   Update the pip :
+   ```sh
+   python -m pip install pip==24.2
+   ```
     
     ```sh
     cd workbench\requirements
@@ -53,10 +58,14 @@ To run the application, first we need to install Python and the necessary packag
     ```
     
     Now install the requirements - 
-
     ```sh
     pip install -r requirement.txt
     ```
+    Special Installation :
+    ```sh
+    pip install numpy==1.26.4
+    ```
+   
 ## Set Configuration Variables
 After installing all the required packages, configure the variables necessary to run the APIs.
 
