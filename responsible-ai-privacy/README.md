@@ -82,7 +82,9 @@ Link provided above will directly download the model version 3.7.1.
       pip install numpy==1.26.2
       pip install torch==2.3.1
   ```
-  Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe).
+Note: If you face any issue with the torch library then uninstall the torch `pip uninstall torch` and then reinstall the latest version `pip install torch` .
+
+Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe).
   
   Different versions of tesseract : [Versions](https://digi.bib.uni-mannheim.de/tesseract/).
   
@@ -162,6 +164,7 @@ Note:
     /v1/privacy/image/masking
     /v1/privacy/privacyShield
     ```
+ 3. User need to mention `null` in the optional payload value of endpoints if not using that field.
   
 
 ## Features

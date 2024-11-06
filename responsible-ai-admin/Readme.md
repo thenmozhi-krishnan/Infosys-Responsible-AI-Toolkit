@@ -109,8 +109,9 @@ Once we have completed all the aforementioned steps, we can start the service.
 
    NOTE : 
     Following Apis will be working fine in the upcoming release :
-       `/api/v1/rai/admin/UpdateOpenAI` , `/api/v1/rai/admin/UpdateReminder` , `/api/v1/rai/admin/UpdateGoalPriority` , `/api/v1/rai/admin/getOpenAI` , 
-       `/api/v1/rai/admin/userRole` , `/api/v1/rai/admin/getRole` .
+       `/api/v1/rai/admin/UpdateOpenAI` , `/api/v1/rai/admin/UpdateReminder` , `/api/v1/rai/admin/UpdateGoalPriority` ,    
+       `/api/v1/rai/admin/userRole` , `/api/v1/rai/admin/DataEntitesUpdate` , `/api/v1/rai/admin/DataEntitesUpdate` ,  
+       `/api/v1/rai/admin/DataGrpUpdate` , `/api/v1/rai/admin/DataEntityAdd` , `/api/v1/rai/admin/DataRecogEntityDelete` ,        `/api/v1/rai/admin/PrivacyEncrypt` , `/api/v1/rai/admin/ThresholdUpdate` , `/api/v1/rai/admin/ApiPost`
 
 ## License
 
