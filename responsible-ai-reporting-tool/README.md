@@ -19,21 +19,23 @@ To run the application, first we need to install Python and the necessary packag
 
 1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
-2. Install MongoDB by following the instructions on the [official MongoDB website](https://docs.mongodb.com/manual/installation/).
+2. Install `pip` if it is not already installed. You can download and install it by following the instructions on the [official pip website](https://pip.pypa.io/en/stable/installation/).
 
-3. Install `pip` if it is not already installed. You can download and install it by following the instructions on the [official pip website](https://pip.pypa.io/en/stable/installation/).
+3. Install MongoDB by following the instructions on the [official MongoDB website](https://docs.mongodb.com/manual/installation/).
 
-4. Clone the repository:
+4. Install "wkhtmltopdf" by following the instructions on the [official wkhtmltopdf website](https://wkhtmltopdf.org/downloads.html).
+
+5. Clone the repository:
     ```sh
     git clone <repository-url>
     ```
 
-5. Create a virtual environment:
+6. Create a virtual environment:
     ```sh
     python -m venv venv
     ```
 
-6. Activate the virtual environment:
+7. Activate the virtual environment:
     - On Windows:
         ```sh
         .\venv\Scripts\activate
@@ -42,15 +44,16 @@ To run the application, first we need to install Python and the necessary packag
         ```sh
         source venv/bin/activate
 
-7. Navigate to the `responsible-ai-reporting-tool` directory:
+8. Navigate to the `responsible-ai-reporting-tool` directory:
     ```sh
     cd responsible-ai-reporting-tool
     ```
 
-8. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
+9. Go to the `requirements` directory where the `requirement.txt` file is present and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
+    
 ## Set Configuration Variables
 
 After installing all the required packages, configure the variables necessary to run the APIs.
@@ -93,6 +96,8 @@ Once we have completed all the aforementioned steps, we can start the service.
 
     User can also change the port which mentioned in main.py file
 
+## Limitations
+This will not work alone as it has dependency over other modules.
 
 ## License
 The source code for the project is licensed under MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.

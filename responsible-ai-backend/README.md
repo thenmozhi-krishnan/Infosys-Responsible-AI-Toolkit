@@ -108,6 +108,9 @@ Once we have completed all the aforementioned steps, we can start the service.
     [http://localhost:30019/v1/rai/backend/docs](http://localhost:30019/v1/rai/backend/docs)
 
     User can also change the port which mentioned in main.py file
+	
+## Account API Details
+	The /account API will not work from the swagger docs. It is used to verify and the JWT token is sent from the front end and then the api will be authorized. 
   
 ## License
 

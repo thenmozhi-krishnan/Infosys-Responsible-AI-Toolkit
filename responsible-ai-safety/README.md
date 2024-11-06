@@ -21,6 +21,32 @@ Safety is an application which detects and masks any unsafe or harmful content p
 2. NFSW model for image : https://github.com/GantMan/nsfw_model . You can download models from https://s3.amazonaws.com/ir_public/ai/nsfw_models/nsfw.299x299.h5
 
  Place the above folder and model in a new folder named 'models' in the following way: 'responsible-ai-toxicity/models'.
+ 
+## Set Configuration Variables
+After installing all the required packages, configure the variables necessary to run the APIs.
+
+1. Navigate to the `profanity` directory:
+    ```sh
+    cd src/profanity
+    ```
+
+2. Locate the `.env` file, which contains keys like the following:
+
+   ```sh
+    ADMIN_API= "${adminapi}" # Optional if adminconnection is not True otherwise provide Admin url
+    SAFETY_COFIG="${safetycofig}" # [Mandatory]* set value as '{"drawings":0.5,"hentai":0.25,"neutral":0.5,"porn":0.25,"sexy":0.25}' if not connect with admin module otherwise config this  value     through admin module. 
+    IMAGEGEN_IP="${imagegenapi}"  # Need image generation api for genearting image from text. [Mandatory]* for Running 'api/v1/safety/profanity/imageGenerate' has dependency on ModerationModels module.
+    ADMIN_CONNECTION="${adminconnection}" # [Mandatory]* False if do not want to connect with Admin module, otherwise True.
+    TELEMETRY_FLAG="${telemetryflag}"   # [Mandatory]* False if do not want to connect with telemetry. otherwise True.
+   ```
+
+    *TELE_FLAG is made true only if user wants to request the response in telemetry. Otherwise for the normal flow it can be set as False.
+    For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-telemetry)
+
+    **Admin Module is the supporting module which is used for configuring the main module. User can create recognizer,custome templates, configure Thresholds and map it to created account and portfolio.
+
+3. Replace the placeholders with your actual values.
+
 
 ## Steps to run this module :
 1. Clone this repository in vscode
@@ -37,7 +63,8 @@ Safety is an application which detects and masks any unsafe or harmful content p
 3. Open the following URL in your browser:
    [http://localhost:8001/api/v1/safety/docs](http://localhost:8001/api/v1/safety/docs)
 
-
+## LIMITATION 
+   The image generation api will not work standalone. It has dependency on the other models module. 
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.

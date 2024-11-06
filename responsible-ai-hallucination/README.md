@@ -136,7 +136,7 @@ After installing all the required packages, configure the variables necessary to
 
 ## Running the Application
 Note : please dont run the api's i.e. `/rag/v1/Retrieval, /rag/v1/DefaultVectorstoreUpdate, /rag/v1/chatbot, /rag/v1/FileUploadtodb` as these endpoints will be depreceated from the next release onwards.
-
+COV --> `/rag/v1/cov` -- code changes (already its updated in IP-2.0.0 branch)
 Once we have completed all the aforementioned steps, we can start the service.
 
 1. Navigate to the `src` directory

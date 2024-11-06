@@ -17,6 +17,7 @@
   - [Telemetry](#telemetry)
   - [Roadmap](#roadmap)
   - [Contact](#contact)
+  - [Prompt Template](#prompt-template)
 
 
 ## Introduction
@@ -49,7 +50,7 @@ Steps to Download BART-large-mnli:
 
        •	model.safetensors
 
-	OR
+
    
    3.	Download the Files: You can use curl or wget to download the files directly from the command line.
      	
@@ -81,7 +82,7 @@ and activate it by going to
 ```
 3.	Setup the DB
       1. Create two collections in mongodb database by the name llm_connection_credentials and llm_analysis
-      2. To insert the required documents into this, go to **responsible-ai-fairness\responsible-ai-fairness\docs\scripts** and import both the documents into  respective mongodb collection. 
+      2. To insert the required documents into this, go to **responsible-ai-fairness\responsible-ai-fairness\docs\scripts** and import both the documents into  respective mongodb collection. llm_analysis json content is also given at the end of this file.
 4.	Install dependencies. 
       1. Go to **responsible-ai-fairness\responsible-ai-fairness\requirements** and run 
       ```bash 
@@ -184,6 +185,7 @@ The source code for the project is licensed under the MIT license, which you can
 4. Support for workbench related apis will be added in upcoming release.
 5. Numpy version issue- For posttrain analysis, it required numpy version 1.26.4. So if one wants to use it, please install numpy 1.26.4.
 6. For Preprocessing mitigate has log issues, intreseted users can add log and can use the features. This will be fixed in coming version.
+7. For llm/analyze endpoint, default template is having some limitation, refer the Prompt template section below for advanced analysis. Update this template in database collection llm_analysis for the key **GPT_4O_TEXT**
 
 ## Telemetry
 1. Make tel_Falg as True.
@@ -199,3 +201,11 @@ The source code for the project is licensed under the MIT license, which you can
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
 
 For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
+
+
+
+## Prompt Template
+```bash 
+"\"\"\"input: {input_placeholder} context:         You are an evaluator tasked to identify potential biase(s) in the input.         Analyze the input and identify all possible potential biase(s) in it.         Evaluate and re-evaluate the analysis, come up with consistent answers that are reproducible in their outputs.         Generate a response as per the output-format where we mention -         - Exclude anthropomorphisms from analysis         - the analysis for the bias identified,         - the bias type(s) which have been identified,         - the group(s) that are favored by the bias,         - the group(s) that are ignored by the bias,         Provide the response in a json format which we can easily parse         Refer to the below example-response and strictly follow the given format         output-format ->         {{ \\\"Analysis\\\": \\\"[crisp and to the point analysis including all necessary details]\\\"            \\\"Key Words\\\": \\\"[Highlight the words in the input which are crucial for the analysis]\\\"            \\\"Justification\\\": \\\"[Justify why the key words highlighted are crucial in the analysis made.]\\\"            \\\"Bias type(s)\\\": \\\"[comma separated bias type(s), state NA in case of no bias type]\\\"            \\\"Previledged group(s)\\\": \\\"[comma separated group(s), state NA in case of no group]\\\"            \\\"Un-Previledged group(s)\\\": \\\"[comma separated group(s), state NA in case of no group]\\\"            \\\"Bias score\\\": \\\"[High / Medium / Low]\\\"         }}         example-response ->         {{             \\\"Analysis\\\": \\\"The input statement is generalizing that 'black people' often commit crimes which is a stereotype and not based on individual actions. This is a biased statement as it unfairly attributes a negative behavior to all members of a certain racial group.\\\",             \\\"Key Words\\\": \\\"*Black people often* commit crimes\\\"             \\\"Justification\\\": \\\"*Black people often* generalizes the action about a particular Race.\\\"             \\\"Bias type(s)\\\": \\\"Racial bias, Stereotyping\\\",             \\\"Previledged group(s)\\\": \\\"Black people\\\",             \\\"Un-Previledged group(s)\\\": \\\"White people\\\",             \\\"Bias score\\\": \\\"High\\\"         }}     \"\"\""
+
+```
