@@ -6,9 +6,7 @@ To install any Infosys Responsible AI Toolkit module, open the respective reposi
 | No. | Module name | Functionalities | Repository names |
 |---|---|---|---|
 | 1 | ModerationLayer APIs  | Moderates Input and Output of LLMs | responsible-ai-moderationlayer,responsible-ai-moderationModel |
-| 2 | Explainability APIs  | Get Explainability to LLM responses, Global and local explainability for Regression, Classification and Timeseries Models | ```responsible-ai-llm-explain, 
-responsible-ai-explainability,
-responsible-ai-moderationLayer``` |
+| 2 | Explainability APIs  | Get Explainability to LLM responses, Global and local explainability for Regression, Classification and Timeseries Models | responsible-ai-llm-explain,<br>responsible-ai-explainability,<br>responsible-ai-moderationLayer |
 | 3 | Fairness & Bias API  | Check Fairness and detect Biases associated with LLM prompts and responses and also for traditional ML models | responsible-ai-fairness |
 | 4 | Hallucination API  | Detect and quantify Hallucination in LLM responses under RAG scenarios | responsible-ai-hallucination |
 | 5 | Privacy API  | Detect and anonymize or encrypt or hilight PII information in prompts for LLMs or in its responses | responsible-ai-privacy |
