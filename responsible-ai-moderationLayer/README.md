@@ -135,12 +135,12 @@ This will start downloading the latest nltk package (Version : 3.9). You will ge
 `Finished downloading collection 'all'` once everything gets downloaded.
 
 
-**Step 2**  : Clone the repository `responsible-ai-fm-ext-flask`:
+**Step 2**  : Clone the repository `responsible-ai-moderationLayer`:
 ```sh
 git clone <repository-url>
 ```
 
-**Step 3**  : Navigate to the `responsible-ai-fm-ext-flask` directory:
+**Step 3**  : Navigate to the `responsible-ai-moderationLayer` directory:
 ```sh
 cd responsible-ai-fm-ext-flask
 ```
