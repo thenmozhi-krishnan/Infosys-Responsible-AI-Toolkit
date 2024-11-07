@@ -23,6 +23,8 @@
 ## Introduction
 Responsible-ai-fairness offers solutions for Traditional AI and LLM's fairness and bias evaluations. For traditional classification problems, the training datasets and model's predictions can be analyzed and mitigated for Group Fairness. Individual Fairness analysis is also supported to get a comprehensive analysis. For Large Language Models, given text is evaluated for bias context and highlights the affected groups and bias types using GPT-4.
 
+To install the Infoysys Responsible AI fairness module, below are the list of required softwares and instructions to be followed. 
+
 ## Requirements
 1. Python 3.9 and above
 2. pip
