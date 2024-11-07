@@ -3,9 +3,11 @@ The Infosys Responsible AI toolkit provides a set of APIs to integrate safety, p
 
 To install any Infosys Responsible AI Toolkit module, open the respective repository and follow the instructions in the README file.
 
-![image](https://github.com/user-attachments/assets/d2f6eb7a-a971-4644-be4f-7b800c4ffadf)
+![image](https://github.com/user-attachments/assets/ab53f844-99e6-4a6c-a385-3ec66327450f)
+
 
 
 These API-based guardrails are being hosted on platforms like Azure OpenAI.
+
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
