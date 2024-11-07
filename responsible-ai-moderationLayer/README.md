@@ -142,14 +142,14 @@ git clone <repository-url>
 
 **Step 3**  : Navigate to the `responsible-ai-moderationLayer` directory:
 ```sh
-cd responsible-ai-fm-ext-flask
+cd responsible-ai-moderationLayer
 ```
 
 **Step 4**  : Use the below link to download `en_core_web_lg` whl file -
 
 [Download Link](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
 This will take 30-40 mins. 
-Once done, put this inside `lib` folder of the repo `responsible-ai-fm-ext-flask`.
+Once done, put this inside `lib` folder of the repo `responsible-ai-moderationLayer`.
 
 
 **Step 5**  : Activate the virtual environment for different OS.
