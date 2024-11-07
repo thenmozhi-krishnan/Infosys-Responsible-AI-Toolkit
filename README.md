@@ -4,8 +4,8 @@ The Infosys Responsible AI toolkit incorporates various features including safet
 To install any of the Infosys Responsible AI Toolkit modules, Open respective repositories & follow the instruction given in the readme file.
 
 S.no  | Module name            |  Repository name  
--------------------------------------------------------------------------------------------
-1.    | Explainability API     | responsible-ai-explainability,responsible-ai-llm-explain
+-------------------------------------------------------------------------------------------------------------------------
+1.    | Explainability API     | responsible-ai-explainability,responsible-ai-llm-explain, responsible-ai-moderationLayer
 2.    | Fairness & Bias API    | responsible-ai-fairness  
 3.    | Privacy API            | responsible-ai-privacy
 4.    | Security API           | responsible-ai-security-API
