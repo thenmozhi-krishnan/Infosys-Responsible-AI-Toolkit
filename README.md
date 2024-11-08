@@ -15,7 +15,7 @@ To install any Infosys Responsible AI Toolkit module, open the respective reposi
 These API-based guardrails are being hosted on platforms like Azure OpenAI.
 
 ## Moderating LLM inputs and outputs using Moderation Layer APIs
-This API suite offers a comprehensive set of features for responsible AI. It includes robust moderation capabilities to filter harmful content, advanced prompt engineering techniques to optimize model performance, and powerful explainability tools to understand model reasoning. 
+This API suite offers a comprehensive set of features for responsible AI. It includes robust moderation capabilities to filter harmful content, advanced prompt engineering techniques to optimize model performance, and powerful explainability methods to understand model reasoning. Following is the list of features available under Moderation layer. 
 * Prompt injection                  
 * Jailbreak attempts                
 * Toxicity detection               
@@ -26,8 +26,10 @@ This API suite offers a comprehensive set of features for responsible AI. It inc
 * Bias detection
 * Hallucination detection
 * Explainability using Chain of thoughts (CoT), Thread of thoughts (ThoT) and Chain of verification (CoV)
-Additionally, it provides language translation and summarization functionalities using Google or Azure translate, as well as telemetry tracking for monitoring API usage and performance. 
-Refer the [Moderation API instructions] document for more details on APIs and their functionalities.
+* Language translation and summarization using Googlel or Azure translate
+* Telemetry tracking for monitoring API usage and performance
+
+Refer the [Moderation API instructions]() document for more details on APIs and their functionalities.
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
