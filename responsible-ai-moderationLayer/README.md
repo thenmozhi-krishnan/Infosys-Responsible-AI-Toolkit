@@ -466,7 +466,7 @@ Once we have completed all the above mentioned steps, we can start the service.
 
    Open the following URL in your browser:
 
-   [http://localhost:<PORT_NO>/rai/v1/moderations/docs](http://localhost:<PORT_NO>/rai/v1/moderations/docs)
+   `http://localhost:<PORT_NO>/rai/v1/moderations/docs`
 
 4. **For PII Entity Detection and Blocking :**
 For `rai/vi/moderations` and `rai/vi/moderations/coupledmoderations` APIs , we have configured parameters to be blocked under `PiientitiesConfiguredToBlock` coming in `ModerationCheckThresholds` in the Request Payload.
