@@ -12,8 +12,24 @@ To install any Infosys Responsible AI Toolkit module, open the respective reposi
 | 5 | Privacy API | Detect and anonymize or encrypt or hilight PII information in prompts for LLMs or in its responses | [responsible-ai-privacy](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-privacy) |
 | 6 | Safety API | Detects and anonymize toxic and profane text associated with LLMs | [responsible-ai-safety](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-safety) |
 
-
 These API-based guardrails are being hosted on platforms like Azure OpenAI.
+
+## Moderating LLM inputs and outputs using Moderation Layer APIs
+This API suite offers a comprehensive set of features for responsible AI. It includes robust moderation capabilities to filter harmful content, advanced prompt engineering techniques to optimize model performance, and powerful explainability methods to understand model reasoning. Following is the list of features available under Moderation layer. 
+* Prompt injection                  
+* Jailbreak attempts                
+* Toxicity detection               
+* Profanity filtering              
+* PII identification
+* Restricted topic detection
+* Factual accuracy
+* Bias detection
+* Hallucination detection
+* Explainability using Chain of thoughts (CoT), Thread of thoughts (ThoT) and Chain of verification (CoV)
+* Language translation and summarization using Googlel or Azure translate
+* Telemetry tracking for monitoring API usage and performance
+
+Refer the [Moderation API instructions]() document for more details on APIs and their functionalities.
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
