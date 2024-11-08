@@ -1,5 +1,5 @@
 # **Infosys-Responsible-AI-Toolkit**
-The Infosys Responsible AI toolkit provides a set of APIs to integrate safety, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
+The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
 To install any Infosys Responsible AI Toolkit module, open the respective repository and follow the instructions in the README file.
 
