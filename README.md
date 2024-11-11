@@ -13,7 +13,7 @@ To install any Infosys Responsible AI Toolkit module, open the respective reposi
 | 6 | Safety API | Detects and anonymize toxic and profane text associated with LLMs | [responsible-ai-safety](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-safety) |
 | 7 | Security APIs | For different types of security attacks and defenses on tabular and image data, prompt injection and jailbreak checks | [responsible-ai-security](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/Responsible-AI-Security-API) |
 
-These API-based guardrails are being hosted on platforms like Azure OpenAI.
+Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments.
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
