@@ -185,7 +185,7 @@ Once we have completed all the aforementioned steps, we can start the service.
 3. Open the following URL in your browser:
     [http://localhost:8002/rai/v1/explainability/docs](http://localhost:8002/rai/v1/explainability/docs)
 
-For API calls, please refer to the [API Documnet](responsible-ai-explain/docs/API_Doc.pdf)
+For API calls, please refer to the [API Documnet](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/responsible-ai-explainability/Docs/EXPLAINABILTY_endpoints_instructions.pdf)
  
 ## License
 
