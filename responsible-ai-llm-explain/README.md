@@ -13,7 +13,8 @@
 
 ## Introduction
 
-**LLM Explain** provides explanations for Large Language Models using methods such as token importance, Graph of Thoughts, and Search Augmentation. It evaluates the responses with metrics including uncertainty, relevancy, and coherence to ensure the reliability and clarity of Generative AI models' outputs..
+**LLM Explain APIs** provides explanations for Large Language Models using methods such as Token Importance, Graph of Thoughts, Chain of Thought (CoT), Search Augmentation, Chain of Verification (CoV), and Thread of Thoughts (Thot). It evaluates the responses with metrics including uncertainty, relevancy, and coherence to ensure the reliability and clarity of Generative AI models' outputs.
+
 
 ## Features
 - **Sentiment Analysis**
@@ -38,6 +39,27 @@
     - **Uncertainty**: Measures the model’s confidence in its responses, highlighting areas where the model may exhibit lower certainty.
 
     - **Coherence**: Assesses the logical consistency and organization of the explanation, ensuring a clear and structured line of reasoning.
+
+- **Chain of Thought**
+
+    It refers to a structured problem-solving approach that breaks down complex tasks into a series of logical, step-by-step processes. It allows the model to systematically explore each part of the problem, making the reasoning more transparent and improving the accuracy of the solution by focusing on each individual step before arriving at a final answer.
+
+- **Thread of Thoughts**
+
+    Thread of Thoughts addresses challenges in chaotic or complex contexts where large language models (LLMs) struggle to sift through and prioritize relevant information amidst an overwhelming amount of data. It helps organize and guide the model’s reasoning by maintaining a clear path of thought, ensuring that important details are identified and addressed without getting lost in extraneous information.
+
+- **Chain of Verification**
+
+    Chain of Verification is a mechanism implemented to directly counteract hallucinations, which occur when an LLM generates responses that are logically coherent but factually incorrect. This approach ensures that each piece of information or step in the model's reasoning process is validated or cross-checked, reducing the likelihood of errors or false conclusions by reinforcing the reliability of the generated output.
+
+- **Chain of Thought for RAG**
+
+    Chain of Thought for RAG (Retrieval-Augmented Generation) outlines the reasoning steps an LLM takes to generate a response, combining the input prompt with relevant context retrieved from external sources. The model explains how it integrates both the prompt and the additional information to form a coherent answer. In a RAG-based system, context is retrieved from vector storage and used to enrich the response. This approach ensures the model's response is grounded in relevant, factual data. It also provides transparency into the reasoning behind the response, clarifying which details were prioritized.
+
+**Note:** 
+`Chain of Thought for RAG` `Chain of Verification` `Thread of Thoughts` `Chain of Thought` These features are available under **Moderation Layer** (responsible-ai-moderationLayer) repository.
+Please follow the setup instructions in the README file of the moderation layer repository to configure them. Ensure that the service is up and running to execute
+
 
 ## Installation
 To run the application, first we need to install Python and the necessary packages:

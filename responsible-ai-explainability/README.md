@@ -108,7 +108,10 @@ To run the application, first we need to install Python and the necessary packag
     cd responsible-ai-explain\requirements
     pip install -r requirement.txt
     ```
-    
+
+**Dependencies for Explainability**
+    The Explainability APIs depend on both the Model Details (responsible-ai-model-detail) repository and the Reporting Tool (responsible-ai-reporting-tool) repository. Please follow the setup instructions in the README files of both repositories to configure them. Ensure that both services are up and running before interacting with the Explainability APIs.
+
 ## Set Configuration Variables
 
 After installing all the required packages, configure the variables necessary to run the APIs.
@@ -139,7 +142,7 @@ After installing all the required packages, configure the variables necessary to
     ```sh
     REPORT_URL = "${reporturl}"               # [Mandatory] REPORT_URL = "http://localhost/v1/report/htmltopdfconversion"  
     You can obtain this from the reporting tool repository. Ensure that the reporting tool is running and you use the same database name for that repository,specifically `DB_NAME = ${dbname}`. 
-    You should use the same database name in the explain, reporting tool and model deatils repository.
+    You should use the same database name in the explainability, reporting tool and model deatil repository.
     ```
 
 3. Replace the placeholders with your actual values.
