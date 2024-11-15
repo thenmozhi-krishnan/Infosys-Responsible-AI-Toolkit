@@ -57,7 +57,7 @@
     Chain of Thought for RAG (Retrieval-Augmented Generation) outlines the reasoning steps an LLM takes to generate a response, combining the input prompt with relevant context retrieved from external sources. The model explains how it integrates both the prompt and the additional information to form a coherent answer. In a RAG-based system, context is retrieved from vector storage and used to enrich the response. This approach ensures the model's response is grounded in relevant, factual data. It also provides transparency into the reasoning behind the response, clarifying which details were prioritized.
 
 **Note:** 
-`Chain of Thought for RAG` `Chain of Verification` `Thread of Thoughts` `Chain of Thought` These features are available under **Moderation Layer** (responsible-ai-moderationLayer) repository.
+`Chain of Thought for RAG` `Chain of Verification` `Thread of Thoughts` `Chain of Thought` These features are available under **Moderation Layer** ([responsible-ai-moderationLayer](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-moderationLayer)) repository.
 Please follow the setup instructions in the README file of the moderation layer repository to configure them. Ensure that the service is up and running to execute
 
 
