@@ -37,11 +37,11 @@ After installing all the required packages, configure the variables necessary to
     SAFETY_COFIG="${safetycofig}" # [Mandatory]* set value as '{"drawings":0.5,"hentai":0.25,"neutral":0.5,"porn":0.25,"sexy":0.25}' if not connect with admin module otherwise config this  value     through admin module. 
     IMAGEGEN_IP="${imagegenapi}"  # Need image generation api for genearting image from text. [Mandatory]* for Running 'api/v1/safety/profanity/imageGenerate' has dependency on ModerationModels module.
     ADMIN_CONNECTION="${adminconnection}" # [Mandatory]* False if do not want to connect with Admin module, otherwise True.
-    TELEMETRY_FLAG="${telemetryflag}"   # [Mandatory]* False if do not want to connect with telemetry. otherwise True.
+    TELEMETRY_FLAG="${telemetryflag}"   # [Mandatory]* False if do not want to connect with telemetry.
    ```
 
     *TELE_FLAG is made true only if user wants to request the response in telemetry. Otherwise for the normal flow it can be set as False.
-    For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-telemetry)
+    For Telemetry setup, refer this link responsible-ai-telemetry
 
     **Admin Module is the supporting module which is used for configuring the main module. User can create recognizer,custome templates, configure Thresholds and map it to created account and portfolio.
 
@@ -52,10 +52,20 @@ After installing all the required packages, configure the variables necessary to
 1. Clone this repository in vscode
 2. Create a virtual environment for python using cmd -
    `python -m venv <env-name>`
-3. Activate the python virtual environment and install all the dependencies in requirement.txt file of the     cloned repository -
+3. Activate the virtual environment:
+    - On Windows:
+        ```sh
+        .\myenv\Scripts\activate
+         ```
+ 
+    - On Linux/Mac:
+        ```sh
+        source myenv/bin/activate
+        ```
+4. Activate the python virtual environment and install all the dependencies in requirement.txt file of the     cloned repository -
    `pip install -r path/to/requirements.txt`
-4. Open .env file in vscode and configure the entries in it
-5. In the virtual environment go to src folder of cloned repository and run below command to run the module-
+5. Open .env file in vscode and configure the entries in it
+6. In the virtual environment go to src folder of cloned repository and run below command to run the module-
    ```sh
     python main.py
      ```
@@ -63,8 +73,7 @@ After installing all the required packages, configure the variables necessary to
 3. Open the following URL in your browser:
    [http://localhost:8001/api/v1/safety/docs](http://localhost:8001/api/v1/safety/docs)
 
-## LIMITATION 
-   The image generation api will not work standalone. It has dependency on the other models module. 
+
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
