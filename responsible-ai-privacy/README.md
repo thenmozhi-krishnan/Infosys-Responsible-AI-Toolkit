@@ -104,8 +104,8 @@ After installing all the required packages, configure the variables necessary to
 2. Locate the `.env` file, which contains keys like the following:
 
    ```sh
-   TELE_FLAG="${tele_flag}"  # [Mandatory]* False if do not want to connect with telemetry
-   PRIVACY_TELEMETRY_URL = "${privacytelemetryurl}" # [Optional]- if teleflag=False otherwise provide the telemetry url
+   TELE_FLAG="${tele_flag}"  # [Mandatory] *Assign the value to False 
+   PRIVACY_TELEMETRY_URL = "${privacytelemetryurl}" # [Optional]- if teleflag=False, otherwise provide the telemetry url
    PRIVACY_ERROR_URL = "${privacyerrorurl}" # [Optional]** - if teleflag=False otherwise provide the error url
    ADMIN_CONNECTION="${adminconnection}"  # [Optional] True if wants to connect to Admin module 
    PRIVADMIN_API="${adminapi}" # Optional if adminconnection is not True otherwise provide Admin url
@@ -119,8 +119,6 @@ After installing all the required packages, configure the variables necessary to
    GCS_DEVELOPER_KEY="${gcsdeveloperkey}"  # [Optional] required if using computer vision
    ```
 
-    *TELE_FLAG is made true only if user wants to request the response in telemetry. Otherwise for the normal flow it can be set as False.
-    For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-telemetry)
 
     **Admin Module is the supporting module which is used for configuring the main module. User can create recognizer,custome templates, configure Thresholds and map it to created account and portfolio.
 
@@ -149,11 +147,11 @@ Once we have completed all the aforementioned steps, we can start the service.
 
 3. Open the following URL in your browser:
     For privacy_main :
-    [http://localhost:30002/v1/privacy/docs#/](http://localhost:30002/v1/privacy/docs#/)
+    "localhost:30002/v1/privacy/docs#/"  
         User can also change the port which is mentioned in privacy_main.py file
 
     For privacyfiles_main :
-    [http://localhost:30003/rai/v1/privacy-files/docs#/](http://localhost:30003/rai/v1/privacy-files/docs#/)
+    "localhost:30003/rai/v1/privacy-files/docs#/"   
         User can also change the port which is mentioned in privacyfiles_main.py file
 
 Note:

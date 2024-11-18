@@ -83,10 +83,10 @@ After installing all the required packages, configure the variables necessary to
       COSMOS_PATH ="${cosmos_path}"       # [Optional] - Needed if DB_TYPE = "cosmos"
    ```
    ```sh
-    allow_origin = "${allow_origin}"     # allow_origin ="*"         
+    allow_origin = "${allow_origin}"     # allow_origin ="*"  [Mandatory]        
     To allow access to all sites, use the value *. Alternatively, you can specify a list of sites that should have access.
 
-    allow_method = "${allow_method}"     # allow_method="GET, POST, OPTIONS, HEAD, DELETE, PATCH, UPDATE"
+    allow_method = "${allow_method}"     # allow_method="GET, POST, OPTIONS, HEAD, DELETE, PATCH, UPDATE" [Mandatory]
    ```
 3. Replace the placeholders with your actual values.
 ## Running the Application
@@ -103,9 +103,8 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 3. Open the following URL in your browser:
-    [http://localhost:30016/api/v1/rai/admin/docs#/](http://localhost:30016/api/v1/rai/admin/docs#/)
-
-    User can also change the port which is mentioned in main.py file
+    "localhost:30016/api/v1/rai/admin/docs#/"   
+     User can also change the port which is mentioned in main.py file
 
    NOTE : 
     Following Apis will be working fine in the upcoming release :
