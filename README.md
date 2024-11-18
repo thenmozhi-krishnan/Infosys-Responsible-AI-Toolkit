@@ -13,7 +13,7 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 | 6 | Safety API | Detects and anonymize toxic and profane text associated with LLMs | [responsible-ai-safety](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-safety) |
 | 7 | Security API | For different types of security attacks and defenses on tabular and image data, prompt injection and jailbreak checks | [responsible-ai-security](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/Responsible-AI-Security-API) |
 
-** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features
+** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
