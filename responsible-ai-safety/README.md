@@ -70,8 +70,10 @@ After installing all the required packages, configure the variables necessary to
     python main.py
      ```
 
-3. Open the following URL in your browser:
-   [http://localhost:8001/api/v1/safety/docs](http://localhost:8001/api/v1/safety/docs)
+3. PORT_NO : Use the Port No that is configured in `.env` file.
+
+   Open the following URL in your browser:
+`http://localhost:<portno.>/api/v1/safety/docs`
 
 
   
