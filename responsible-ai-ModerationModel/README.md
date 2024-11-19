@@ -1,5 +1,3 @@
-Responsible-AI-Moderation Model 
-
 ## Table of Contents
 
 - [Introduction](#introduction)
