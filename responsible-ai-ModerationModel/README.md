@@ -1,4 +1,4 @@
-# Responsible-AI-Moderation Model 
+<img width="560" alt="image" src="https://github.com/user-attachments/assets/95f760a9-533e-49f6-a670-1b13495ffa8f"># Responsible-AI-Moderation Model 
 
 ## Table of Contents
 
@@ -118,9 +118,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 
-3. Open the following URL in your browser:
-   [http://localhost:8000/rai/v1/raimoderationmodels/docs](http://localhost:8000/rai/v1/raimoderationmodels/docs)
-   http://localhost:7000/rai/v1/raimoderationmodels/docs
+3. PORT_NO : Use the Port No that is configured in `.env` file.
+
+   Open the following URL in your browser:
+   `http://localhost:7000/rai/v1/raimoderationmodels/docs`
 
 
   
