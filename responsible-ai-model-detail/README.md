@@ -130,8 +130,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-3. Open the following URL in your browser to access the swagger:
-    [http://localhost:80/v1/workbench/docs](http://localhost:80/v1/workbench/docs)
+3. PORT_NO : Use the Port No that is configured in `.env` file.
+
+   Open the following URL in your browser to access the swagger:
+    `http://localhost:<portno>/v1/workbench/docs'
 
 
 ## License
