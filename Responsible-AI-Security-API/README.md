@@ -106,7 +106,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-2. PORT_NO : Use the Port No that is configured in `.env` file.
+2. Use the port no. which has been defined in `main.py` file
    Open the following URL in your browser:
    `http://localhost:<PORT_NO>/rai/v1/security_workbench/docs`
 
