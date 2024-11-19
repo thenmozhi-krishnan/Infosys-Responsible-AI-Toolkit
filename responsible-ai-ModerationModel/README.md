@@ -1,4 +1,4 @@
-<img width="560" alt="image" src="https://github.com/user-attachments/assets/95f760a9-533e-49f6-a670-1b13495ffa8f"># Responsible-AI-Moderation Model 
+Responsible-AI-Moderation Model 
 
 ## Table of Contents
 
