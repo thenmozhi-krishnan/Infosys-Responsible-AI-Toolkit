@@ -149,9 +149,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-3. Open the following URL in your browser:
+3. PORT_NO : Use the Port No that is configured in `.env` file.
 
-    [http://localhost:8002/rai/v1/llm-explainability/docs](http://localhost:8002/rai/v1/llm-explainability/docs)
+   Open the following URL in your browser:
+   `http://localhost:<portno>/rai/v1/llm-explainability/docs)`
 
 ## License
 
