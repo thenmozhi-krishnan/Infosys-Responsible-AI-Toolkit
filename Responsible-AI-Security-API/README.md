@@ -106,8 +106,9 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-2. Open the following URL in your browser:
-    [http://localhost:80/rai/v1/security_workbench/docs](http://localhost:80/rai/v1/security_workbench/docs)
+2. PORT_NO : Use the Port No that is configured in `.env` file.
+   Open the following URL in your browser:
+   `http://localhost:80/rai/v1/security_workbench/docs`
 
 ## License
 The source code for the project is licensed under MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.
