@@ -95,7 +95,8 @@ and activate it by going to
 6. Run the application using below steps:
       1. Go to responsible-ai-fairness/responsible-ai-fairness/src 
       2. Run python main_api.py 
-7. Open Swagger URL in browser once server is running: http://localhost:8000/api/v1/fairness/docs#/ 
+7. PORT_NO : Use the Port No that is configured in `.env` file.
+   Open Swagger URL in browser once server is running: `http://localhost:<PORT_NO>/api/v1/fairness/docs#/`
 
 ## Configurations
  1. Add required environment variables.
