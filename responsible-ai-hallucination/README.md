@@ -146,9 +146,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-3. Open the following URL in your browser:
+3. PORT_NO : Use the Port No that is configured in `.env` file.
 
-    [http://localhost:8002/rag/v1/docs](http://localhost:8002/rag/v1/docs)
+   Open the following URL in your browser:
+   `http://localhost:<PORT_NO>/rag/v1/docs`
 
 For API calls, please refer to the [API Document](Rag/docs/RAG_endpoints_Instruction.pdf)
 
