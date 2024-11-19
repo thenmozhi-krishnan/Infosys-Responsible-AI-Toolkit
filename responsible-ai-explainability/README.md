@@ -182,8 +182,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 
-3. Open the following URL in your browser:
-    [http://localhost:8002/rai/v1/explainability/docs](http://localhost:8002/rai/v1/explainability/docs)
+3. PORT_NO : Use the Port No that is configured in `.env` file.
+
+   Open the following URL in your browser:
+  `http://localhost:8002/rai/v1/explainability/docs`
 
 For API calls, please refer to the [API Documnet](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/responsible-ai-explainability/Docs/EXPLAINABILTY_endpoints_instructions.pdf)
  
