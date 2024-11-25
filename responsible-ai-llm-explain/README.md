@@ -13,7 +13,7 @@
 
 ## Introduction
 
-**LLM Explain APIs** provides explanations for Large Language Models using methods such as Token Importance, Graph of Thoughts, Chain of Thought (CoT), Search Augmentation, Chain of Verification (CoV), and Thread of Thoughts (Thot). It evaluates the responses with metrics including uncertainty, relevancy, and coherence to ensure the reliability and clarity of Generative AI models' outputs.
+**LLM Explain APIs** provides explanations for Large Language Models using methods such as Token Importance, Graph of Thoughts, Chain of Thought (CoT), Search Augmentation, Chain of Verification (CoV), and Thread of Thoughts (Thot). It evaluates the responses with metrics including uncertainty, relevance, and coherence to ensure the reliability and clarity of Generative AI models' outputs.
 
 
 ## Features
