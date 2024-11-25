@@ -110,9 +110,12 @@ Once we have completed all the aforementioned steps, we can start the service.
     `http://localhost:<portno>/v1/rai/backend/docs`
 
     User can also change the port which mentioned in main.py file
-	
+    
 ## Account API Details
-	The /account API will not work from the swagger docs. It is used to verify and the JWT token is sent from the front end and then the api will be authorized. 
+    The /account API will not work from the swagger docs. It is used to verify and the JWT token is sent from the front end and then the api will be authorized. 
+
+## ResetCount API Details
+    The resetcount API will be removed in the next release from the swagger docs.
   
 ## License
 
