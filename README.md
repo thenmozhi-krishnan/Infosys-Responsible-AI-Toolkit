@@ -17,7 +17,7 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
-Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments.
+Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For AzureOpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
