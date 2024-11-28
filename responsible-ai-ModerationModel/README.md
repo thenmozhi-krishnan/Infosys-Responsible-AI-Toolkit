@@ -1,3 +1,5 @@
+# Responsible-AI-Moderation Model 
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -20,14 +22,14 @@ To run the application, first we need to install Python and the necessary packag
 
 1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
-2. Clone the repository : responsible-ai-ModerationModel:
+2. Clone the repository : responsible-ai-mm-flask:
     ```sh
     git clone <repository-url>
     ```
 
-3. Navigate to the `responsible-ai-ModerationModel` directory:
+3. Navigate to the `responsible-ai-mm-flask` directory:
     ```sh
-    cd responsible-ai-ModerationModel
+    cd responsible-ai-mm-flask
     ```
 
 4. Create a virtual environment:
@@ -41,7 +43,20 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-6. Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
+6. Go to the `requirements` directory where the `requirement.txt` file is present.
+    In the `requirement.txt` file comment the 
+    ```sh
+    lib/torch-2.2.0+cu118-cp39-cp39-linux_x86_64.whl
+    ``` 
+    if working in windows as this is for linux and replace 
+    ```sh
+    lib/
+    ```
+    with 
+    ```sh
+    ../lib/
+    ``` 
+    Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
     [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
     and install the requirements:
     ```sh
@@ -85,26 +100,21 @@ Name the folder as 'dbertaInjection'.
 2. [Restricted Topic](https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v1/tree/main)
 Files required to download here are : pytorch_model.bin, added_tokens.json, config.json, special_tokens_map.json, spm.model, tokenizer.json, tokenizer_config.json.
 Name the folder as 'restricted-dberta-large-zeroshot'.
-
 3. [Sentence Transformer Model](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main)
-Files required to download here are : 1_Pooling folder(rename the file downloaded inside this folder as config.json), pytorch_model.bin, vocab.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
+Files required to download here are : 1_Pooling folder, pytorch_model.bin, vocal.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
 Name the folder as 'multi-qa-mpnet-base-dot-v1'.
-
 4. [Detoxify](https://huggingface.co/FacebookAI/roberta-base/tree/main)
 Files required to download here are : vocab.json, tokenizer.json, merges.txt, config.json.
 Now download the model checkpoint file from this url and keep it under this folder -
 [toxic_model_ckpt_file](https://github.com/unitaryai/detoxify/releases/download/v0.3-alpha/toxic_debiased-c7548aa0.ckpt)
 Name the folder as 'detoxify'.
 
-Place the above folders in a folder named 'models' in the following way: 'responsible-ai-ModerationModel/models'.
+Place the above folders in a folder named 'models' in the following way: 'responsible-ai-mm-flask/models'.
 
 In main.py comment the following lines:
-    ```sh
-    from routing.safety_router import img_router
-    ```
-    ```sh
-    app.register_blueprint(img_router,url_prefix='/rai/v1/raimoderationmodels')
-    ```
+from routing.safety_router import img_router
+app.register_blueprint(img_router,url_prefix='/rai/v1/raimoderationmodels')
+
 
 ## Running the Application
 Once we have completed all the aforementioned steps, we can start the service.
@@ -116,10 +126,8 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 
-3. PORT_NO : Use the Port No that is configured in `.env` file.
-
-   Open the following URL in your browser:
-   `http://localhost:<portno>/rai/v1/raimoderationmodels/docs`
+3. Open the following URL in your browser:
+   [http://localhost:8000/rai/v1/raimoderationmodels/docs](http://localhost:8000/rai/v1/raimoderationmodels/docs)
 
 
   
