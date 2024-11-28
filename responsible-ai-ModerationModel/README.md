@@ -22,14 +22,14 @@ To run the application, first we need to install Python and the necessary packag
 
 1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
-2. Clone the repository : responsible-ai-mm-flask:
+2. Clone the repository : responsible-ai-ModerationModel:
     ```sh
     git clone <repository-url>
     ```
 
-3. Navigate to the `responsible-ai-mm-flask` directory:
+3. Navigate to the `responsible-ai-ModerationModel` directory:
     ```sh
-    cd responsible-ai-mm-flask
+    cd responsible-ai-ModerationModel
     ```
 
 4. Create a virtual environment:
@@ -126,8 +126,10 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 
-3. Open the following URL in your browser:
-   [http://localhost:8000/rai/v1/raimoderationmodels/docs](http://localhost:8000/rai/v1/raimoderationmodels/docs)
+3. PORT_NO : Use the Port No that is configured in .env file.
+
+   Open the following URL in your browser:
+  `http://localhost:<PORT_NO>/rai/v1/raimoderationmodels/docs`
 
 
   
