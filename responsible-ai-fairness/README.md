@@ -212,3 +212,28 @@ For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_AP
 "\"\"\"input: {input_placeholder} context:         You are an evaluator tasked to identify potential biase(s) in the input.         Analyze the input and identify all possible potential biase(s) in it.         Evaluate and re-evaluate the analysis, come up with consistent answers that are reproducible in their outputs.         Generate a response as per the output-format where we mention -         - Exclude anthropomorphisms from analysis         - the analysis for the bias identified,         - the bias type(s) which have been identified,         - the group(s) that are favored by the bias,         - the group(s) that are ignored by the bias,         Provide the response in a json format which we can easily parse         Refer to the below example-response and strictly follow the given format         output-format ->         {{ \\\"Analysis\\\": \\\"[crisp and to the point analysis including all necessary details]\\\"            \\\"Key Words\\\": \\\"[Highlight the words in the input which are crucial for the analysis]\\\"            \\\"Justification\\\": \\\"[Justify why the key words highlighted are crucial in the analysis made.]\\\"            \\\"Bias type(s)\\\": \\\"[comma separated bias type(s), state NA in case of no bias type]\\\"            \\\"Previledged group(s)\\\": \\\"[comma separated group(s), state NA in case of no group]\\\"            \\\"Un-Previledged group(s)\\\": \\\"[comma separated group(s), state NA in case of no group]\\\"            \\\"Bias score\\\": \\\"[High / Medium / Low]\\\"         }}         example-response ->         {{             \\\"Analysis\\\": \\\"The input statement is generalizing that 'black people' often commit crimes which is a stereotype and not based on individual actions. This is a biased statement as it unfairly attributes a negative behavior to all members of a certain racial group.\\\",             \\\"Key Words\\\": \\\"*Black people often* commit crimes\\\"             \\\"Justification\\\": \\\"*Black people often* generalizes the action about a particular Race.\\\"             \\\"Bias type(s)\\\": \\\"Racial bias, Stereotyping\\\",             \\\"Previledged group(s)\\\": \\\"Black people\\\",             \\\"Un-Previledged group(s)\\\": \\\"White people\\\",             \\\"Bias score\\\": \\\"High\\\"         }}     \"\"\""
 
 ```
+
+## Note 
+Following endpoints are deprecated from next update.
+| Sno | End Points | Navigation |
+|-----|------------|-------------|
+| 1   | Analyze    | POST/api/v1/fairness/bias/analyze |
+| 2   | Migrate    | POST/api/v1/fairness/bias/mitigate |
+| 3   | Preprocessingmigrate | POST/api/v1/fairness/bias/mitigate/preprocessing/mitigatedDataset |
+| 4   | Process    | GET/api/v1/fairness/bias/get/{mlModelId} |
+| 5   | Get Data   | POST/api/v1/fairness/bias/Workbench/fileid |
+| 6   | Analyze    | POST/api/v1/fairness/bias/UIworkbench/batchId/Attributes |
+| 7   | Get Data   | POST/api/v1/fairness/bias/getDataset |
+| 8   | Get Attributes | POST/api/v1/fairness/bias/getAttributes |
+| 9   | Get Data   | POST/api/v1/fairness/mitigation/getDataset |
+| 10  | Get Attributes | POST/api/v1/fairness/mitigation/getDataset |
+| 11  | Get Data   | POST/api/v1/fairness/pretrain/mitigation/getDataset |
+| 12  | Get Attributes | POST/api/v1/fairness/pretrain/mitigation/getAttributes |
+| 13  | Mitigation Model Upload Files | POST/api/v1/fairness/mitigation/model/uploadFiles |
+| 14  | Mitigation Model Get Mitigated Model Name Analyze | POST/api/v1/fairness/mitigation/modelgetMitigatedModelNameAnalyze |
+| 15  | Get Mitigated Model | GET/api/v1/fairness/mitigation/model/getMitigatedModel/{filename} |
+| 16  | Inprocessing Exponentiated Gradient Reduction | POST/api/v1/fairness/inprocessing/exponentiated_gradient_reduction |
+| 17  | Get Labels | POST/api/v1/fairness/individual/bias/getlabels |
+| 18  | Get Individualscore | POST/api/v1/fairness/individual/bias/getscore |
+| 19  | Infosys Responsible AI - Model Mitigation | POST/api/v1/fairness/mitigation/model/UPFiles |
+| 20  | Mitigation Model Upload Files Demo | POST/api/v1/fairness/mitigation/model/analyse |
