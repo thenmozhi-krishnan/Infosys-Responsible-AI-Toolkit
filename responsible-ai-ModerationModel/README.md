@@ -62,13 +62,16 @@ To run the application, first we need to install Python and the necessary packag
      ```sh
    pip install --pre torch torchvision torchaudio \--extra-index-url https://download.pytorch.org/whl/nightly/cpu
     ```
-    Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
+  
+  Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
     [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
+    
     and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
-    **Note:** when running requirement.txt, if getting error related to "cuda-python" then comment cuda-python from 
+    
+  **Note:** when running requirement.txt, if getting error related to "cuda-python" then comment cuda-python from 
           requirement.txt file and run pip install again
     Install the fastapi library as well, use the following command:
     ```sh
