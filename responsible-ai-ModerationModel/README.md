@@ -64,9 +64,8 @@ To run the application, first we need to install Python and the necessary packag
     ```
   
   Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
-    [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
+    [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl) and install the requirements:
     
-    and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
