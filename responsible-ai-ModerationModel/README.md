@@ -49,6 +49,7 @@ To run the application, first we need to install Python and the necessary packag
     lib/torch-2.2.0+cu118-cp39-cp39-linux_x86_64.whl  
     ```
     **Note:** Download appropriate torch version supporting python version which is installed [i.e if Python version is 3.10 use torch-2.2.0+cu118-**cp310**-**cp310**-**linux**_x86_64.whl, where cp310 denotes python version 3.10 and linux denotes OS which can be linux/win and **_not applicable for Mac_**]
+   
     **Note:** If working in windows as this is for linux and replace 
     ```sh
     lib/
