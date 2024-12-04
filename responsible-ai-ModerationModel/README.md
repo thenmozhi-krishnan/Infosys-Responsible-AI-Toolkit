@@ -20,7 +20,7 @@ The **Moderation Model** module acts as a wrapper for the traditional AI models 
 ## Installation
 To run the application, first we need to install Python and the necessary packages:
 
-1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
+1. Install Python (version >= 3.9 & <3.12) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
 2. Clone the repository : responsible-ai-ModerationModel:
     ```sh
@@ -55,13 +55,19 @@ To run the application, first we need to install Python and the necessary packag
     with 
     ```sh
     ../lib/
-    ``` 
+    ```
+   Note: If working in Mac Os, run the below command after running reqiorement.txt
+     ```sh
+   pip install --pre torch torchvision torchaudio \--extra-index-url https://download.pytorch.org/whl/nightly/cpu
+    ```
     Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
     [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
     and install the requirements:
     ```sh
     pip install -r requirement.txt
     ```
+    Note: when running requirement.txt, if getting error related to "cuda-python" then comment cuda-python from 
+          requirement.txt file and run pip install again
     Install the fastapi library as well, use the following command:
     ```sh
     pip install fastapi
