@@ -18,6 +18,7 @@
   - [Roadmap](#roadmap)
   - [Contact](#contact)
   - [Prompt Template](#prompt-template)
+  - [Note](#note)
 
 
 ## Introduction
@@ -189,6 +190,7 @@ The source code for the project is licensed under the MIT license, which you can
 5. Numpy version issue- For posttrain analysis, it required numpy version 1.26.4. So if one wants to use it, please install numpy 1.26.4.
 6. For Preprocessing mitigate has log issues, intreseted users can add log and can use the features. This will be fixed in coming version.
 7. For llm/analyze endpoint, default template is having some limitation, refer the Prompt template section below for advanced analysis. Update this template in database collection llm_analysis for the key **GPT_4O_TEXT**
+8. For analysis/llm and analysis/image, currently we are supporting only model **gpt_4o_westus**, one can fix the issue by simply changing the model name in the service.py.
 
 ## Telemetry
 1. Make tel_Falg as True.
