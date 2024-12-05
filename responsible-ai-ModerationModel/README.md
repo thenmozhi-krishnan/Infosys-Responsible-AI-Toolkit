@@ -20,7 +20,7 @@ The **Moderation Model** module acts as a wrapper for the traditional AI models 
 ## Installation
 To run the application, first we need to install Python and the necessary packages:
 
-1. Install Python (version >= 3.9) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
+1. Install Python (version >= 3.9 & <3.12) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
 2. Clone the repository : responsible-ai-ModerationModel:
     ```sh
@@ -46,22 +46,32 @@ To run the application, first we need to install Python and the necessary packag
 6. Go to the `requirements` directory where the `requirement.txt` file is present.
     In the `requirement.txt` file comment the 
     ```sh
-    lib/torch-2.2.0+cu118-cp39-cp39-linux_x86_64.whl
-    ``` 
-    if working in windows as this is for linux and replace 
+    lib/torch-2.2.0+cu118-cp39-cp39-linux_x86_64.whl  
+    ```
+    **Note:** Download appropriate torch version supporting python version which is installed [i.e if Python version is 3.10 use torch-2.2.0+cu118-**cp310**-**cp310**-**linux**_x86_64.whl, where cp310 denotes python version 3.10 and linux denotes OS which can be linux/win and **_not applicable for Mac_**]
+   
+    **Note:** If working in windows as this is for linux and replace 
     ```sh
     lib/
     ```
     with 
     ```sh
     ../lib/
-    ``` 
-    Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
-    [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl)
-    and install the requirements:
+    ```
+  **Note:** If working in Mac Os, run the below command after running requirement.txt
+     ```sh
+   pip install --pre torch torchvision torchaudio \--extra-index-url https://download.pytorch.org/whl/nightly/cpu
+    ```
+  
+  Download and place the en_core_web_lg-3.5.0-py3-none-any.whl inside the lib folder.
+    [en_core_web_lg](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.5.0/en_core_web_lg-3.5.0-py3-none-any.whl) and install the requirements:
+    
     ```sh
     pip install -r requirement.txt
     ```
+    
+  **Note:** when running requirement.txt, if getting error related to "cuda-python" then comment cuda-python from 
+          requirement.txt file and run pip install again
     Install the fastapi library as well, use the following command:
     ```sh
     pip install fastapi
