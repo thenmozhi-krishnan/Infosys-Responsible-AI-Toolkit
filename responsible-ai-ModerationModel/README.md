@@ -110,9 +110,11 @@ Name the folder as 'dbertaInjection'.
 2. [Restricted Topic](https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v1/tree/main)
 Files required to download here are : pytorch_model.bin, added_tokens.json, config.json, special_tokens_map.json, spm.model, tokenizer.json, tokenizer_config.json.
 Name the folder as 'restricted-dberta-large-zeroshot'.
+
 3. [Sentence Transformer Model](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main)
 Files required to download here are : 1_Pooling folder, pytorch_model.bin, vocal.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
 Name the folder as 'multi-qa-mpnet-base-dot-v1'.
+
 4. [Detoxify](https://huggingface.co/FacebookAI/roberta-base/tree/main)
 Files required to download here are : vocab.json, tokenizer.json, merges.txt, config.json.
 Now download the model checkpoint file from this url and keep it under this folder -
@@ -124,7 +126,6 @@ Place the above folders in a folder named 'models' in the following way: 'respon
 In main.py comment the following lines:
 from routing.safety_router import img_router
 app.register_blueprint(img_router,url_prefix='/rai/v1/raimoderationmodels')
-
 
 ## Running the Application
 Once we have completed all the aforementioned steps, we can start the service.
@@ -141,7 +142,7 @@ Once we have completed all the aforementioned steps, we can start the service.
    Open the following URL in your browser:
   `http://localhost:<PORT_NO>/rai/v1/raimoderationmodels/docs`
 
-
+**Note:** In the swagger opened in browser the endpoint - /rai/v1/raimoderationmodels/ImageGenerate won't work as we have disabled img_router in the previous step because we don't require the image generation API
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
