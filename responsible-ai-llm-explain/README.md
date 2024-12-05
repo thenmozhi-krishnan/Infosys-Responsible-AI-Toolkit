@@ -13,7 +13,7 @@
 
 ## Introduction
 
-**LLM Explain APIs** provides explanations for Large Language Models using methods such as Token Importance, Graph of Thoughts, Chain of Thought (CoT), Search Augmentation, Chain of Verification (CoV), and Thread of Thoughts (Thot). It evaluates the responses with metrics including uncertainty, relevance, and coherence to ensure the reliability and clarity of Generative AI models' outputs.
+**LLM Explain APIs** provides explanations for Large Language Models using methods such as Token Importance, Graph of Thoughts, Chain of Thought (CoT), Search Augmentation, Chain of Verification (CoV), and Thread of Thoughts (Thot). It evaluates the responses with metrics including uncertainty, relevancy, and coherence to ensure the reliability and clarity of Generative AI models' outputs.
 
 
 ## Features
@@ -57,8 +57,10 @@
     Chain of Thought for RAG (Retrieval-Augmented Generation) outlines the reasoning steps an LLM takes to generate a response, combining the input prompt with relevant context retrieved from external sources. The model explains how it integrates both the prompt and the additional information to form a coherent answer. In a RAG-based system, context is retrieved from vector storage and used to enrich the response. This approach ensures the model's response is grounded in relevant, factual data. It also provides transparency into the reasoning behind the response, clarifying which details were prioritized.
 
 **Note:** 
-`Chain of Thought for RAG` `Chain of Verification` `Thread of Thoughts` `Chain of Thought` These features are available under **Moderation Layer** ([responsible-ai-moderationLayer](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-moderationLayer)) repository.
-Please follow the setup instructions in the README file of the moderation layer repository to configure them. Ensure that the service is up and running to execute
+- `Chain of Thought for RAG` `Chain of Verification` `Thread of Thoughts` `Chain of Thought` These features are available under **Moderation Layer** (responsible-ai-moderationLayer) repository.
+Please follow the setup instructions in the README file of the moderation layer repository to configure them. Ensure that the service is up and running to execute.
+
+- For generating explanations, use GPT4 or earlier model versions in **llm-explain** (responsible-ai-llm-explain) repository.
 
 
 ## Installation
@@ -82,9 +84,9 @@ To run the application, first we need to install Python and the necessary packag
         .\venv\Scripts\activate
          ```
 
-5. Install `pip` if it's not already installed:
+5. Upgrade `pip`:
     ```sh
-    python -m ensurepip --upgrade
+    python -m pip install --upgrade pip
     ```
 
 6. Navigate to the `responsible-ai-llm-explain` directory:
@@ -149,10 +151,8 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-3. PORT_NO : Use the Port No that is configured in `.env` file.
-
-   Open the following URL in your browser:
-   `http://localhost:<portno>/rai/v1/llm-explainability/docs`
+3. Steps to form swagger url:
+    1. Use the Port No that is mentioned in `main.py` file. Open the swagger URL in browser once server is running: `http://localhost:Port_No/rai/v1/llm-explainability/docs`
 
 ## License
 
