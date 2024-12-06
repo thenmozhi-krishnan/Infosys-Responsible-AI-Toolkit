@@ -31,11 +31,7 @@ This application is built using the Flask web framework.Leveraging the flexibili
 ## Prerequisites
 
 1. Before installing the repo for Moderation Layer, first you need to install the repo for Moderation Models.
-<<<<<<< HEAD
 Please find the link for **Moderation Model** repo : (https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-ModerationModel).
-=======
-Please find the link for **Moderation Model** repo : [Moderation Model repo](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-ModerationModel)).
->>>>>>> 4f954a97214d22468f63a342ab33c97cc41309ba
 
 2. **Installation of Python** : To run the application, first we need to install Python and the necessary packages. Install Python **(version >= 3.9)** from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
@@ -513,7 +509,115 @@ which can be added as below :
   Bearer <token>
   ```
 
+6. **For the api /rai/v1/moderations/getTemplates/{userid}**
+   - For this , first you need to clone the admin repository. Link mentioned :  [Admin Repo](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-admin)
+   - Once done, please do the necessary steps to run the admin repo codebase in your local (as mentioned in admin readme file)
+   - Go to the API ```api/v1/rai/admin/createCustomeTemplate``` and provide the necessary details to create custom template. The payload is like this :
   
+     For Text Based Templates :
+     ```sh
+         {
+           "userId": "123",
+           "mode": "Master_Template/Private_Template", -> Master templates accessible to all, Private templates only to particular user with userid
+           "category": "SingleModel",
+           "templateName": "Template1",   <------> Name of the Prompt Template
+           "description": "Template1",  <-----> Short description on what the template is about
+           "subTemplates": [
+             {
+               "subtemplate": "evaluation_criteria",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "prompting_instructions",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "few_shot_examples",
+               "templateData": ""
+             }
+           ]
+         }
+     ```
+
+     For Image based Templates :
+     ```sh
+         {
+           "userId": "123",
+           "mode": "Master_Template/Private_Template", -> Master templates accessible to all, Private templates only to particular user with userid
+           "category": "MultiModel",
+           "templateName": "Template1",   <------> Name of the Prompt Template
+           "description": "Template1",  <-----> Short description on what the template is about
+           "subTemplates": [
+             {
+               "subtemplate": "evaluation_criteria",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "prompting_instructions",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "few_shot_examples",
+               "templateData": ""
+             }
+           ]
+         }
+     ```
+
+     - Once the above thing is done, in the `.env` file, mention the admin api running in local for the field as shown below :
+       ```sh
+       adminTemplatepath = "<admin_api_url>" `[ Ex : http://localhost:8019//api/v1/rai/admin/getCustomeTemplate/"]`
+       ADMINTEMPLATEPATH="${adminTemplatepath}"
+       ```
+     - Post this, you can run the api ```api/v1/rai/admin/createCustomeTemplate``` and as success response, you will get response like this :
+       ```sh
+        Templates Retrieved
+       ```
+
+7. **For Template-based Checks**
+   - There are 2 APIs exposed that make use of prompt templates to evaluate adversarials from text( text moderation) or image(image moderation).
+   - Some Master Templates we are using for the api `/rai/v1/moderations/evalllm` :
+     ```sh
+     
+     1. PROMPT_INJECTION : to check for prompt injection
+     2. JAILBREAK : to check for Jailbreak checks
+     3. FAIRNESS_AND_BIAS: to check for biasness
+     4. LANGUAGE_CRITIQUE_COHERENCE : through this check, LLM will evaluate the quality of the provided text, focusing on the coherence aspect.
+     5. LANGUAGE_CRITIQUE_FLUENCY : through this check, LLM will evaluate the quality of the provided text, focusing on the fluency aspect.
+     6. LANGUAGE_CRITIQUE_GRAMMAR : through this check, LLM will evaluate the quality of the provided text, focusing on the grammar aspect.
+     7. LANGUAGE_CRITIQUE_POLITENESS : through this check, LLM will evaluate the quality of the provided text, focusing on the politeness aspect.
+     8. RESPONSE_COMPLETENESS : to check if the LLM response is complete w.r.t the user prompt
+     9. RESPONSE_CONCISENESS : to check if the LLM response is concise and brief w.r.t. the user prompt 
+     10. RESPONSE_LANGUAGE_CRITIQUE_COHERENCE : through this check, LLM will evaluate the quality of the LLM Response, focusing on the coherence aspect.
+     11. RESPONSE_LANGUAGE_CRITIQUE_FLUENCY : through this check, LLM will evaluate the quality of the LLM Response, focusing on the fluency aspect.
+     12. RESPONSE_LANGUAGE_CRITIQUE_GRAMMAR : through this check, LLM will evaluate the quality of the LLM Response, focusing on the grammar aspect.
+     13. RESPONSE_LANGUAGE_CRITIQUE_POLITENESS : through this check, LLM will evaluate the quality of the LLM Response, focusing on the politeness aspect.
+     
+     ```
+         
+   - Some Master Templates we are using for the api `/rai/v1/moderations/multimodal` :
+     ```sh
+     1. Restricted Topic : to restrict certain topics like "terrorrism" , "explosives"
+     2. Prompt Injection : to check for Prompt Injection
+     3. Jailbreak : to check for Jailbreak attacks
+     4. Toxicity : to check for Toxicity
+     5. Profanity : to check for Profanity
+     ```
+
+     We need to use these template names in our request payload as shown below :
+     ```sh
+     {
+      "AccountName": "None",
+      "PortfolioName": "None",
+      "userid": "None",
+      "lotNumber": 1,
+      "Prompt": "Which is the biggest country in the world?",
+      "model_name": "gpt4",
+      "temperature": "0",
+      "PromptTemplate": "GoalPriority",
+      "template_name": "PROMPT_INJECTION"  <---------->   template name as mentioned above
+     }
+     ``` 
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
@@ -522,11 +626,3 @@ The source code for the project is licensed under the MIT license, which you can
 If you have more questions or need further insights please feel free to connect with us at
 DL : Infosys Responsible AI
 Mailid: Infosysraitoolkit@infosys.com
-
-
-
-
-
-
-
-
