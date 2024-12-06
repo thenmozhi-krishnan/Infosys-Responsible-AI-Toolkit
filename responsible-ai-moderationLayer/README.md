@@ -31,7 +31,7 @@ This application is built using the Flask web framework.Leveraging the flexibili
 ## Prerequisites
 
 1. Before installing the repo for Moderation Layer, first you need to install the repo for Moderation Models.
-Please find the link for **Moderation Model** repo : [Moderation Model repo](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-mm-flask).
+Please find the link for **Moderation Model** repo : [Moderation Model repo](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-ModerationModel)).
 
 2. **Installation of Python** : To run the application, first we need to install Python and the necessary packages. Install Python **(version >= 3.9)** from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
@@ -135,21 +135,21 @@ This will start downloading the latest nltk package (Version : 3.9). You will ge
 `Finished downloading collection 'all'` once everything gets downloaded.
 
 
-**Step 2**  : Clone the repository `responsible-ai-fm-ext-flask`:
+**Step 2**  : Clone the repository `responsible-ai-moderationLayer`:
 ```sh
 git clone <repository-url>
 ```
 
-**Step 3**  : Navigate to the `responsible-ai-fm-ext-flask` directory:
+**Step 3**  : Navigate to the `responsible-ai-moderationLayer` directory:
 ```sh
-cd responsible-ai-fm-ext-flask
+cd responsible-ai-moderationLayer
 ```
 
 **Step 4**  : Use the below link to download `en_core_web_lg` whl file -
 
 [Download Link](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
 This will take 30-40 mins. 
-Once done, put this inside `lib` folder of the repo `responsible-ai-fm-ext-flask`.
+Once done, put this inside `lib` folder of the repo `responsible-ai-moderationLayer`.
 
 
 **Step 5**  : Activate the virtual environment for different OS.
