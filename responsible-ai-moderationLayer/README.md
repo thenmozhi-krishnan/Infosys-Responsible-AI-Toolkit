@@ -31,7 +31,7 @@ This application is built using the Flask web framework.Leveraging the flexibili
 ## Prerequisites
 
 1. Before installing the repo for Moderation Layer, first you need to install the repo for Moderation Models.
-Please find the link for **Moderation Model** repo : (https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-ModerationModel).
+Please find the link for **Moderation Model** repo : [Moderation Model repo](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-mm-flask).
 
 2. **Installation of Python** : To run the application, first we need to install Python and the necessary packages. Install Python **(version >= 3.9)** from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
@@ -135,21 +135,21 @@ This will start downloading the latest nltk package (Version : 3.9). You will ge
 `Finished downloading collection 'all'` once everything gets downloaded.
 
 
-**Step 2**  : Clone the repository `responsible-ai-moderationLayer`:
+**Step 2**  : Clone the repository `responsible-ai-fm-ext-flask`:
 ```sh
 git clone <repository-url>
 ```
 
-**Step 3**  : Navigate to the `responsible-ai-moderationLayer` directory:
+**Step 3**  : Navigate to the `responsible-ai-fm-ext-flask` directory:
 ```sh
-cd responsible-ai-moderationLayer
+cd responsible-ai-fm-ext-flask
 ```
 
 **Step 4**  : Use the below link to download `en_core_web_lg` whl file -
 
 [Download Link](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
 This will take 30-40 mins. 
-Once done, put this inside `lib` folder of the repo `responsible-ai-moderationLayer`.
+Once done, put this inside `lib` folder of the repo `responsible-ai-fm-ext-flask`.
 
 
 **Step 5**  : Activate the virtual environment for different OS.
@@ -509,8 +509,115 @@ which can be added as below :
   Bearer <token>
   ```
 
+6. **For the api /rai/v1/moderations/getTemplates/{userid}**
+   - For this , first you need to clone the admin repository. Link mentioned :  [Admin Repo](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
+   - Once done, please do the necessary steps to run the admin repo codebase in your local (as mentioned in admin readme file)
+   - Go to the API ```api/v1/rai/admin/createCustomeTemplate``` and provide the necessary details to create custom template. The payload is like this :
   
-  
+     For Text Based Templates :
+     ```sh
+         {
+           "userId": "123",
+           "mode": "Master_Template/Private_Template", -> Master templates accessible to all, Private templates only to particular user with userid
+           "category": "SingleModel",
+           "templateName": "Template1",   <------> Name of the Prompt Template
+           "description": "Template1",  <-----> Short description on what the template is about
+           "subTemplates": [
+             {
+               "subtemplate": "evaluation_criteria",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "prompting_instructions",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "few_shot_examples",
+               "templateData": ""
+             }
+           ]
+         }
+     ```
+
+     For Image based Templates :
+     ```sh
+         {
+           "userId": "123",
+           "mode": "Master_Template/Private_Template", -> Master templates accessible to all, Private templates only to particular user with userid
+           "category": "MultiModel",
+           "templateName": "Template1",   <------> Name of the Prompt Template
+           "description": "Template1",  <-----> Short description on what the template is about
+           "subTemplates": [
+             {
+               "subtemplate": "evaluation_criteria",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "prompting_instructions",
+               "templateData": ""
+             },
+             {
+               "subtemplate": "few_shot_examples",
+               "templateData": ""
+             }
+           ]
+         }
+     ```
+
+     - Once the above thing is done, in the `.env` file, mention the admin api running in local for the field as shown below :
+       ```sh
+       adminTemplatepath = "<admin_api_url>" `[ Ex : http://localhost:8019//api/v1/rai/admin/getCustomeTemplate/"]`
+       ADMINTEMPLATEPATH="${adminTemplatepath}"
+       ```
+     - Post this, you can run the api ```api/v1/rai/admin/createCustomeTemplate``` and as success response, you will get response like this :
+       ```sh
+        Templates Retrieved
+       ```
+
+7. **For Template-based Checks**
+   - There are 2 APIs exposed that make use of prompt templates to evaluate adversarials from text( text moderation) or image(image moderation).
+   - Some Master Templates we are using for the api `/rai/v1/moderations/evalllm` :
+     ```sh
+     
+     1. PROMPT_INJECTION : to check for prompt injection
+     2. JAILBREAK : to check for Jailbreak checks
+     3. FAIRNESS_AND_BIAS: to check for biasness
+     4. LANGUAGE_CRITIQUE_COHERENCE : through this check, LLM will evaluate the quality of the provided text, focusing on the coherence aspect.
+     5. LANGUAGE_CRITIQUE_FLUENCY : through this check, LLM will evaluate the quality of the provided text, focusing on the fluency aspect.
+     6. LANGUAGE_CRITIQUE_GRAMMAR : through this check, LLM will evaluate the quality of the provided text, focusing on the grammar aspect.
+     7. LANGUAGE_CRITIQUE_POLITENESS : through this check, LLM will evaluate the quality of the provided text, focusing on the politeness aspect.
+     8. RESPONSE_COMPLETENESS : to check if the LLM response is complete w.r.t the user prompt
+     9. RESPONSE_CONCISENESS : to check if the LLM response is concise and brief w.r.t. the user prompt 
+     10. RESPONSE_LANGUAGE_CRITIQUE_COHERENCE : through this check, LLM will evaluate the quality of the LLM Response, focusing on the coherence aspect.
+     11. RESPONSE_LANGUAGE_CRITIQUE_FLUENCY : through this check, LLM will evaluate the quality of the LLM Response, focusing on the fluency aspect.
+     12. RESPONSE_LANGUAGE_CRITIQUE_GRAMMAR : through this check, LLM will evaluate the quality of the LLM Response, focusing on the grammar aspect.
+     13. RESPONSE_LANGUAGE_CRITIQUE_POLITENESS : through this check, LLM will evaluate the quality of the LLM Response, focusing on the politeness aspect.
+     
+     ```
+         
+   - Some Master Templates we are using for the api `/rai/v1/moderations/multimodal` :
+     ```sh
+     1. Restricted Topic : to restrict certain topics like "terrorrism" , "explosives"
+     2. Prompt Injection : to check for Prompt Injection
+     3. Jailbreak : to check for Jailbreak attacks
+     4. Toxicity : to check for Toxicity
+     5. Profanity : to check for Profanity
+     ```
+
+     We need to use these template names in our request payload as shown below :
+     ```sh
+     {
+      "AccountName": "None",
+      "PortfolioName": "None",
+      "userid": "None",
+      "lotNumber": 1,
+      "Prompt": "Which is the biggest country in the world?",
+      "model_name": "gpt4",
+      "temperature": "0",
+      "PromptTemplate": "GoalPriority",
+      "template_name": "PROMPT_INJECTION"  <---------->   template name as mentioned above
+     }
+     ```
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
 
