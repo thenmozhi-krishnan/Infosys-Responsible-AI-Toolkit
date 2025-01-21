@@ -47,9 +47,9 @@ To run the application, first we need to install Python and the necessary packag
         source venv/bin/activate
         ```
 
-7. Navigate to the `Responsible-AI-Security-API` directory:
+7. Navigate to the `responsible-ai-security` directory:
     ```sh
-    cd Responsible-AI-Security-API
+    cd responsible-ai-security
     ```
 
 8. Navigate to `src` directory:
