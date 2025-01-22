@@ -71,6 +71,8 @@ To run the application, first we need to install Python and the necessary packag
 8. Download the following open source model: ["nreimers/MiniLM-L6-H384-uncased"] (https://huggingface.co/nreimers/MiniLM-L6-H384-uncased).
 
 9. Replace the relative path for the similarity_model variable in the `service.py` file with the model's path.
+    
+10. For external environment please use the same similarity model as your embedding model. Comment line number 67 and uncomment line number 66 in the `service.py` file. Paste the path for the similarity_model folder in the "model_name" section of embedding model.
 
 ## Set Configuration Variables
 
