@@ -15,6 +15,10 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 ** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
+## User Interface for Responsible AI Toolkit
+The Responsible AI toolkit offers an intuitive interface for effortless experimentation and alignment with diverse Responsible AI principles via simple button clicks.
+| 1 |User Interface API <br>(Suite of APIs to facilitate UI activation and usage) | To access the toolkit through the interface, consult the README files within the listed repositories. | [responsible-ai-moderationlayer](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-moderationLayer),<br>[responsible-ai-moderationModel](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/main/responsible-ai-ModerationModel) |
+
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
