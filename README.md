@@ -17,9 +17,10 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 ## User Interface for Responsible AI Toolkit
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
-| Repository name(s) |
-| --- |
-| [responsible-ai-admin](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-admin),<br>[responsible-ai-backend](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-backend),<br>[responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-file-storage),<br>[responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-llm-benchmarking),<br>[responsible-ai-mfe](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-mfe),<br>[responsible-ai-shell](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-shell),<br>[responsible-ai-telemetry](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-telemetry),<br>[responsible-ai-upload-doc](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-upload-doc),<br>[responsible-ai-workbench](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-workbench) |
+| # | Module | Functionalities | Repository name(s) |
+| --- | --- | --- | ---- |
+| 1 | MFE |  An Angular micro frontend app serves as a user interface where users can easily interact with and consume various backend endpoints through independently developed, modular components. | [responsible-ai-mfe](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-mfe) |
+
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
