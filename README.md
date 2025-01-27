@@ -20,6 +20,9 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
 | 1 | MFE |  An Angular micro frontend app serves as a user interface where users can easily interact with and consume various backend endpoints through independently developed, modular components. | [responsible-ai-mfe](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-mfe) |
+| 2 | SHELL |  A shell application in a micro frontend architecture acts as the central hub, orchestrating and loading independent frontend modules. It provides a unified user interface where users can interact with different micro frontends, consume backend endpoints.| [responsible-ai-shell](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-shell) |
+| 3 | Backend |  A Python backend module focused on registration and authentication handles user account management, including user registration, login, password validation, and session management.| [responsible-ai-backend](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-backend) |
+
 
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
