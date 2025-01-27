@@ -22,6 +22,12 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 1 | MFE |  An Angular micro frontend app serves as a user interface where users can easily interact with and consume various backend endpoints through independently developed, modular components. | [responsible-ai-mfe](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-mfe) |
 | 2 | SHELL |  A shell application in a micro frontend architecture acts as the central hub, orchestrating and loading independent frontend modules. It provides a unified user interface where users can interact with different micro frontends, consume backend endpoints.| [responsible-ai-shell](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-shell) |
 | 3 | Backend |  A Python backend module focused on registration and authentication handles user account management, including user registration, login, password validation, and session management.| [responsible-ai-backend](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-backend) |
+| 4 | Telemetry | A python backend module defining the various tenets structure for ingestion of the API's data into Elasticsearch indexes. It provided customizable input validation and insertion of data coming from tenets into elasticsearch, which can be further displayed using kibana.| [responsible-ai-telemetry](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-telemetry) |
+| 5 | File Storage | Python module that provides versatile APIs for seamless integration across multiple microservices, enabling efficient file management with Azure Blob Storage. It supports key operations such as file upload, retrieval, and updates, offering a robust solution for handling files in Azure Blob Storage.| [responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-file-storage) |
+| 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-llm-benchmarking)|
+
+
+
 
 
 
