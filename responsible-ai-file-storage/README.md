@@ -48,22 +48,20 @@ and activate it by going to
 ```bash
 .venv\Script\activate
 ```
-3.	Setup the DB
-      1. Create database in mongodb and add the db name in .env file
-4.	Install dependencies. 
+3.	Install dependencies. 
       1. Go to **responsible-ai-file-storage\requirements** and run 
       ```bash 
          pip install -r requirements.txt.
       ```
       2. if you are on windows, please add **../** in front to .whl file in requirements.txt to install without any errors.
-5. Add required configurations provided below in .env file.
-6. Run the application using below steps:
+4. Add required configurations provided below in .env file.
+5. Run the application using below steps:
       1. Go to responsible-ai-fairness/responsible-ai-fairness/src 
       2. Run 
       ```bash 
          python main_api.py 
       ```
-7. Once server is running successfully, go to [http://localhost:8000/api/v1/azureBlob/docs](http://localhost:8000/api/v1/azureBlob/docs#/)
+6. Once server is running successfully, go to [http://localhost:8000/api/v1/azureBlob/docs](http://localhost:8000/api/v1/azureBlob/docs#/)
 
 
 ## Configurations

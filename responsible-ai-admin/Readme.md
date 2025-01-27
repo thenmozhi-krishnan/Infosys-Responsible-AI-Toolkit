@@ -70,16 +70,24 @@ After installing all the required packages, configure the variables necessary to
     ```
 2. Locate the `.env` file, which contains keys like the following:
    ```sh
-      AZUREADDFILE="${azureaddfileurl}"   # [Optional]
-      CONTAINERNAME="${containername}"    # [Optional]
+      AZUREADDFILE="${azureaddfileurl}"   # [Mandatory for RAG]
+      CONTAINERNAME="${containername}"    # [Mandatory for RAG]
+      COLLECTIONNAME = "${collectionname}"# [Mandatory for RAG]
+      AZUREBLOBNAME = `"http://localhost:[PORT NUMBER]/api/v1/azureBlob/getBlob?"`
+      OPENAI_MODEL = "${openaimodel}"
+      OPENAI_API_TYPE = "${apitype}"
+      OPENAI_API_BASE = "${apibase}"
+      OPENAI_API_KEY = "${apikey}"
+      OPENAI_API_VERSION = "${apiversion}"
+
       DB_NAME="${dbname}"                 # [Mandatory] - Any Name : RAI_Admin_DB
       DB_USERNAME="${username}"           # [Optional] 
       DB_PWD="${password}"                # [Optional] 
       DB_IP="${ipaddress}"                # [Optional] 
       DB_PORT="${port}"                   # [Optional] 
-      MONGO_PATH="mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"     # [Mandatory] MONGO_PATH = "mongodb://localhost:27017/"  - if using DB_TYPE = "mongo" locally. Also, use the port according your local
+      MONGO_PATH="mongodb://${DB_USERNAME}:${DB_PWD}@${DB_IP}:${DB_PORT}/"     # [Mandatory] MONGO_PATH = "mongodb://localhost:[PORT NUMBER]/"  - if using DB_TYPE = "mongo" locally. Also, use the port according your local
       DB_TYPE ="${dbtype}"                # [Mandatory] DB_TYPE = "mongo"
-      RAG_IP="${rag_ip}"                  # [Optional]
+      RAG_IP="${rag_ip}"                  # [Mandatory for RAG]
       COSMOS_PATH ="${cosmos_path}"       # [Optional] - Needed if DB_TYPE = "cosmos"
    ```
    ```sh
@@ -89,6 +97,10 @@ After installing all the required packages, configure the variables necessary to
     allow_method = "${allow_method}"     # allow_method="GET, POST, OPTIONS, HEAD, DELETE, PATCH, UPDATE"
    ```
 3. Replace the placeholders with your actual values.
+
+4. Required File storage & Hallucination dependency running in Local
+rag_ip= `http://localhost:[PORT_NUMBER]`
+
 ## Running the Application
 
 Once we have completed all the aforementioned steps, we can start the service.
@@ -106,6 +118,49 @@ Once we have completed all the aforementioned steps, we can start the service.
     [http://localhost:30016/api/v1/rai/admin/docs#/](http://localhost:30016/api/v1/rai/admin/docs#/)
 
     User can also change the port which is mentioned in main.py file
+
+NOTE : To use the following API endpoints:
+
+            /api/v1/rai/admin/UpdateOpenAI
+            /api/v1/rai/admin/UpdateReminder
+            /api/v1/rai/admin/UpdateGoalPriority
+            /api/v1/rai/admin/getOpenAI
+            /api/v1/rai/admin/userRole
+            /api/v1/rai/admin/getRole
+            
+   Make the following changes :
+    1.Create new collection in Db as OpenAIConfig.
+    2.Dump the following json in the collection : 
+   ```sh
+   [{
+   "_id": 1697448919.0553722,
+   "isOpenAI": true,
+   "selfReminder": true,
+   "isNemo": true,
+   "role": "ROLE_ADMIN",
+   "CreatedDateTime": {
+     "$date": "2023-10-16T09:35:19.055Z"
+   },
+   "LastUpdatedDateTime": {
+     "$date": "2023-10-16T09:35:19.055Z"
+   },
+   "goalPriority": true
+   },
+   {
+     "_id": 1697448919.0572698,
+     "isOpenAI": true,
+     "selfReminder": true,
+     "isNemo": true,
+     "role": "ROLE_USER",
+     "CreatedDateTime": {
+       "$date": "2023-10-16T09:35:19.057Z"
+     },
+     "LastUpdatedDateTime": {
+       "$date": "2023-10-16T09:35:19.057Z"
+     },
+     "goalPriority": true
+   }]
+   ```
 
 ## License
 

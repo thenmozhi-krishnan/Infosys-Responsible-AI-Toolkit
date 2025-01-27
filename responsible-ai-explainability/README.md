@@ -103,6 +103,8 @@ To run the application, first we need to install Python and the necessary packag
     cd responsible-ai-explain\requirements
     pip install -r requirement.txt
     ```
+**Note:** 
+Ensure you install versions of the packages that are compatible with your operating system and python environment.
 
 **Dependencies for Explainability**
     The Explainability APIs depend on both the Model Details (responsible-ai-model-detail) repository and the Reporting Tool (responsible-ai-reporting-tool) repository. Please follow the setup instructions in the README files of both repositories to configure them. Ensure that both services are up and running before interacting with the Explainability APIs.

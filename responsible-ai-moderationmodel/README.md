@@ -107,12 +107,12 @@ The following models are required to run the application. Download all the model
 Files required to download here are : model.safetensors, config.json, tokenizer_config.json, tokenizer.json, special_tokens_map.json.
 Name the folder as 'dbertaInjection'.
 
-2. [Restricted Topic](https://huggingface.co/MoritzLaurer/deberta-v3-large-zeroshot-v1/tree/main)
-Files required to download here are : pytorch_model.bin, added_tokens.json, config.json, special_tokens_map.json, spm.model, tokenizer.json, tokenizer_config.json.
-Name the folder as 'restricted-dberta-large-zeroshot'.
+2. [Restricted Topic](https://huggingface.co/MoritzLaurer/deberta-v3-base-zeroshot-v2.0/tree/main)
+Files required to download here are : model.safetensors, added_tokens.json, config.json, special_tokens_map.json, spm.model, tokenizer.json, tokenizer_config.json.
+Name the folder as 'restricted-dberta-base-zeroshot-v2'.
 
 3. [Sentence Transformer Model](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1/tree/main)
-Files required to download here are : 1_Pooling folder, pytorch_model.bin, vocal.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
+Files required to download here are : 1_Pooling folder, pytorch_model.bin, vocab.txt, tokenizer.json, tokenizer_config.json, special_tokens_map.json, sentence_bert_config.json, modules.json, config.json, config_sentence_transformers.json.
 Name the folder as 'multi-qa-mpnet-base-dot-v1'.
 
 4. [Detoxify](https://huggingface.co/FacebookAI/roberta-base/tree/main)
