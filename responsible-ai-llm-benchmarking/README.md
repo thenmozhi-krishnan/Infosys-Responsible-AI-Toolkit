@@ -30,19 +30,19 @@ python -m venv .venv
 ```
 and activate it by going to
 ```bash
-.venv\Script\activate
+.venv\Scripts\activate
 ```
 3.	Setup the DB
       1. Create database in mongodb and add the db name in .env file
 4.	Install dependencies. 
-      1. Go to **responsible-ai-llm-benchmarking\trustllm\requirements** and run 
+      1. Go to **responsible-ai-benchmarking\requirements** and run 
       ```bash 
-         pip install -r requirements.txt.
+         pip install -r requirement.txt
       ```
       2. if you are on windows, please add **../** in front to .whl file in requirements.txt to install without any errors.
 5. Add required configurations provided below in .env file.
 6. Run the application using below steps:
-      1. Go to responsible-ai-fairness/responsible-ai-fairness/src 
+      1. Go to responsible-ai-benchmarking\src 
       2. Run 
       ```bash 
          python main_api.py 
@@ -76,7 +76,11 @@ and activate it by going to
 
 
 ##Note:
-Offline Generation and evaluation required GPU to run.
+Offline Generation and evaluation required GPU to run. To install cuda, execute the following command <br>
+``` bash 
+   pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
 
 ## License
 The source code for the project is licensed under MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.

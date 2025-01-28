@@ -46,7 +46,7 @@ python -m venv .venv
 ```
 and activate it by going to
 ```bash
-.venv\Script\activate
+.venv\Scripts\activate
 ```
 3.	Install dependencies. 
       1. Go to **responsible-ai-file-storage\requirements** and run 

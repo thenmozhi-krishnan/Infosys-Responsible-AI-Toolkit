@@ -78,7 +78,7 @@ python -m venv .venv
 ```
 and activate it by going to
 ```bash
-.venv\Script\activate
+.venv\Scripts\activate
 ```
 3.	Setup the DB
       1. Create database in mongodb and add the db name in .env file
@@ -165,7 +165,7 @@ and activate it by going to
 | Analyse_dowl_url                   | "${analyse_dowl_url}"                 |                  | Optional |
 
 ## Features
-For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_Docs.docx)
+For more details refer our [API Documentation](responsible-ai-fairness/README.md)
 
 | Model Type                      | Phase         | Function  | Description                                                                 |
 |---------------------------------|---------------|-----------|-----------------------------------------------------------------------------|
@@ -221,5 +221,3 @@ The source code for the project is licensed under the MIT license, which you can
 
 ## Contact
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
-
-For more details refer our [User Guide](responsible-ai-fairness/docs/Fairness_API_Doc.pdf)
