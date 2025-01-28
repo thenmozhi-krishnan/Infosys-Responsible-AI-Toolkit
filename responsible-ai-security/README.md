@@ -47,9 +47,9 @@ To run the application, first we need to install Python and the necessary packag
         source venv/bin/activate
         ```
 
-7. Navigate to the `Responsible-AI-Security-API` directory:
+7. Navigate to the `responsible-ai-security` directory:
     ```sh
-    cd Responsible-AI-Security-API
+    cd responsible-ai-security
     ```
 
 8. Navigate to `src` directory:
@@ -107,7 +107,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     ```
 
 2. Open the following URL in your browser:
-    [http://localhost:80/rai/v1/security_workbench/docs](http://localhost:80/rai/v1/security_workbench/docs)
+    `http://localhost:<portno>/rai/v1/security_workbench/docs`
 
 ## License
 The source code for the project is licensed under MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.
