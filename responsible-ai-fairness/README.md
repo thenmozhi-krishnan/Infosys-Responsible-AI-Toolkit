@@ -216,9 +216,8 @@ The source code for the project is licensed under the MIT license, which you can
 3. Pass the enpoint `/rai/v1/telemetry/errorloggingtelemetryapi` from above setup swagger ui to the varaible 'FAIRNESS_TELEMETRY_URL' in .env
 
 ## Roadmap
-1. Small Language Model to evaluate text fairness. Finetuning Phi-3.5.
-2. Multimodal based Image evaluation for fairness.
-3. postprocessing data mitigation.
+1. Unstructured text training data validation for Bias.
+2. REST call support for text validationt to support ollama or similar model hosting.
 
 ## Contact
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
