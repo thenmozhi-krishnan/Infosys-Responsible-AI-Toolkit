@@ -2,7 +2,7 @@
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
 ### Repositories and Installation Instructions
-To install any Infosys Responsible AI Toolkit module, navigate to the specific module's repository on GitHub. Refer to the README file within the repository for detailed installation instructions.
+The following table lists the modules of the Infosys Responsible AI Toolkit.  Installation instructions for each module can be found in the corresponding README file within the module's directory.
 
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
@@ -16,7 +16,7 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 ** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
-### User Interface for Responsible AI Toolkit
+### Modules for the Responsible AI Toolkit Interface
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
