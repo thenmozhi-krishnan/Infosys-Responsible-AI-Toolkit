@@ -1,11 +1,6 @@
 # **Infosys-Responsible-AI-Toolkit**
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
-### Snapshot of Released Features
-| Safety, Security & Privacy | Model Transparency | Text Quality | Linguistic Quality  |
-|:--- |:--- |:--- |:--- |
-|Prompt Injection Score <br>Jailbreak Score <br>Privacy Check <br>Profanity Check <br>Restricted Topic Check <br>Toxicity Check <br>Refusal Check | Sentiment Check <br>Fairness & Bias Check <br>Hallucination Score <br>Thread of Thoughts (ToT) <br>Chain of Thoughts (CoT) <br>Graph of Thoughts (GoT) <br>Logic of Thoughts (LoT) |Invisible Text Check <br>Gibberish Check <br>Ban Code Check <br>Text Quality <br>Completeness Check <br>Conciseness Check <br>Text Relevance Check (Similarity Score) <br>Uncertainty Score <br>Coherence Score |Language Critique Coherence Check <br>Language Critique Fluency Check <br>Language Critique Grammar Check <br>Language Critique Politeness Check  |
-
 ### Repositories and Installation Instructions
 To install any Infosys Responsible AI Toolkit module, navigate to the specific module's repository on GitHub. Refer to the README file within the repository for detailed installation instructions.
 
@@ -21,7 +16,7 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 ** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
-## User Interface for Responsible AI Toolkit
+### User Interface for Responsible AI Toolkit
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
@@ -31,11 +26,6 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 4 | Telemetry | A python backend module defining the various tenets structure for ingestion of the API's data into Elasticsearch indexes. It provided customizable input validation and insertion of data coming from tenets into elasticsearch, which can be further displayed using kibana.| [responsible-ai-telemetry](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-telemetry) |
 | 5 | File Storage | Python module that provides versatile APIs for seamless integration across multiple microservices, enabling efficient file management with Azure Blob Storage. It supports key operations such as file upload, retrieval, and updates, offering a robust solution for handling files in Azure Blob Storage.| [responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-file-storage) |
 | 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-llm-benchmarking)|
-
-
-
-
-
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
