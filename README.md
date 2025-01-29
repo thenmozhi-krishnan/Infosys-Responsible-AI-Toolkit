@@ -35,12 +35,12 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 ### Generative AI Models
 | Safety, Security & Privacy | Model Transparency  | Text Quality | Linguistic Quality |
 |:--- |:--- |:----  |:---- |
-|* Prompt Injection Score <br>* Jailbreak Score <br>* Privacy check <br>* Profanity check <br>* Restricted Topic check <br>* Toxicity check <br>* Refusal check |* Sentiment check <br>* Fairness & Bias check <br>* Hallucination Score <br>* Explainability Methods:<br<i>- Thread of Thoughts (ToT)</i><br>- Chain of Thoughts (CoT) <br>- Graph of Thoughts (GoT) <br>* Token Importance |* Invisible Text, Gibberish checks <br>* Ban Code check <br>* Completeness check <br>* Conciseness check <br>* Text Quality check<br>* Text Relevance check <br>* Uncertainty Score <br>* Coherence Score |* Language Critique Coherence<br>* Language Critique Fluency<br>* Language Critique Grammar<br>* Language Critique Politeness|
+|* Prompt Injection Score <br>* Jailbreak Score <br>* Privacy check <br>* Profanity check <br>* Restricted Topic check <br>* Toxicity check <br>* Refusal check |* Sentiment check <br>* Fairness & Bias check <br>* Hallucination Score <br>* Explainability Methods:<br><i>- Thread of Thoughts (ToT)</i><br><i>- Chain of Thoughts (CoT)</i><br><i>- Graph of Thoughts (GoT)</i><br>* Token Importance |* Invisible Text, Gibberish checks <br>* Ban Code check <br>* Completeness check <br>* Conciseness check <br>* Text Quality check<br>* Text Relevance check <br>* Uncertainty Score <br>* Coherence Score |* Language Critique Coherence<br>* Language Critique Fluency<br>* Language Critique Grammar<br>* Language Critique Politeness|
 
 ### Machine Learning Models
 | Security | Fairness | Explainability |
 |:--- |:--- |:----  |
-|* Simulate Adverserial Attacks<br>* Recommend Defense Mechanism|* Bias Detection Methods:<br>- Statistical Parity Difference<br>- Disparate Imapct Ratio<br>- Four Fifth's Rule<br>- Cohen's D<br>* Mitigation Methods:<br>- Equalized Odds<br>- Re-weighing |* Global Explainability using LIME<br>* Local Explainability using SHAP |
+|* Simulate Adverserial Attacks<br>* Recommend Defense Mechanisms|* Bias Detection Methods:<br><i>- Statistical Parity Difference</i><br><i>- Disparate Imapct Ratio</i><br><i>- Four Fifth's Rule</i><br><i>- Cohen's D</i><br>* Mitigation Methods:<br><i>- Equalized Odds</i><br><i>- Re-weighing</i>|* Global Explainability using LIME<br>* Local Explainability using SHAP |
 
 ## Upcoming Features
 (to include features planned for subsequent releases)
