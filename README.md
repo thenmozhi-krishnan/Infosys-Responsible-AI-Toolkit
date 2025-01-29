@@ -31,5 +31,10 @@ Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Respons
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
+### Snapshot of the Features
+| Safety, Security & Privacy | Model Transparency | Text Quality | Linguistic Quality  |
+|:--- |:--- |:--- |:--- |
+|Prompt Injection Score <br>Jailbreak Score <br>Privacy Check <br>Profanity Check <br>Restricted Topic Check <br>Toxicity Check <br>Refusal Check | Sentiment Check <br>Fairness & Bias Check <br>Hallucination Score <br>Thread of Thoughts (ToT) <br>Chain of Thoughts (CoT) <br>Graph of Thoughts (GoT) <br>Logic of Thoughts (LoT) |Invisible Text Check <br>Gibberish Check <br>Ban Code Check <br>Text Quality <br>Completeness Check <br>Conciseness Check <br>Text Relevance Check (Similarity Score) <br>Uncertainty Score <br>Coherence Score |Language Critique Coherence Check <br>Language Critique Fluency Check <br>Language Critique Grammar Check <br>Language Critique Politeness Check  |
+
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
