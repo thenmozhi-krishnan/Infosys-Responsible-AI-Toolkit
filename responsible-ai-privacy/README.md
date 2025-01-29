@@ -68,13 +68,29 @@ Link provided above will directly download the model version 3.7.1.
 *If you download and use the other version of en_core_web_lg then make sure to change the name in the requirement.txt too. To download other version, visit [spaCy](https://spacy.io/models/en/#en_core_web_lg)
 
 9. Now go back to `responsible-ai-privacy\responsible-ai-privacy` to install the requirements by running the following command : 
-   ```sh
+  Update the pip :
+  ```sh
+  python -m pip install pip==24.2
+  ```
+  Dowload the requirements : 
+  ```sh
      pip install -r .\requirements\requirement.txt
-    ```
+  ```
+  Special installations : 
+  ```sh
+      pip install datasets==2.15.0
+      pip install numpy==1.26.2
+      pip install torch==2.3.1
+  ```
+  Note: If you face any issue with the torch library then uninstall the torch `pip uninstall torch` and then reinstall the latest version `pip install torch` .
   Note:To anonymize PDF file which is part of privacyfiles_main please install PyMuPDF (which is a AGPL Licensed package) using following command:
   ```sh
      pip install PyMuPDF
    ```
+
+Download and install the tesseract in your system. After installation, set the tessaract path in environment variables of account or system : [Tessaract](https://digi.bib.uni-   mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.3.0.20221214.exe).
+  Different versions of tesseract : [Versions](https://digi.bib.uni-mannheim.de/tesseract/).
+  Tesseract Github : [Github](https://github.com/tesseract-ocr/tessdoc).
 
 10. Download the ner model from [StarPII](https://huggingface.co/bigcode/starpii/tree/main), place it in a folder named nermodel and place it in the path : `src/privacy/util/code_detect/ner/pii_inference/nermodel`
    (Also mentioned in the Models section)
@@ -106,11 +122,18 @@ After installing all the required packages, configure the variables necessary to
    ```
 
     *TELE_FLAG is made true only if user wants to request the response in telemetry. Otherwise for the normal flow it can be set as False.
-    For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-telemetry)
+    For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-telemetry)
+    set the below env variables for connecting with telemetry alongside Telemetry flag.
+   
+   ```sh
+    TELEMETRY_FLAG="True"
+    PRIVACY_TELEMETRY_URL="http://<host:PORT>/path/v1/telemtry/<privacy telemetry api url>"
+    PRIVACY_ERROR_URL="http://<host:PORT>/path/v1/telemtry/<privacy error telemetry api url>"
+   ```
 
     **Admin Module is the supporting module which is used for configuring the main module. User can create recognizer,custome templates, configure Thresholds and map it to created account and portfolio.
 
-3. Replace the placeholders with your actual values.
+4. Replace the placeholders with your actual values.
 
 ## Running the Application
 
@@ -135,11 +158,11 @@ Once we have completed all the aforementioned steps, we can start the service.
 
 3. Open the following URL in your browser:
     For privacy_main :
-    `http://localhost:<portno.>/v1/privacy/docs#`
+    [http://localhost:30002/v1/privacy/docs#/](http://localhost:30002/v1/privacy/docs#/)
         User can also change the port which is mentioned in privacy_main.py file
 
     For privacyfiles_main :
-    `http://localhost:<portno.>/rai/v1/privacy-files/docs#`
+    [http://localhost:30003/rai/v1/privacy-files/docs#/](http://localhost:30003/rai/v1/privacy-files/docs#/)
         User can also change the port which is mentioned in privacyfiles_main.py file
   
 
@@ -228,4 +251,4 @@ The source code for the project is licensed under the MIT license, which you can
 
 ## Contact
 
-If you have more questions or need further insights, feel free to Connect with us @infosysraitoolkit@infosys.com
+If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
