@@ -106,7 +106,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
     ```
 
-2. Open the following URL in your browser:
+2. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: 
     `http://localhost:<portno>/rai/v1/security_workbench/docs`
 
 ## License
