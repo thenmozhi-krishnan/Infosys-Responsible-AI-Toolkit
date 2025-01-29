@@ -31,7 +31,7 @@ Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Respons
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
-### Toolkit features at a glance
+## Toolkit features at a glance
 #### Generative AI Models
 | Safety, Security & Privacy | Model Transparency  | Text Quality | Linguistic Quality |
 |:--- |:--- |:----  |:---- |
