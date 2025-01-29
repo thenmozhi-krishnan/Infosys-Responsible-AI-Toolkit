@@ -42,5 +42,8 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 |:--- |:--- |:----  |
 |Simulate Adverserial Attacks<br>Recommend Defense Mechanism |Bias Detection Methods<br>-Statistical Parity Difference<br>-Disparate Imapct Ratio<br>-Four Fifth's Rule<br>-Cohen's D<br>Mitigation Methods:<br>-Equalized Odds<br>-Re-weighing |Global Explainability using LIME<br>Local Explainability using SHAP |
 
+### Upcoming Features
+<To be included>
+
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
