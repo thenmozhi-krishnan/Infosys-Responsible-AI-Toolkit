@@ -2,7 +2,7 @@
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
 ## Key Features of this Release
-| # |  |  |  |
+
 | --- | --- | --- | ---- |
 | Prompt Injection check | Jailbreak check | Toxicity check | Privacy check |
 
