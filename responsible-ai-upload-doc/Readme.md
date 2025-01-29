@@ -84,6 +84,8 @@ After installing all the required packages, configure the variables necessary to
 
     allow_method = "${allow_method}"     # allow_method="GET, POST, OPTIONS, HEAD, DELETE, PATCH, UPDATE"
    ```
+   NOTE : To store the videos, endpoint is needed from azure blob storage module. 
+   
 3. Replace the placeholders with your actual values.
 ## Running the Application
 
@@ -98,7 +100,8 @@ Once we have completed all the aforementioned steps, we can start the service.
     ```sh
     python main.py
      ```
-3. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: `http://localhost:30016/rai/v1/docProcess/docs#/`
+3. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: 
+    `http://localhost:<portno>/rai/v1/docProcess/docs#/`
 
     User can also change the port which is mentioned in main.py file
 
