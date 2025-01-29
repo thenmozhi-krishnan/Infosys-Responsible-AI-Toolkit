@@ -4,7 +4,7 @@ The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,se
 ## Key Features of this Release
 |  |  |  |  |
 | --- | --- | --- | ---- |
-| Prompt Injection check | Jailbreak check | Toxicity check | Privacy check |
+| * Prompt Injection check | + Jailbreak check | - Toxicity check | Privacy check |
 
 To install any Infosys Responsible AI Toolkit module, navigate to the specific module's repository on GitHub. Refer to the README file within the repository for detailed installation instructions.
 
