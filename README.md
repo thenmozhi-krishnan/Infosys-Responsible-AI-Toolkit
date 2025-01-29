@@ -35,7 +35,7 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 ### Generative AI Models
 | Safety, Security & Privacy | Model Transparency  | Text Quality | Linguistic Quality |
 |:--- |:--- |:----  |:---- |
-|* Prompt Injection Score <br>* Jailbreak Score <br>* Privacy check <br>* Profanity check <br>* Restricted Topic check <br>* Toxicity check <br>* Refusal check |* Sentiment check <br>* Fairness & Bias check <br>* Hallucination Score <br>* Explainability Methods:<br>- Thread of Thoughts (ToT) <br>- Chain of Thoughts (CoT) <br>- Graph of Thoughts (GoT) <br>* Token Importance |* Invisible Text, Gibberish checks <br>* Ban Code check <br>* Completeness check <br>* Conciseness check <br>* Text Quality check<br>* Text Relevance check <br>* Uncertainty Score <br>* Coherence Score |* Language Critique Coherence<br>* Language Critique Fluency<br>* Language Critique Grammar<br>* Language Critique Politeness|
+|* Prompt Injection Score <br>* Jailbreak Score <br>* Privacy check <br>* Profanity check <br>* Restricted Topic check <br>* Toxicity check <br>* Refusal check |* Sentiment check <br>* Fairness & Bias check <br>* Hallucination Score <br>* Explainability Methods:<br<i>- Thread of Thoughts (ToT)</i><br>- Chain of Thoughts (CoT) <br>- Graph of Thoughts (GoT) <br>* Token Importance |* Invisible Text, Gibberish checks <br>* Ban Code check <br>* Completeness check <br>* Conciseness check <br>* Text Quality check<br>* Text Relevance check <br>* Uncertainty Score <br>* Coherence Score |* Language Critique Coherence<br>* Language Critique Fluency<br>* Language Critique Grammar<br>* Language Critique Politeness|
 
 ### Machine Learning Models
 | Security | Fairness | Explainability |
