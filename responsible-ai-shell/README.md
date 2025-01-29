@@ -80,7 +80,7 @@ To ensure everything worked, run:
 
 ```
 
-Then navigate to [http://localhost:](http://localhost:) in your browser.
+Then navigate to `http://localhost:` in your browser.
 
 ### Packaging as war
 
