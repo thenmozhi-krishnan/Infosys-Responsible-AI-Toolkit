@@ -47,7 +47,7 @@ and activate it by going to
       ```bash 
          python main_api.py 
       ```
-7. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: `http://localhost:8000/api/v1/trustllm/docs#/`
+7. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: `http://localhost:<portno>/api/v1/trustllm/docs#/`
 
 
 ## Configurations
