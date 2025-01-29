@@ -1,23 +1,10 @@
 # **Infosys-Responsible-AI-Toolkit**
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
-<div style="display: flex; flex-wrap: wrap;">
-  <div style="flex: 1; padding-right: 20px;">
-    <ul>
-      <li>Prompt Inject</li><li>Jailbreak</li><li>Privacy</li><li>Profanity</li>
-    </ul>
-  </div>
-  <div style="flex: 1; padding-right: 20px;">
-    <ul>
-      <li>Restricted Topic</li><li>Toxicity</li><li>Sentiment</li><li>Refusal</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <ul>
-      <li>Fairness & Bias</li><li>Hallucination</li><li>Explainability</li>    
-    </ul>
-  </div>
-</div>
+## Key features include 
+| --- | --- | --- |
+| Prompt Injection | Jailbreak | Toxicity |
+
 
 To install any Infosys Responsible AI Toolkit module, navigate to the specific module's repository on GitHub. Refer to the README file within the repository for detailed installation instructions.
 
