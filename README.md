@@ -1,7 +1,8 @@
 # **Infosys-Responsible-AI-Toolkit**
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
-To install any Infosys Responsible AI Toolkit module, navigate to the specific module's repository on GitHub. Refer to the README file within the repository for detailed installation instructions.
+### Repositories and Installation Instructions
+The following table lists the modules of the Infosys Responsible AI Toolkit.  Installation instructions for each module can be found in the corresponding README file within the module's directory.
 
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
@@ -15,7 +16,7 @@ To install any Infosys Responsible AI Toolkit module, navigate to the specific m
 
 ** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
-## User Interface for Responsible AI Toolkit
+### Modules for the Responsible AI Toolkit Interface
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
 | # | Module | Functionalities | Repository name(s) |
 | --- | --- | --- | ---- |
@@ -26,14 +27,23 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 5 | File Storage | Python module that provides versatile APIs for seamless integration across multiple microservices, enabling efficient file management with Azure Blob Storage. It supports key operations such as file upload, retrieval, and updates, offering a robust solution for handling files in Azure Blob Storage.| [responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-file-storage) |
 | 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Infosys-Responsible-AI-Toolkit-v2.1.0/responsible-ai-llm-benchmarking)|
 
-
-
-
-
-
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/main/Reference%20Guide%20-%20Features%20and%20Endpoints.pdf) document for more details.
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
+
+## Toolkit features at a glance
+### Generative AI Models
+| Safety, Security & Privacy | Model Transparency  | Text Quality | Linguistic Quality |
+|:--- |:--- |:----  |:---- |
+|Prompt Injection Score <br>Jailbreak Score <br>Privacy check <br>Profanity check <br>Restricted Topic check <br>Toxicity check <br>Refusal check | Sentiment check <br>Fairness & Bias check <br>Hallucination Score <br>Explainability using<br>-Thread of Thoughts (ToT) <br>-Chain of Thoughts (CoT) <br>-Graph of Thoughts (GoT) <br>Token Importance |Invisible Text, Gibberish Checks <br>Ban Code Check <br>Completeness check <br>Conciseness check <br>Text Quality check<br>Text Relevance check <br>Uncertainty Score <br>Coherence Score |Language Critique Coherence check <br>Language Critique Fluency check <br>Language Critique Grammar check <br>Language Critique Politeness check  |
+
+### Machine Learning Models
+| Security | Fairness | Explainability |
+|:--- |:--- |:----  |
+|Simulate Adverserial Attacks<br>Recommend Defense Mechanism |Bias Detection Methods<br>-Statistical Parity Difference<br>-Disparate Imapct Ratio<br>-Four Fifth's Rule<br>-Cohen's D<br>Mitigation Methods:<br>-Equalized Odds<br>-Re-weighing |Global Explainability using LIME<br>Local Explainability using SHAP |
+
+## Upcoming Features
+(to include features planned for subsequent releases)
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
