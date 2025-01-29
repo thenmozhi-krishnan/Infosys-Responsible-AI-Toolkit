@@ -2,8 +2,8 @@
 The Infosys Responsible AI toolkit provides a set of APIs to integrate safety,security, privacy, explainability, fairness, and hallucination detection into AI solutions, ensuring trustworthiness and transparency. 
 
 #### Key Features of this Release
-| Safety & Security checks | Text Quality checks | Linguistic Quality | Model Transparency |
-|:---:|:---:|:---:|:---:|
+| Safety, Security & Privacy checks | Text Quality checks | Linguistic Quality | Model Transparency |
+|:--- |:--- |:--- |:--- |
 |Prompt Injection Score <br>Jailbreak Score <br>Privacy Check <br>Profanity Check <br>Restricted Topic Check <br>Toxicity Check <br>Refusal Check |Invisible Text Check <br>Gibberish Check <br>Ban Code Check <br>Text Quality <br>Completeness Check <br>Conciseness Check <br>Text Relevance Check (Similarity Score) <br>Uncertainty Score <br>Coherence Score |Language Critique Coherence Check <br>Language Critique Fluency Check <br>Language Critique Grammar Check <br>Language Critique Politeness Check  |Sentiment Check <br>Fairness & Bias Check <br>Hallucination Score <br>Thread of Thoughts (ToT) <br>Chain of Thoughts (CoT) <br>Graph of Thoughts (GoT) <br>Logic of Thoughts (LoT) |
 
 #### Repositories and Installation Instructions
