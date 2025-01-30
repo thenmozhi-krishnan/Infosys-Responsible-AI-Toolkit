@@ -165,7 +165,9 @@ Once we have completed all the aforementioned steps, we can start the service.
     [http://localhost:30003/rai/v1/privacy-files/docs#/](http://localhost:30003/rai/v1/privacy-files/docs#/)
         User can also change the port which is mentioned in privacyfiles_main.py file
   
-
+4. Note: /rai/v1/privacy-files/excel/anonymize : This API endpoint is not working and it will be removed in next release.
+ 
+   
 ## Features
 
 **Privacy :** 
