@@ -368,9 +368,17 @@ PORT="${ports}"
 TEL_FLAG="${tel_flag}"
 tel_flag=<set it as False>
 ```
-otherwise :
+otherwise : If you are going to setup elasticsearch, kibana telemetry in your system, use the below configurations.
+telemetrypath -> moderation telemetry path URL
+coupledtelemetrypath --> coupled moderation telemetry path URL
+adminTemplatepath --> admin telemetry path URL
+evalllmtelemetrypath --> eval telemetry path URL
 ```sh
 tel_flag=<set it as True>
+TELEMETRY_PATH="http://<host:PORT>/path/v1/telemtry/<moderation telemetry api url>" 
+COUPLEDTELEMETRYPATH="http://<host:PORT>/path/v1/telemtry/<coupled moderation telemetry api url>"
+ADMINTEMPLATEPATH="http://<host:PORT>/path/v1/telemtry/<admin telemetry api url>"
+EVALLLMTELEMETRYPATH="http://<host:PORT>/path/v1/telemtry/<eval moderation telemetry api url>"
 ```
 
 **Optional Parameters**
