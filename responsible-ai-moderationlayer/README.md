@@ -135,12 +135,12 @@ This will start downloading the latest nltk package (Version : 3.9). You will ge
 `Finished downloading collection 'all'` once everything gets downloaded.
 
 
-**Step 2**  : Clone the repository `responsible-ai-moderationLayer`:
+**Step 2**  : Clone the repository `responsible-ai-moderationlayer`:
 ```sh
 git clone <repository-url>
 ```
 
-**Step 3**  : Navigate to the `responsible-ai-moderationLayer` directory:
+**Step 3**  : Navigate to the `responsible-ai-moderationlayer` directory:
 ```sh
 cd responsible-ai-moderationLayer
 ```
@@ -149,7 +149,7 @@ cd responsible-ai-moderationLayer
 
 [Download Link](https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl)
 This will take 30-40 mins. 
-Once done, put this inside `lib` folder of the repo `responsible-ai-moderationLayer`.
+Once done, put this inside `lib` folder of the repo `responsible-ai-moderationlayer`.
 
 
 **Step 5**  : Activate the virtual environment for different OS.
