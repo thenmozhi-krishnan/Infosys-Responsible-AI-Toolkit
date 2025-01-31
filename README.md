@@ -45,7 +45,7 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 ## Upcoming Features
 * Logic of Thoughts(LoT) for enhanced Explainability 
 * Fairness Auditing for continuous monitoring and mitigation of Biases
-* Read Teaming to identify and mitigate AI model security threats
+* Red Teaming to identify and mitigate AI model security threats
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
