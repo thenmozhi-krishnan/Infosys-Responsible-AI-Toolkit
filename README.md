@@ -43,7 +43,9 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 |* Simulate Adverserial Attacks<br>* Recommend Defense Mechanisms|* Bias Detection Methods:<br><i>- Statistical Parity Difference</i><br><i>- Disparate Imapct Ratio</i><br><i>- Four Fifth's Rule</i><br><i>- Cohen's D</i><br>* Mitigation Methods:<br><i>- Equalized Odds</i><br><i>- Re-weighing</i>|* Global Explainability using LIME<br>* Local Explainability using SHAP |
 
 ## Upcoming Features
-Logic of Thoughts(LoT) for enhanced Explainability, Fairness Auditing for continuous monitoring and mitigation of Biases
+* Logic of Thoughts(LoT) for enhanced Explainability 
+* Fairness Auditing for continuous monitoring and mitigation of Biases
+* Read Teaming to identify and mitigate AI model security threats
 
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
