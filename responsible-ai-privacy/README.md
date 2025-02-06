@@ -120,7 +120,7 @@ After installing all the required packages, configure the variables necessary to
    API_ENDPOINT="${api_endpoint}"          # [Optional] required if using computer vision
    GCS_DEVELOPER_KEY="${gcsdeveloperkey}"  # [Optional] required if using computer vision
    ```
-
+    
     *TELE_FLAG is made true only if user wants to request the response in telemetry. Otherwise for the normal flow it can be set as False.
     For Telemetry setup, refer this link [responsible-ai-telemetry](https://github.com/Infosys-AI-Cloud-MMS/responsible-ai-telemetry)
     set the below env variables for connecting with telemetry alongside Telemetry flag.
@@ -130,8 +130,10 @@ After installing all the required packages, configure the variables necessary to
     PRIVACY_TELEMETRY_URL="http://<host:PORT>/path/v1/telemtry/<privacy telemetry api url>"
     PRIVACY_ERROR_URL="http://<host:PORT>/path/v1/telemtry/<privacy error telemetry api url>"
    ```
-
+    
     **Admin Module is the supporting module which is used for configuring the main module. User can create recognizer,custome templates, configure Thresholds and map it to created account and portfolio.
+
+   Note: To utilize Computer Vision in Privacy , need a Azure Computer Vision Subscription and set the Endpoint,Key in .env file 
 
 4. Replace the placeholders with your actual values.
 
@@ -166,6 +168,7 @@ Once we have completed all the aforementioned steps, we can start the service.
         User can also change the port which is mentioned in privacyfiles_main.py file
   
 4. Note: /rai/v1/privacy-files/excel/anonymize : This API endpoint is not working and it will be removed in next release.
+   
  
    
 ## Features
