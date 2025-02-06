@@ -9,6 +9,7 @@
 - [Running the Application](#running-the-application)
 - [License](#license)
 - [Contact](#contact)
+- [Issues](#issues)
 
 ## Introduction
 
@@ -162,3 +163,7 @@ The source code for the project is licensed under MIT license, which you can fin
 ## Contact
 
 If you have more questions or need further insights, feel free to Connect with us @ infosysraitoolkit@infosys.com
+
+## Issues
+
+- Graph of Thought currently supports GPT-3.5-Turbo and GPT-4 models, requiring deployment names as `gpt-35-turbo` or `gpt4`; ensure `AZURE_DEPLOYMENT_ENGINE` in the .env file and `modelName` in API payload match. Support for additional models and deployment name issues planned for a future release.
