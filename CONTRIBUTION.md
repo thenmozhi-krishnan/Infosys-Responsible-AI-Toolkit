@@ -71,12 +71,7 @@ Replace `<new-branch-name>` with a descriptive name for your changes.
 - Make the necessary changes to the code or documentation.
 - You can add new features, fix bugs, improve existing code, or update documentation.
 
-### 5. Contribution:
- - Ensure that your contribution license is compatible with the MIT license and that there are no copyleft licenses present, such as GPL, AGPL, LGPL 2.1, MPL 1.0, etc. 
-   If you wish to contribute, please review the contributor license agreement and email a signed PDF of this agreement to infosysraitoolkit@infosys.com. Additionally, 
-   refer to the release notice for the permissive licenses used in this project.
-
-### 6. Commit Your Changes
+### 5. Commit Your Changes
 - Once you've made the changes, add them to the staging area:
 ```bash
 git add .
@@ -86,13 +81,13 @@ git add .
 git commit -m "Brief description of changes"
 ```
 
-### 7. Push Changes to Your Fork
+### 6. Push Changes to Your Fork
 - Push the changes to your forked repository:
 ```bash
 git push origin <new-branch-name>
 ```
 
-### 8. Open a Pull Request
+### 7. Open a Pull Request
 - Go to the original repository where you want to contribute.
 - Click the Pull Requests tab.
 - Click the New Pull Request button.
@@ -101,10 +96,15 @@ git push origin <new-branch-name>
 - Click the Create Pull Request button.
 - Add a descriptive title and detailed explanation of your changes in the PR description.
 
-### 9. Review and Merge
+### 8. Review and Merge
 - The project maintainers will review your pull request.
 - Be prepared to make changes based on their feedback. You can push additional commits to the same branch, and the PR will automatically update.
 - Once the maintainers are satisfied, your PR will be merged into the main project.
+
+### 9. Contribution:
+ - Ensure that your contribution license is compatible with the MIT license and that there are no copyleft licenses present, such as GPL, AGPL, LGPL 2.1, MPL 1.0, etc. 
+   If you wish to contribute, please review the contributor license agreement and email a signed PDF of this agreement to infosysraitoolkit@infosys.com. Additionally, 
+   refer to the release notice for the permissive licenses used in this project.
   
 ### 10. Celebrate 🎉
 - Congratulations! You've contributed to an open-source project! 🎉
