@@ -1,46 +1,72 @@
-# RAI  MicroFrontend
+# RAI  MicroFrontend(MFE)
 
 ## Development
 
 Before you can build this project, you must install and configure the following dependencies on your machine:
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
-   ( preferably v18 & above)
-2. [Angular CLI][]: Install Angular Cli using [npm install -g @angular/cli@15.2.9].
-3. Set Environmental Variable , Path as Variable name & Value will be path to the npm. Example 
-    C:\Users\<username>\AppData\Roaming\npm.
+1.	Install Node.js
+    Ensure that Node.js version is higher than v18 (preferably the latest stable version).
+2.	Install Angular CLI
+    Install Angular CLI v15.2.9 to align with the application's version:
+            ```
+                npm install -g @angular/cli@15.2.9
+            ```
+3.	Update Environment Variables
+    Add the npm path to your system’s environment variables with the variable name Path.
+    Example 
+    `C:\Users\<username>\AppData\Roaming\npm`.
 4. Now CLI will be available .
 
 ## To Run Locally
 
 After installing Node & following above steps, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+1. 	Verify Dependencies
+        After cloning, inspect the package.json file. It contains the list of dependencies required for the application along with their specific versions.
 
-Go to the root folder of the repository & run ,
+2.	Install Dependencies
+        Navigate to the root folder of the project and run the following command to install all necessary dependencies:
+       ```
+       npm install
+        ```
 
-```
-npm install
-```
+    You will only need to run this command  also whenever dependencies change in [package.json] (package.json).
+
+3.	Node Modules Folder
+        Once dependencies are installed, a node_modules folder will be created containing all direct and indirect dependencies. The versions of dependencies will be aligned with the lockfile (package-lock.json).
+
+4.	Configure start.js File
+    Open the start.js file and make the following modifications:
+        1.	Uncomment the line:
+            `await runLocally()`;
+
+        2.	Comment the line:
+            `setDataFromENV()`;
+
+        3.	 Modify Variables in the runLocally Method
+                In the runLocally method, replace the following variables with the correct values:
+                    1.	MASTERURL: Endpoint for the config API from the admin module, e.g., http://localhost:4000/api/v1/rai/admin/ConfigApi.
+
+                    2.	ENABLESEARCH: Set to true to enable internet search functionality, e.g., true.
+
+                    3.	AUTHORITY_API: Endpoint for the page authority from the backend module, e.g., http://localhost:5000/v1/rai/backend/pageauthoritynew.
+
+5.	The runLocally() method configures all values locally, while setDataFromENV()
+     fetches configuration values from Nginx during server deployment.
+
+6.	Start the Application
+        In the root folder, run the following command to start the application:
+        ```
+            npm start
+        ```
+       The application is available at `http://localhost:30055`. When you open this URL, you might only see the navbar initially, as the list of pages will be loaded when the API is called from the shell. You will be able to view the entire application once the shell and backend are up and running, as the application is embedded within the shell using the micro frontends (MFE) architecture.
+
 We use npm scripts and [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
-
-
-In start.js file uncomment await runLocally() & comment out setDataFromENV()
-Then do 
-```
-npm start
-``` 
-Application is available in localhost:30055 .
-
-
 Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
 specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
 Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
 
 The `npm run` command will list all of the scripts available to run for this project.
+
 
 ### Using Angular CLI
 
@@ -60,63 +86,24 @@ create src/main/webapp/app/my-component/my-component.component.ts
 update src/main/webapp/app/app.module.ts
 ```
 
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the IDF application for production, run:
-
-```
-
-
-```
-
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
-```
-
-
-```
-
-Then navigate to `http://localhost:` in your browser.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-```
-
-
-```
-
-## Testing
-
-To launch your application's tests, run:
-
-```
-./gradlew test integrationTest jacocoTestReport
-```
-
-
 ## Dependency
  As these are frontend modules , they have dependency on these modules
- 1	responsible-ai-safety
-2	responsible-ai-ModerationModel
-3	responsible-ai-explainability
-4	responsible-ai-llm-explain
-5	responsible-ai-privacy
-6	responsible-ai-moderationLayer
-7	responsible-ai-security-API
-8	responsible-ai-fairness
-9	responsible-ai-llmbenchmarking
-10	responsible-ai-backend
-11	responsible-ai-admin
-12	responsible-ai-hallucination
-13	Responsible-ai-video
-14	responsible-ai-model-detail
-15	responsible-ai-reporting-tool
-16	responsible-ai-UploadDoc
-17	responsible-ai-telemetry
-18	responsible-ai-questionnaire
-19	responsible-ai-filestorage
+1.	responsible-ai-safety
+2.	responsible-ai-ModerationModel
+3.	responsible-ai-explainability
+4.	responsible-ai-llm-explain
+5.	responsible-ai-privacy
+6. responsible-ai-moderationLayer
+7.	responsible-ai-security-API
+8.	responsible-ai-fairness
+9.	responsible-ai-llmbenchmarking
+10.	responsible-ai-backend
+11.	responsible-ai-admin
+12.	responsible-ai-hallucination
+13.	Responsible-ai-video
+14.	responsible-ai-model-detail
+15.	responsible-ai-reporting-tool
+16.	responsible-ai-UploadDoc
+17.	responsible-ai-telemetry
+18.	responsible-ai-questionnaire
+19.	responsible-ai-filestorage
