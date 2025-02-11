@@ -78,6 +78,8 @@ Link provided above will directly download the model version 3.7.1.
   ```
   Special installations : 
   ```sh
+      pip install fastapi==0.100.1
+      pip install pydantic==1.10.11
       pip install datasets==2.15.0
       pip install numpy==1.26.2
       pip install torch==2.3.1
