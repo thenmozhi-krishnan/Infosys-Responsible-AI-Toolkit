@@ -68,7 +68,8 @@ Once we have completed all the aforementioned steps, we can start the service.
     ```sh
     python main.py
      ```
-3. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: `http://localhost:30080/v1/questionnaire/docs`
+3. Open the following URL in your browser:
+    [http://localhost:30080/v1/questionnaire/docs](http://localhost:30080/v1/questionnaire/docs)
 
     User can also change the port which is mentioned in main.py file
 
@@ -78,13 +79,11 @@ NOTE : To use the following API endpoints:
     /v1/questionnaire/Details
     /v1/questionnaire/riskDashboardDetails/{userid}/{useCaseName}
     /v1/questionnaire/ResubmitDetails/{userid}/{useCaseName}
-You will need to store questions and their associated options and score in the database based on your project's specific requirements. Additionally, some code modifications may be necessary to align with your database schema and design and for below API's,
+You will need to store questions and their associated options and score in the database based on your project's specific requirements. Additionally, some code modifications may be necessary to align with your database schema and design and for above API's,
 
-    /v1/questionnaire/lotAssign
-    /v1/questionnaire/telemetryUrlAdd
-    /v1/questionnaire/telemetryUrlGet/{tenant}
-    /v1/questionnaire/workbench/uploadFile
-you will need the telemetry URL's to be stored in the database based on your project's specific requirements. Additionally, some code modifications may be necessary to align with your database schema and design
+    /v1/questionnaire/lotAssign  -- This api is not in use - It will be deperecated in next release
+    /v1/questionnaire/workbench/uploadFile -- Internally it's working & the response is null. Will be updated from next release.
+
 
 ## Contact
-If you have more questions or need further insights, feel free to Connect with us @infosysraitoolkitI@infosys.com   
+If you have more questions or need further insights, feel free to Connect with us @ ResponsibleAI@infosys.com   
