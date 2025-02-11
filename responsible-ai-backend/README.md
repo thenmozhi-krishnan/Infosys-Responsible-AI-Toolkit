@@ -112,7 +112,7 @@ Note: v1/rai/backend/account endpoint is used by frontend module for verifying t
   
 ## License
 
-The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.md](LICENSE.md) file.
+The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.md](License.md) file.
 
 ## Contact
 
