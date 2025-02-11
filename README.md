@@ -18,6 +18,7 @@ The following table lists the modules of the Infosys Responsible AI Toolkit.  In
 
 Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/Release-2.1.0/Features%20and%20Endpoints.pdf) document for more details on endpoints and their usage. 
 
+
 ### Modules for the Responsible AI Toolkit Interface
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
 | # | Module | Functionalities | Repository name(s) |
@@ -30,8 +31,6 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Release-2.1.0/responsible-ai-llm-benchmarking)|
 
 For technical details and usage instructions on the Infosys Responsible AI toolkit's features, please refer to the [documentation]().
-
-Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
 ## Toolkit features at a glance
 ### Generative AI Models
@@ -51,5 +50,6 @@ Note: These API-based guardrails are optimized for Azure OpenAI. Users employing
 * Multi-lingual support for Prompt injection and Jailbreak in Moderation models
 * Multilingual Feature support to privacy & safety modules
 
+Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
 
