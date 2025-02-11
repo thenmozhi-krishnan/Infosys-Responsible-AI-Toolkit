@@ -69,7 +69,7 @@ Once we have completed all the aforementioned steps, we can start the service.
     python main.py
      ```
 3. Open the following URL in your browser:
-    [http://localhost:30080/v1/questionnaire/docs](http://localhost:30080/v1/questionnaire/docs)
+   `http://localhost:<portno>/v1/questionnaire/docs`
 
     User can also change the port which is mentioned in main.py file
 
