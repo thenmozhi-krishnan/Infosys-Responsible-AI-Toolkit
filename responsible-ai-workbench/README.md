@@ -86,4 +86,4 @@ You will need to store questions and their associated options and score in the d
 
 
 ## Contact
-If you have more questions or need further insights, feel free to Connect with us @ ResponsibleAI@infosys.com   
+If you have more questions or need further insights, feel free to Connect with us @Infosysraitoolkit@infosys.com  
