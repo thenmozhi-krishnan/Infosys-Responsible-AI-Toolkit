@@ -52,5 +52,4 @@ For technical details and usage instructions on the Infosys Responsible AI toolk
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
-If you have more questions or need further insights please feel free to connect with us  Infosysraitoolkit@infosys.com
-
+Want to help us out? Check out the [contribution]() page to share your feedback or suggest improvements. Have more questions? Connect with us at Infosysraitoolkit@infosys.com.
