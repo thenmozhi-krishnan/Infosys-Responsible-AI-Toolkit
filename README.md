@@ -29,7 +29,7 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 5 | File Storage | Python module that provides versatile APIs for seamless integration across multiple microservices, enabling efficient file management with Azure Blob Storage. It supports key operations such as file upload, retrieval, and updates, offering a robust solution for handling files in Azure Blob Storage.| [responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Release-2.1.0/responsible-ai-file-storage) |
 | 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Release-2.1.0/responsible-ai-llm-benchmarking)|
 
-Refer the [documentation]() for technical details and usage instructions of different features of Infosys Responsible AI toolkit.
+Refer the [documentation]() for technical details and usage instructions of different features of the Infosys Responsible AI toolkit.
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
