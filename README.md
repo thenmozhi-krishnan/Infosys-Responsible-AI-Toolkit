@@ -16,6 +16,8 @@ The following table lists the modules of the Infosys Responsible AI Toolkit.  In
 
 ** Endpoints for explainability are located in both the explainability and moderation layer repositories. Refer to the README files in these repositories for more details on specific features.
 
+Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/Release-2.1.0/Features%20and%20Endpoints.pdf) document for more details on endpoints and their usage. 
+
 ### Modules for the Responsible AI Toolkit Interface
 The Responsible AI toolkit provides a user-friendly interface for seamless experimentation and alignment with various Responsible AI principles. The following APIs are required to activate and utilize the toolkit's UI. To access the toolkit through the interface, refer to the README files associated with the listed repositories.
 | # | Module | Functionalities | Repository name(s) |
@@ -27,7 +29,7 @@ The Responsible AI toolkit provides a user-friendly interface for seamless exper
 | 5 | File Storage | Python module that provides versatile APIs for seamless integration across multiple microservices, enabling efficient file management with Azure Blob Storage. It supports key operations such as file upload, retrieval, and updates, offering a robust solution for handling files in Azure Blob Storage.| [responsible-ai-file-storage](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Release-2.1.0/responsible-ai-file-storage) |
 | 6 | Benchmarking | Displays stats related to benchmarking large language models (LLMs) across various categories such as fairness, privacy, truthfulness and ethics. It helps evaluate and compare LLM performance in these critical areas.| [responsible-ai-llm-benchmarking](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/tree/Release-2.1.0/responsible-ai-llm-benchmarking)|
 
-Please refer [Features and Endpoints](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/blob/Release-2.1.0/Features%20and%20Endpoints.pdf) document for more details.
+Refer the [documentation]() for technical details and usage instructions of different features of Infosys Responsible AI toolkit.
 
 Note: These API-based guardrails are optimized for Azure OpenAI. Users employing alternative LLMs should make the necessary client configuration adjustments. For Azure OpenAI api subscription, follow instructions provided in the [Microsoft Azure website](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true).
 
