@@ -20,7 +20,7 @@ import { NonceService } from 'src/app/nonce.service';
 export class FmParametersComponent {
 
 
-  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,public nonceService:NonceService) {
+  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,public nonceService:NonceService) {
     this.fromCreation();
   }
 
@@ -154,7 +154,7 @@ export class FmParametersComponent {
 
   }
   setFMConfigData(payload: any) {
-    this.http.post(this.fm_config_entry,payload).subscribe(
+    this.https.post(this.fm_config_entry,payload).subscribe(
       (res:any) =>{
         
         const message = 'The Api has succeeded';
@@ -479,7 +479,7 @@ export class FmParametersComponent {
   Restrictedtopics: any = [];
   InputModerationChecks: any = [];
   getSelectDRopDownArrray() {
-    this.http.get(this.fm_config_modCheck).subscribe(
+    this.https.get(this.fm_config_modCheck).subscribe(
       (res: any) => {
         this.InputModerationChecks = res.dataList;
         // this.getAccountMasterEntryList();
@@ -518,12 +518,12 @@ export class FmParametersComponent {
     );
 
 
-    this.http.get(this.fm_config_topicList).subscribe(
+    this.https.get(this.fm_config_topicList).subscribe(
       (res: any) => {
         this.Restrictedtopics = res.dataList;
       })
 
-    this.http.get(this.fm_config_outputModCheck).subscribe(
+    this.https.get(this.fm_config_outputModCheck).subscribe(
       (res: any) => {
         this.OutputModerationChecks = res.dataList;
       })

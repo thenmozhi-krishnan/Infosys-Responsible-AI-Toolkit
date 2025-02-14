@@ -35,7 +35,7 @@ export class NewUseCaseComponent {
   edit=false
   getRaiICanvasEndPoint: any;
   activeTab = "Available Use cases";
-  constructor(private _snackBar: MatSnackBar,private useCaseService:UseCaseServiceService,private _formBuilder: FormBuilder,private cdr: ChangeDetectorRef,public http: HttpClient,private modalservice: NgbModal,private router:Router) {
+  constructor(private _snackBar: MatSnackBar,private useCaseService:UseCaseServiceService,private _formBuilder: FormBuilder,private cdr: ChangeDetectorRef,public https: HttpClient,private modalservice: NgbModal,private router:Router) {
     this.edit=false
     console.log("From constructor edit value====",this.edit)
   }
@@ -66,8 +66,8 @@ export class NewUseCaseComponent {
   }
   getUseCaseDetail(userId:any){
     console.log("Userid============",userId)
-    // this.http.get(this.getUrl+userId).subscribe
-    this.http.get(this.getUseCase+'"'+userId+'"').subscribe
+    // this.https.get(this.getUrl+userId).subscribe
+    this.https.get(this.getUseCase+'"'+userId+'"').subscribe
     ((res: any) => {
 
       this.result = res
@@ -143,8 +143,8 @@ setApilist(ip_port: any) {
       this.useCaseService.setUseCaseName(usecaseName)
         // let getURL = this.apiURL + this.getAICanvasEndPoint 
         // console.log("getURL::",getURL)
-        // this.http.get(this.localgetUrl+ userId +"/"+ AiUseCaseName).subscribe(
-        this.http.get(this.getAICanvasEndPoint+ '"'+this.userId+'"' +"/"+ usecaseName).subscribe(
+        // this.https.get(this.localgetUrl+ userId +"/"+ AiUseCaseName).subscribe(
+        this.https.get(this.getAICanvasEndPoint+ '"'+this.userId+'"' +"/"+ usecaseName).subscribe(
           (res: any) => {
             if (res == "No Record Found") {
               console.log("No Record Found")
@@ -173,7 +173,7 @@ setApilist(ip_port: any) {
         );
 
 
-        this.http.get(this.getRaiICanvasEndPoint+ '"'+this.userId+'"' +"/"+ usecaseName).subscribe(
+        this.https.get(this.getRaiICanvasEndPoint+ '"'+this.userId+'"' +"/"+ usecaseName).subscribe(
           (res: any) => {
             if (res == "No Record Found") {
               console.log("No Record Found")

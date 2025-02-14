@@ -18,7 +18,7 @@ import { NonceService } from 'src/app/nonce.service';
   styleUrls: ['./accounts-configuration-modal-fm.component.css']
 })
 export class AccountsConfigurationModalFmComponent {
-  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalFmComponent>, public _snackBar: MatSnackBar, public http: HttpClient,public nonceService:NonceService
+  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalFmComponent>, public _snackBar: MatSnackBar, public https: HttpClient,public nonceService:NonceService
     , @Inject(MAT_DIALOG_DATA) public data: { id: any }) {
     this.fromCreation();
   }
@@ -154,7 +154,7 @@ export class AccountsConfigurationModalFmComponent {
          "ModerationCheckThresholds": payload1
          }
          console.log("payload======",payload)
-         this.http.patch(this.fm_config_dataUpdate,payload).subscribe(
+         this.https.patch(this.fm_config_dataUpdate,payload).subscribe(
            (res:any) =>{
              const message = 'FM Parameters has been updated successfully';
                const action = 'Close';
@@ -473,7 +473,7 @@ export class AccountsConfigurationModalFmComponent {
   dataSource3: any;
 
   get_fmdataforFmConfigResponseform() {
-    this.http.post(this.fm_config_dataList, { accMasterId: this.data.id }).subscribe
+    this.https.post(this.fm_config_dataList, { accMasterId: this.data.id }).subscribe
       ((res: any) => {
         if(res==null){
           const message = 'FM Parameters is not set for this account';
@@ -539,7 +539,7 @@ export class AccountsConfigurationModalFmComponent {
 
   // set the value of the form in base 
   getSelectDRopDownArrray() {
-    this.http.get(this.fm_config_modCheck).subscribe(
+    this.https.get(this.fm_config_modCheck).subscribe(
       (res: any) => {
         this.InputModerationChecks = res.dataList;
         // this.getAccountMasterEntryList();
@@ -578,12 +578,12 @@ export class AccountsConfigurationModalFmComponent {
     );
 
 
-    this.http.get(this.fm_config_topicList).subscribe(
+    this.https.get(this.fm_config_topicList).subscribe(
       (res: any) => {
         this.Restrictedtopics = res.dataList;
       })
 
-    this.http.get(this.fm_config_outputModCheck).subscribe(
+    this.https.get(this.fm_config_outputModCheck).subscribe(
       (res: any) => {
         this.OutputModerationChecks = res.dataList;
       })

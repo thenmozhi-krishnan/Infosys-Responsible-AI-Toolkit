@@ -36,12 +36,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     <app-image-parent></app-image-parent>
                 </ng-template>
             </mat-tab>
-            <mat-tab label="Video" *ngIf="roleService.checkSubtabExists('Workbench','Video')">
-                <!-- Content for Tab 4 -->
+            <!-- <mat-tab label="Video" *ngIf="roleService.checkSubtabExists('Workbench','Video')">
                 <ng-template matTabContent>
                     <app-video></app-video>
                 </ng-template>
-            </mat-tab>
+            </mat-tab> -->
             <mat-tab label="Code" *ngIf="roleService.checkSubtabExists('Workbench','Code')">
                 <ng-template matTabContent>
                     <app-code-privacy>

@@ -115,7 +115,7 @@ export class StructuredTextComponent implements OnInit {
   securityReport: any;
   deleteBatch: any;
   explanation_visualization:any;
-  constructor(private dialog: MatDialog, public _snackBar: MatSnackBar, public http: HttpClient) {
+  constructor(private dialog: MatDialog, public _snackBar: MatSnackBar, public https: HttpClient) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -279,7 +279,7 @@ export class StructuredTextComponent implements OnInit {
     console.log("GET ALL BATCHES CALLED")
     const formData = new FormData();
     formData.append("userId", this.loggedin_userId)
-    this.http.post(this.batchTable, formData).subscribe((data: any) => {
+    this.https.post(this.batchTable, formData).subscribe((data: any) => {
       this.dataSource = data;
       this.onTableDataChange(this.currentPage)
       this.isLoadingTable = false;
@@ -299,7 +299,7 @@ export class StructuredTextComponent implements OnInit {
   //   // this.showSpinner1 = true;
   //   const formData = new FormData;
   //   formData.append("userId", this.loggedin_userId)
-  //   this.http.post(this.getAllModels, formData).subscribe((res: any) => {
+  //   this.https.post(this.getAllModels, formData).subscribe((res: any) => {
   //     this.allModels = res;
   //     // this.showSpinner1 = false;
   //     console.log("ALL MODELS", this.allModels)
@@ -318,7 +318,7 @@ export class StructuredTextComponent implements OnInit {
   // getDataFiles() {
   //   const formData = new FormData;
   //   formData.append("userId", this.loggedin_userId)
-  //   this.http.post(this.getAllData, formData).subscribe((res: any) => {
+  //   this.https.post(this.getAllData, formData).subscribe((res: any) => {
   //     this.allDataFiles = res;
   //     console.log(this.allDataFiles)
   //   }, error => {
@@ -333,7 +333,7 @@ export class StructuredTextComponent implements OnInit {
   //   })
   // }
   // getAllTenants() {
-  //   this.http.get(this.allTenantsApi).subscribe((res: any) => {
+  //   this.https.get(this.allTenantsApi).subscribe((res: any) => {
   //     this.allTenants = res;
   //   })
   // }
@@ -346,37 +346,23 @@ export class StructuredTextComponent implements OnInit {
     const body = new URLSearchParams();
     
     if (batch.TenetId == 2.2) {
-      this.ReportDownload = this.FairnessWrapDownload;
-    const payload = {'Batch_id': id}
-      this.http.post(this.ReportDownload, payload ,{ responseType: 'blob' }).subscribe(
-        (res: any) => {
-          let filename = this.genFile();
-        const contentType = res.type;
-        const urlCreator = window.URL || window.webkitURL;
-        const a = document.createElement('a');
-        let downloadUrl!: any;
-      if (contentType == 'application/pdf') {
-       downloadUrl = urlCreator.createObjectURL(res);
-
-      } else if (contentType == 'application/octet-stream') {
-          const blob = new Blob([res], { type: 'text/csv;charset=utf-8' });
-           downloadUrl = urlCreator.createObjectURL(blob);
-      }
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      urlCreator.revokeObjectURL(downloadUrl);
-
-        }, error => { 
-          console.log(error)
-          const message = error.error.detail
-          const action = "Close"
-        })
-    } else {
+      const payload = {'Batch_id': id}
+        this.https.post(this.FairnessWrapDownload, payload ,{ responseType: 'blob',observe: 'response' }).subscribe(
+          (res: any) => {
+            let filename = this.genFile();
+        const contentDisposition = res.headers.get('Content-Disposition');
+        if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
+          filename = contentDisposition.split('filename=')[1].trim().replace(/"/g, '');
+        }
+        this.downloadFile(res.body, filename);
+          }, error => {
+            console.log(error)
+            const message = error.error.detail
+            const action = "Close"
+          })
+      } else {
       body.set('batchId', id.toString());
-      this.http.post(this.ReportDownload, body, { responseType: 'blob', headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded') }).subscribe(
+      this.https.post(this.ReportDownload, body, { responseType: 'blob', headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded') }).subscribe(
         (res: Blob) => {
           const filename = this.genFile();
           saveAs(res, filename);
@@ -397,7 +383,17 @@ export class StructuredTextComponent implements OnInit {
     const timestamp = new Date().getTime();
     return `file_${timestamp}`;
   }
-
+  downloadFile(data: Blob, filename: string) {
+    const blob = new Blob([data], { type: data.type });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
   // ------------------------Handle Model and Data File Selection Change--------------------------
   // selectDataMethod(data: any) {
   //   let selectedOptionIndex = data.options['selectedIndex']
@@ -434,7 +430,7 @@ export class StructuredTextComponent implements OnInit {
   //     "scope": null
   //   }
 
-  //   this.http.post(this.security_applicableAttacks, fdata).subscribe(
+  //   this.https.post(this.security_applicableAttacks, fdata).subscribe(
   //     (res: any) => {
   //       this.applicableAttack = res
   //       console.log(this.applicableAttack)
@@ -445,7 +441,7 @@ export class StructuredTextComponent implements OnInit {
   //       console.log(error)
   //     }
   //   )
-  //   this.http.post(this.ExplainMethods, payload).subscribe(
+  //   this.https.post(this.ExplainMethods, payload).subscribe(
   //     (data: any) => {
   //       this.applicableMethod = data.methods;
   //       this.cdr.detectChanges();
@@ -478,7 +474,7 @@ export class StructuredTextComponent implements OnInit {
   generateReport(batch: any, index: number) {
     this.dataSource[index].Status = "In-progress"
     if (batch.TenetId == 1.1) {
-      this.http.post(this.ExplainReport, { "batchId": batch.BatchId }).subscribe((res1: any) => {
+      this.https.post(this.ExplainReport, { "batchId": batch.BatchId }).subscribe((res1: any) => {
         this.getAllBatches();
         if (res1.status == 'FAILURE') {
           this._snackBar.open(res1.message, "Close", {
@@ -501,7 +497,7 @@ export class StructuredTextComponent implements OnInit {
         });
       })
     } else if (batch.TenetId == 2.2) {
-      this.http.post(this.fairnessReport, { "Batch_id": batch.BatchId }).subscribe((res1: any) => {
+      this.https.post(this.fairnessReport, { "Batch_id": batch.BatchId }).subscribe((res1: any) => {
         this.getAllBatches();
         this._snackBar.open("Report Generated Successfully", "Close", {
           duration: 3000,
@@ -520,7 +516,7 @@ export class StructuredTextComponent implements OnInit {
     } else if (batch.TenetId == 3.3) {
       const formData = new FormData();
       formData.append('batchId', batch.BatchId);
-      this.http.post(this.securityReport, formData).subscribe((res1: any) => {
+      this.https.post(this.securityReport, formData).subscribe((res1: any) => {
         this.getAllBatches();
         this._snackBar.open("Report Generated Successfully", "Close", {
           duration: 3000,
@@ -551,7 +547,7 @@ export class StructuredTextComponent implements OnInit {
       }),
       body: params,
     };
-    this.http.delete(this.deleteBatch, options).subscribe(
+    this.https.delete(this.deleteBatch, options).subscribe(
       (res: any) => {
         this.getAllBatches();
         const message = 'Record Deleted Successfully';
@@ -839,15 +835,15 @@ export class StructuredTextComponent implements OnInit {
 
   //   }
   //   console.log("PAYLOADS::", payload)
-  //   this.http.post(this.batchGeneration, payload).subscribe((res: any) => {
+  //   this.https.post(this.batchGeneration, payload).subscribe((res: any) => {
   //     const BatchResponse = res;
   //     BatchResponse.forEach((batch: any) => {
   //       if (batch.TenetId == 1.1) {
-  //         this.http.post(this.ExplainReport, { "batchId": batch.BatchId }).subscribe((res1: any) => {
+  //         this.https.post(this.ExplainReport, { "batchId": batch.BatchId }).subscribe((res1: any) => {
   //           this.getAllBatches();
   //         })
   //       } else if (batch.TenetId == 2.2) {
-  //         this.http.post(this.fairnessReport, { "Batch_id": batch.BatchId }).subscribe((res1: any) => {
+  //         this.https.post(this.fairnessReport, { "Batch_id": batch.BatchId }).subscribe((res1: any) => {
   //           this.getAllBatches();
   //         })
   //       }

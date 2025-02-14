@@ -12,9 +12,9 @@ import { Observable } from 'rxjs';
 })
 export class ImageService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private https: HttpClient) {}
   imgApi(url: any, file: any,headers:any): Observable<any> {
     //  const options = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(url, file,headers);
+    return this.https.post<any>(url, file,headers);
   }
 }

@@ -19,7 +19,7 @@ export class UsecaseGuard implements CanActivate {
   ip_port:any
   userRole:any;
   userRole1:any;
-  constructor(private router: Router,public http: HttpClient) { }
+  constructor(private router: Router,public https: HttpClient) { }
 
   canActivate(
 
@@ -48,7 +48,7 @@ export class UsecaseGuard implements CanActivate {
     const user = this.getLogedInUser();
 
     console.log("User", user);
-    return this.http.get(this.getUseCase + '"' + user + '"').pipe(
+    return this.https.get(this.getUseCase + '"' + user + '"').pipe(
 
       map((res: any) => {
         console.log( "res",res)

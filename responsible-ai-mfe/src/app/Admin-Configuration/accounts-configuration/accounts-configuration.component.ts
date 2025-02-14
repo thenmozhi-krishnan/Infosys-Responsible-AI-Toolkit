@@ -29,7 +29,7 @@ export class AccountsConfigurationComponent {
   accountDetail: any;
   listReconList: any=[];
   csrfToken: string;
-  constructor (public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,public nonceService:NonceService)
+  constructor (public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,public nonceService:NonceService)
   {
     this.csrfToken = this.nonceService.getNonce();
 
@@ -103,7 +103,7 @@ export class AccountsConfigurationComponent {
     this.setPrivacyParameter(header)
   }
   setPrivacyParameter(header: any) {
-    this.http.post(this.Admin_SetPrivacyParameter, header).subscribe
+    this.https.post(this.Admin_SetPrivacyParameter, header).subscribe
         ((res: any) => {
           console.log("data sent to database" + res.status)
           if (res.status === "True") {
@@ -219,7 +219,7 @@ export class AccountsConfigurationComponent {
 
   getAccountMasterEntryList(){
     console.log("getAccountMasterEntryList")
-    this.http.get(this.admin_list_AccountMaping_AccMasterList).subscribe
+    this.https.get(this.admin_list_AccountMaping_AccMasterList).subscribe
       ((res: any) => {
 
         this.dataSource = res.accList
@@ -251,7 +251,7 @@ export class AccountsConfigurationComponent {
   portfolioArr :any =[]
 
   getAllAccountData(){
-    this.http.get( this.admin_list_getAccountDetails).subscribe
+    this.https.get( this.admin_list_getAccountDetails).subscribe
         ((res: any) => {
           console.log("res=========>>>",res[0].AccountDetails)
           
@@ -479,7 +479,7 @@ test(p:any){
 createNewAccPot() {
   if (this.NewAccPort.valid) {
     const formData = this.NewAccPort.value;
-    this.http.post(this.admin_list_AccountMaping_AccMasterentry, formData).subscribe(
+    this.https.post(this.admin_list_AccountMaping_AccMasterentry, formData).subscribe(
       (response: any) => {
         // Handle success response
         console.log(response);
@@ -493,7 +493,7 @@ createNewAccPot() {
 }
 
 getadmin_list_rec_get_list(){
-  this.http.get(this.admin_list_rec_get_list).subscribe
+  this.https.get(this.admin_list_rec_get_list).subscribe
   ((res: any) => {
     console.log("res",res)
     this.listReconList = res.RecogList
@@ -573,7 +573,7 @@ deleteAccounttGroup(id: any) {
       accMasterId: id
     },
   };
-  this.http.delete(this.admin_list_AccountMaping_AccMasterList_Delete, options).subscribe
+  this.https.delete(this.admin_list_AccountMaping_AccMasterList_Delete, options).subscribe
     ((res: any) => {
       if (res.status === "True") {
 

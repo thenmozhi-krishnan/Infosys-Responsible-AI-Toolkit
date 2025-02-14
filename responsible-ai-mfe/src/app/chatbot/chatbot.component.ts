@@ -25,7 +25,7 @@ export class ChatbotComponent implements OnInit{
   userMessages: string[] = [];
   botResponses: string[] = [];
   public safeTemplateData!: SafeHtml; 
-  constructor(private http: HttpClient,public nonceService:NonceService,private sanitizer: DomSanitizer) {}
+  constructor(private https: HttpClient,public nonceService:NonceService,private sanitizer: DomSanitizer) {}
   ngOnInit(): void {
   let ip_port: any ;
   if (localStorage.getItem("res") != null) {
@@ -61,7 +61,7 @@ export class ChatbotComponent implements OnInit{
     const payload = { text: this.prompt };
     this.prompt = '';
     this.isLoading = true;
-    this.http.post(this.url, payload).subscribe(response => {
+    this.https.post(this.url, payload).subscribe(response => {
       console.log("chatbotResponse", response);
       const responseArray = response as any[];
       if (responseArray && responseArray.length > 0 && responseArray[0].text) {

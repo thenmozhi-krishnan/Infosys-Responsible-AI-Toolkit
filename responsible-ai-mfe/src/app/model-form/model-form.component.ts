@@ -30,7 +30,7 @@ export class ModelFormComponent {
   showSpinner1 = false;
   deleteModels:any;
   getModel:any;
-  constructor(private dialog: MatDialog,private http: HttpClient,public _snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog,private https: HttpClient,public _snackBar: MatSnackBar) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -65,7 +65,7 @@ export class ModelFormComponent {
   getBatches() {
     const formData =new FormData;
     formData.append("userId",this.user)
-    this.http.post(this.getModel ,formData).subscribe(
+    this.https.post(this.getModel ,formData).subscribe(
       (res: any) => {
         this.dataSource_getBatches = res;
         this.onTableDataChange(this.currentPage);
@@ -97,7 +97,7 @@ export class ModelFormComponent {
       body: params,
     };
     this.showSpinner1 = true;
-    this.http.delete(this.deleteModels, options).subscribe(
+    this.https.delete(this.deleteModels, options).subscribe(
       (res: any) => {
         this.getBatches();
         const message = 'Record Deleted Successfully';

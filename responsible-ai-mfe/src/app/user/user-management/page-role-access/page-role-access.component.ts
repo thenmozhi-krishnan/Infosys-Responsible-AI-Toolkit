@@ -71,7 +71,7 @@ NewAccPort!: FormGroup;
 //
 tabs!: Tab[];
 
-  constructor(private snackBar:MatSnackBar,private pageRoleAccessService: PageRoleAccessService, @Inject(MAT_DIALOG_DATA) public data: any,private http: HttpClient,public nonceService:NonceService)
+  constructor(private snackBar:MatSnackBar,private pageRoleAccessService: PageRoleAccessService, @Inject(MAT_DIALOG_DATA) public data: any,private https: HttpClient,public nonceService:NonceService)
     {
       this.CreateNewRoleForm();
      }
@@ -501,7 +501,7 @@ submitRoleForm() {
   if (this.NewAccPort.valid) {
     const formData = this.NewAccPort.value;
     console.log("FORM SUBMIT",formData.role);
-    this.http.post(this.newRoleUrl, formData).subscribe(
+    this.https.post(this.newRoleUrl, formData).subscribe(
       (response: any) => {
         // Handle success response
         console.log(response);
@@ -514,7 +514,7 @@ submitRoleForm() {
       (error: any) => {
       }
     );
-    this.http.post(this.createPageAuthUrl, formData).subscribe(
+    this.https.post(this.createPageAuthUrl, formData).subscribe(
       (response: any) => {
         // Handle success response
         console.log(response);
@@ -527,7 +527,7 @@ submitRoleForm() {
 }
 
 getUpdatedRoles(){
-  this.http.get(this.getRoleUrl).subscribe(
+  this.https.get(this.getRoleUrl).subscribe(
     (response: any) => {
       // Handle successful response here
       console.log(response);

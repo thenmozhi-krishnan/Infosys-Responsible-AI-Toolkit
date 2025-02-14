@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 export class RequestModerationService {
   apiEndpoints: any = {};
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   // Get Local Storage Data
   fetchApiUrl() {
@@ -36,6 +36,6 @@ export class RequestModerationService {
   }
 
   contentDetector(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.textDetector, payload);
+    return this.https.post(this.apiEndpoints.textDetector, payload);
   }
 }

@@ -172,35 +172,66 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             <a mat-raised-button type="btn" class="mainBtn DecryptButton" color="DecryptBtnClr" (click)="toggleArrow()">Additional Explanation <span [innerHTML]="isArrowDown ? '&#9660;' : '&#9650;'"></span></a>
             <br/><br/>
             <div class="fixed-height-card2" *ngIf="!isArrowDown">
-                <h2>TOKEN IMPORTANCE
-                    <mat-icon class="ml-2 cursor-pointer" style="color: #727272;" [inline]="true" (click)="openRightSideModal({title:'Token Importance',type:'token'}); $event.stopPropagation()">info</mat-icon>
-                </h2>
-                <div class="card-bodymainLabel mainLabelSM mainLabelLight p-2">
+                <div class="card-header cursor  border-bottom-0" style="background: none;" id="headingOne">
+                    <div>
+                        <label role='button' class="mainLabel cursor" style="display: flex;">
+                            TOKEN IMPORTANCE <mat-icon class="ms-2 cursor-pointer" style="color: #727272;"
+                                [inline]="true"
+                                (click)="openRightSideModal({title:'Token Importance',type:'token'}); $event.stopPropagation()">info</mat-icon>
+                        </label>
+                    </div>
+                    <div class="col-md-10 text-end " *ngIf="!isEmptyObject(tokenImportanceResponse)">
+                        <p class="mainLabel mainLabelSM ">Time Taken: <span>{{tokenImportanceResponse.time_taken}}s</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-bodymainLabel mainLabelSM mainLabelLight p-0">
+                    <div class="card-body" *ngIf="isEmptyObject(tokenImportanceResponse)">
+                        <p *ngIf="tokenImportanceShowErrorMessage" class="mainLabel mainLabelSM pt-3">
+                            API got failed. Please try again later.
+                            <a class="text-decoration-underline" (click)="TokenImportance()">Click here to retry</a>
+                        </p>
+                    </div>
                     <div *ngIf="isLoadingTokenImportance" class="spinner-container">
                         <div class="spinner"></div>
                     </div>
-                    <div class="table-container" style="display: flex; justify-content: center;">
+                    <div class="table-container" style="display: flex; justify-content: center;" *ngIf="!isEmptyObject(tokenImportanceResponse)">
                         <table>
                             <tr>
                                 <th style="padding: 0 15px;">Token</th>
                                 <th style="padding: 0 15px;">Importance Value</th>
                                 <th style="padding: 0 15px;">Position</th>
                             </tr>
-                            <tr *ngFor="let item of tokenImportanceResponse?.token_importance_mapping">
-                                <td style="padding: 0 15px; text-align: center;">{{item.token}}</td>
+                            <tr *ngFor="let item of topTokens">
+                                <td style="padding: 0 15px; text-align: left;">{{item.token}}</td>
                                 <td style="padding: 0 15px; text-align: center;">{{item.importance_value | number:'1.2-2'}}</td>
-                                <td style="padding: 0 15px; text-align: center;">{{item.Position}}</td>
+                                <td style="padding: 0 15px; text-align: center;">{{item.position}}</td>
                             </tr>
                         </table>
                     </div>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <img [src]="tokenImage1" class="tokenImage img-fluid" />
+                    <div style="display: flex; margin-top:15px; margin-right:0px; padding: 0 0 0 0; justify-content: center;" *ngIf="!isEmptyObject(tokenImportanceResponse)">
+                        <div style="display: block; width: 520px; height: 300px; align-self: center; margin-top: 20px; margin-bottom: 0px;  padding: 0 0 0 0; box-sizing: border-box;">
+                            <h3 class="mainLabel" style="text-align: center;">Importance Score Per Token</h3>
+                            <canvas id="myTokenBarChart" width="520" height="300" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
                         </div>
-                        <div class="col-md-6">
-                            <img [src]="tokenImage2" class="tokenImage img-fluid" />
+                        <div style="display: block; width: 290px; height: 255px; align-self: top; margin-top: 20px; margin-left:10px; margin-bottom: 0px; margin-right:0px; padding: 0 0 0 0; box-sizing: border-box;">
+                            <h3 class="mainLabel" style="text-align: center;">Distribution of Importance Score</h3>
+                            <canvas id="myDistributionBarChart" width="290" height="255" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
                         </div>
                     </div>
+                    <!-- <div style="display: block; width: 400px; height: 275px; align-self: center; margin-top: 20px; margin-bottom: 0px; padding: 0; box-sizing: border-box;">
+                        <h3 class="mainLabel" style="text-align: center;">Distribution of Importance Score</h3>
+                        <canvas id="myFrequencyBarChart" width="400" height="275" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
+                    </div> -->
+                    <!-- <div class="row mt-2">
+                        <div class="col-md-6">
+                            <img [src]="'data:image/jpeg;base64,' +tokenImportanceResponse?.image_data[0]" class="tokenImage img-fluid" />
+                        </div>
+                        <div class="col-md-6">
+                            <img [src]="'data:image/jpeg;base64,' +tokenImportanceResponse?.image_data[1]" class="tokenImage img-fluid" />
+                        </div>
+                    </div> -->
                 </div>
             </div>
 

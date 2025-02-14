@@ -326,20 +326,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
             <div id="accordionTHOT" class="mt-3" *ngIf="thotState.active">
                 <div class="card">
-                    <div class="card-header cursor  border-bottom-0" style="background: none;" id="headingOne" data-toggle="collapse" data-target="#THOTCollapse" aria-expanded="true" aria-controls="THOTCollapse" (click)="callTHOT()">
+                    <div class="card-header cursor  border-bottom-0" style="background: none;" id="headingOne" (click)="toggleTHOTCollapse();callTHOT()">
                         <div>
                             <label class="mainLabel cursor" style="display: flex;">
-                                REASONING <mat-icon class="ml-2 cursor-pointer" style="color: #727272;"
+                                REASONING <mat-icon class="ms-2 cursor-pointer" style="color: #727272;"
                                     [inline]="true"
                                     (click)="openRightSideModal({title:'Thread of Thoughts',type:'thotdescription'}); $event.stopPropagation()">info</mat-icon>
                             </label>
                         </div>
-                        <div class="col-md-10 text-right" *ngIf="!isEmptyObject(thotResponse)">
+                        <div class="col-md-10 text-end" *ngIf="!isEmptyObject(thotResponse)">
                             <p class="mainLabel mainLabelSM">Time Taken: <span>{{thotResponse.timetaken}}s</span></p>
                             <p class="mainLabel mainLabelSM " *ngIf="hallucinationSwitchCheck">Token Cost: <span>{{thotResponse.token_cost}}</span>
                         </div>
                     </div>
-                    <div id="THOTCollapse" class="collapse" aria-labelledby="headingOne" data-parent="#accordionTHOT">
+                    <div *ngIf="isTHOTCollapsed">
                         <div class="card-body" *ngIf="isEmptyObject(thotResponse)">
                             <p class="mainLabel mainLabelSM" *ngIf="thotState.status == 'FAILED'; else loaderTHOT">API got failed. Please try again later. <a class="text-decoration-underline" (click)="callTHOT()">Click
                                     here to retry</a></p>
@@ -377,27 +377,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     </div>
                 </div>
             </div>
-            <div id="accordion" class="mt-3" *ngIf="covState.active">
+            <div id="accordionCOV" class="mt-3" *ngIf="covState.active">
                 <div class="card">
-                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" data-toggle="collapse" data-target="#COVCollapse" aria-expanded="true" aria-controls="COVCollapse" (click)="covgetApi()">
+                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" (click)="toggleCollapse(); covgetApi()">
                         <div>
                             <label role='button' class="mainLabel cursor" style="display: flex;">
-                                VERIFICATION <mat-icon class="ml-2 cursor-pointer" style="color: #727272;"
-                                    [inline]="true"
-                                    (click)="openRightSideModal({title:'Chain of Verifications',type:'covdescription'}); $event.stopPropagation()">info</mat-icon>
-                            </label>
+                                    VERIFICATION <mat-icon class="ms-2 cursor-pointer" style="color: #727272;" [inline]="true" (click)="openRightSideModal({title:'Chain of Verifications',type:'covdescription'}); $event.stopPropagation()">info</mat-icon>
+                </label>
                         </div>
-                        <div class="col-md-10 text-right " *ngIf="!isEmptyObject(covResponse)">
-                            <p class="mainLabel mainLabelSM ">Time Taken: <span>{{covResponse.timetaken}}s</span>
-                            </p>
+                        <div class="col-md-10 text-end" *ngIf="!isEmptyObject(covResponse)">
+                            <p class="mainLabel mainLabelSM">Time Taken: <span>{{covResponse.timetaken}}s</span></p>
                         </div>
                     </div>
-                    <div id="COVCollapse" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div *ngIf="isCollapsed">
                         <div class="card-body" *ngIf="isEmptyObject(covResponse)">
-                            <p class="mainLabel mainLabelSM" *ngIf="covState.status == 'FAILED'; else loaderCOV">API got failed. Please try again later. <a class="text-decoration-underline" (click)="covgetApi()">Click here to retry</a>
-                            </p>
+                            <p class="mainLabel mainLabelSM" *ngIf="covState.status == 'FAILED'; else loaderCOV">API got failed. Please try again later. <a class="text-decoration-underline" (click)="covgetApi()">Click here to retry</a></p>
                             <ng-template #loaderCOV>
-                                <div class=" d-flex justify-content-center align-items-center" style="color: #8626C3;">
+                                <div class="d-flex justify-content-center align-items-center" style="color: #8626C3;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
@@ -405,15 +401,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             </ng-template>
                         </div>
                         <div class="card-body mt-0" *ngIf="!isEmptyObject(covResponse)">
-                            <!-- <div class=" row ">
-                                <div class="col-md-12 text-right ">
-                                    <p class="mainLabel mainLabelSM ">Time Taken: <span>{{covResponse.timetaken}}s</span>
-                                    </p>
-                                </div>
-                            </div> -->
                             <div class="mt-0">
-                                <p class="mainLabel mainLabelSM mainLabelLight m-0" [innerHTML]="covResponse.verification">
-                                </p>
+                                <p class="mainLabel mainLabelSM mainLabelLight m-0" [innerHTML]="covResponse.verification"></p>
                             </div>
                         </div>
                     </div>
@@ -465,22 +454,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             <a mat-raised-button type="btn" class="mainBtn DecryptButton mt-3" color="DecryptBtnClr" (click)="toggleArrow()">Additional Explanation <span [innerHTML]="isArrowDown ? '&#9660;' : '&#9650;'"></span></a>
             <div id="accordionCOT" class="mt-3" *ngIf="cotState.active && !isArrowDown">
                 <div class="card">
-                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" data-toggle="collapse" data-target="#COTCollapse" aria-expanded="true" aria-controls="COTCollapse" (click)="callCOT()">
+                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" (click)="toggleCOTCollapse();callCOT()">
                         <div>
                             <label class="mainLabel cursor" style="display: flex;">
-                                Chain of Thoughts <mat-icon class="ml-2 cursor-pointer" style="color: #727272;"
+                                Chain of Thoughts <mat-icon class="ms-2 cursor-pointer" style="color: #727272;"
                                 [inline]="true"
                                 (click)="openRightSideModal({title:'Chain of Thoughts',type:'cotdescription'}); $event.stopPropagation()">info</mat-icon>
                             </label>
                         </div>
-                        <div class="col-md-10 text-right" *ngIf="!isEmptyObject(cotResponse)">
+                        <div class="col-md-10 text-end" *ngIf="!isEmptyObject(cotResponse)">
                             <p class="mainLabel mainLabelSM ">Time Taken: <span>{{cotResponse.timetaken}}s</span>
                             </p>
                             <p class="mainLabel mainLabelSM " *ngIf="hallucinationSwitchCheck">Token Cost: <span>{{cotResponse.token_cost}}</span>
                             </p>
                         </div>
                     </div>
-                    <div id="COTCollapse" class="collapse" aria-labelledby="headingOne" data-parent="#accordionCOT">
+                    <div *ngIf="isCOTCollapsed">
                         <div class="card-body" *ngIf="isEmptyObject(cotResponse)">
                             <p class="mainLabel mainLabelSM" *ngIf="cotState.status == 'FAILED'; else loaderCOT">API got failed. Please try again later. <a class="text-decoration-underline" (click)="callCOT()">Click here
                                     to
@@ -529,16 +518,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             </div>
             <div id="accordionGOT" class="mt-3 " *ngIf="gotState.active && !isArrowDown && !hallucinationSwitchCheck">
                 <div class="card">
-                    <div class="card-header cursor border-bottom-0" style="background: none; " id="headingOne " data-toggle="collapse" data-target="#GOTCollapse" aria-expanded="true" aria-controls="GOTCollapse" (click)="getGOT()">
+                    <div class="card-header cursor border-bottom-0" style="background: none; " id="headingOne " (click)="toggleGOTCollapse();getGOT()">
                         <div>
                             <label class="mainLabel cursor d-flex">
-                                Graph of Thoughts <mat-icon class="ml-2 cursor-pointer " style="color: #727272; "
+                                Graph of Thoughts <mat-icon class="ms-2 cursor-pointer " style="color: #727272; "
                                     [inline]="true"
                                     (click)="openRightSideModal({title: 'Graph of Thoughts',type: 'gotdescription'}); $event.stopPropagation()">info</mat-icon>
                             </label>
                         </div>
                     </div>
-                    <div id="GOTCollapse" class="collapse" aria-labelledby="headingOne" data-parent="#accordionGOT">
+                    <div *ngIf="isGOTCollapsed">
                         <!-- <div class=" d-flex justify-content-center align-items-center " *ngIf="isLoading " style="color: #8626C3; padding: 15px; ">
                         <div class="spinner-border " role="status ">
                             <span class="sr-only ">Loading...</span>
@@ -594,7 +583,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                             [attr.y]="node.dimension.height / 2 ">{{ node.label }}</svg:text>
                                     </svg:g>
                                 </ng-template>
-
+ 
                                 <ng-template #linkTemplate let-link>
                                     <svg:g class="edge ">
                                         <svg:path class="line " stroke-width="2 " marker-end="url(#arrow) ">
@@ -631,24 +620,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     </div>
                 </div>
             </div>
+
             <div id="accordionTOKEN" class="mt-3" *ngIf="tokenImpState.active && !isArrowDown">
                 <div class="card">
-                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" data-toggle="collapse" data-target="#TOKENCollapse" aria-expanded="true" aria-controls="TOKENCollapse" (click)="tokenImportance()">
+                    <div class="card-header cursor border-bottom-0" style="background: none;" id="headingOne" (click)="toggleTokenCollapse(); tokenImportance()">
                         <div>
                             <label class="mainLabel cursor d-flex">
-                                Token Importance  <mat-icon class="ml-2 cursor-pointer " style="color: #727272;"
-                                    [inline]="true"
-                                    (click)="openRightSideModal({title: 'Token Importance',type: 'TokenImportancedes'}); $event.stopPropagation()">info</mat-icon>
-                            </label>
+                        TOKEN IMPORTANCE <mat-icon class="ms-2 cursor-pointer" style="color: #727272;" [inline]="true" (click)="openRightSideModal({title: 'Token Importance',type: 'TokenImportancedes'}); $event.stopPropagation()">info</mat-icon>
+                      </label>
+                        </div>
+                        <div class="col-md-10 text-end" *ngIf="!isEmptyObject(tokenImportanceResponse)">
+                            <p class="mainLabel mainLabelSM">Time Taken: <span>{{tokenImportanceResponse?.time_taken}}s</span></p>
                         </div>
                     </div>
-                    <div id="TOKENCollapse" class="collapse" aria-labelledby="headingOne" data-parent="#accordionTOKEN">
-                        <div class="card-body " *ngIf="isEmptyObject(tokenImportanceResponse) ">
-                            <p class="mainLabel mainLabelSM" *ngIf="tokenImpState.status=='FAILED' ; else loaderTokenImp">
+                    <div *ngIf="isTokenCollapsed">
+                        <div class="card-body" *ngIf="isEmptyObject(tokenImportanceResponse)">
+                            <p class="mainLabel mainLabelSM" *ngIf="tokenImpState.status=='FAILED'; else loaderTokenImp">
                                 API got failed. Please try again later. <a class="text-decoration-underline" (click)="tokenImportance()">Click here to retry</a>
                             </p>
                             <ng-template #loaderTokenImp>
-                                <div class=" d-flex justify-content-center align-items-center" style="color: #8626C3;">
+                                <div class="d-flex justify-content-center align-items-center" style="color: #8626C3;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
@@ -662,19 +653,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                     <th class="text-center">Importance Value</th>
                                     <th class="text-center">Position</th>
                                 </tr>
-                                <tr *ngFor="let item of tokenImportanceResponse.token_importance_mapping">
+                                <tr *ngFor="let item of topTokens">
                                     <td class="text-center">{{item.token}}</td>
                                     <td class="text-center">{{item.importance_value | number:'1.0-2'}}</td>
-                                    <td class="text-center">{{item.Position}}</td>
+                                    <td class="text-center">{{item.position}}</td>
                                 </tr>
                             </table>
-                            <div class="row mt-2">
-                                <div class="col-md-6 ">
-                                    <img [src]=" 'data:image/jpeg;base64,' +tokenImportanceResponse.image_data[0] " class="tokenImage img-fluid " />
-                                </div>
-                                <div class="col-md-6 ">
-                                    <img [src]=" 'data:image/jpeg;base64,' +tokenImportanceResponse.image_data[1] " class="tokenImage img-fluid " />
-                                </div>
+                        </div>
+                        <div *ngIf="!isEmptyObject(tokenImportanceResponse)" style="display: flex; margin-top:15px; margin-right:0px; padding: 0 0 0 0; justify-content: center;">
+                            <div style="display: block; width: 580px; height: 300px; align-self: center; margin-top: 20px; margin-bottom: 0px; padding: 0 0 0 0; box-sizing: border-box;">
+                                <h3 class="mainLabel" style="text-align: center;">Importance Score Per Token</h3>
+                                <canvas id="myTokenBarChart1" width="580" height="300" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
+                            </div>
+                            <div style="display: block; width: 300px; height: 255px; align-self: top; margin-top: 20px; margin-left:10px; margin-bottom: 0px; margin-right:0px; padding: 0 0 0 0; box-sizing: border-box;">
+                                <h3 class="mainLabel" style="text-align: center;">Distribution of Importance Score</h3>
+                                <canvas id="myDistributionBarChart1" width="300" height="255" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ import { AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Node, Edge } from '@swimlane/ngx-graph';
 import { KeyValue } from '@angular/common';
 import { urlList } from 'src/app/urlList';
-
+import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-response-comparison',
   templateUrl: './response-comparison.component.html',
@@ -25,8 +25,8 @@ export class ResponseComparisonComponent {
   @Input() cotState: any;
   @Input() thotState: any;
   @Input() fmRes: any;
-  @Input() nemoModerationRailRes: any;
   @Input() covState: any;
+  @Input() nemoModerationRailRes: any;
   @Input() prompt: any;
   @Input() tokenImpState: any;
   @Input() gotState: any;
@@ -74,10 +74,12 @@ export class ResponseComparisonComponent {
   selectCoveComplexity: any = 'simple';
   selectedLlmModel: any = 'gpt4';
   summary:boolean = true;
+  topTokens: any[] = [];
+  tokens:any[] = [];
   GOTAnswer: string = '';
   enableSearch = urlList.enableInternetSearch;
-
-  constructor(private dialog: MatDialog, private responseService: ResponseComparisonService, public _snackBar: MatSnackBar, private http: HttpClient, private cdr: ChangeDetectorRef, private sharedDataService: SharedDataService) {
+  isCollapsed = false
+  constructor(private dialog: MatDialog, private responseService: ResponseComparisonService, public _snackBar: MatSnackBar, private https: HttpClient, private cdr: ChangeDetectorRef, private sharedDataService: SharedDataService) {
     this.sharedDataService.templateBasedResponses.subscribe(response => {
       this.templateBasedResponse = response
       console.log(this.templateBasedResponse,"templateBased Service Data")
@@ -102,6 +104,29 @@ export class ResponseComparisonComponent {
     //this.generatedTextFormatted = this.formatText(this.fmRes?.moderationResults?.responseModeration?.generatedText);
     this.RagMultiModalResponse.response.text = this.RagMultiModalResponse?.response?.text?.replace(/\n\n/g, '<br>');
   }
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+}
+
+isTHOTCollapsed = false;
+  isGOTCollapsed = false;
+    isTokenCollapsed = false;
+isCOTCollapsed = false;
+ 
+    toggleTHOTCollapse() {
+        this.isTHOTCollapsed = !this.isTHOTCollapsed;
+    }
+   toggleGOTCollapse() {
+        this.isGOTCollapsed = !this.isGOTCollapsed;
+    }
+ 
+    toggleCOTCollapse() {
+        this.isCOTCollapsed = !this.isCOTCollapsed;
+    }
+toggleTokenCollapse(): void {
+      this.isTokenCollapsed = !this.isTokenCollapsed;
+    }
+
 
   formatText(text: any) {
     if (!text) {
@@ -417,10 +442,20 @@ export class ResponseComparisonComponent {
     this.tokenImpState.status = 'inPROCESS'
     console.log("--RESPONSIBLE-COMPARISON-|||-tokenImportance-CALL", this.tokenImpState);
     this.ApiCallHappened.add('tokenImportance');
-
+ 
     this.responseService.tokenImportance(this.tokenImpState.payload).subscribe(
       (res: any) => {
         this.tokenImportanceResponse = res;
+        this.tokens = res?.token_importance_mapping;
+        console.log("Tokens populated:", this.tokens);
+        this.updatetopTokens();
+        console.log("Top tokens updated:", this.topTokens);
+        this.createTokenBarChart();
+        console.log("Token bar chart created");
+       
+        // this.createFrequencyBarChart();
+        this.frequencyDistributionChart();
+        console.log("Frequency distribution chart created");
       },
       error => {
         console.log("--RESPONSIBLE-COMPARISON-|||-Error-in-tokenImportance", error);
@@ -568,5 +603,228 @@ export class ResponseComparisonComponent {
   }
   get llmExplainResponseArray(): Array<KeyValue<string, any>> {
     return Object.entries(this.llmExplainResponse).map(([key, value]) => ({ key, value }));
+  }
+  updatetopTokens() {
+    this.topTokens = this.tokens
+      .sort((a: any, b: any) => b.importance_score - a.importance_score);
+      this.topTokens = this.topTokens.slice(0, 10);
+      (console.log('topTokens:', this.topTokens));
+}
+ ngAfterViewChecked(): void {
+    if (this.isTokenCollapsed && this.tokens.length > 0) {
+      this.createTokenBarChart();
+      this.frequencyDistributionChart();
+ 
+    }
+  }
+  createTokenBarChart(): void {
+    if (!this.tokens || this.tokens.length === 0) {
+        console.log("No tokens available to create the chart.");
+        return;
+    }
+ 
+    const ctx = document.getElementById('myTokenBarChart1') as HTMLCanvasElement;
+    if (!ctx) {
+        console.error("Canvas element not found.");
+        return;
+    }
+ 
+    console.log("Creating token bar chart with tokens:", this.tokens);
+ 
+    // Extracting tokens and importance scores from tokens
+    const labels = this.tokens.map(token => token.token);
+    const data = this.tokens.map(token => token.importance_value);
+ 
+    const backgroundColorPlugin = {
+        beforeDraw: (chart: Chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            if (ctx) {
+                const chartArea = chart.chartArea;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = '#c1d1f1a0';
+                ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+                ctx.restore();
+            }
+        }
+    };
+ 
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tokens',
+                data: data,
+                backgroundColor: '#2ca02c',
+                borderColor: '#2ca02c',
+                borderWidth: 1
+            }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top', // You can adjust position as per your preference (top, bottom, left, right)
+          labels: {
+          generateLabels: function(chart) {
+          return [{
+            text: 'Tokens', // Custom label for green bars
+            fillStyle: '#2ca02c', // Color of the bars (green)
+            strokeStyle: '#2ca02c', // Border color (green)
+          }];
+        }
+      }
+          }
+          },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Tokens'
+          }
+          },
+          y: {
+            grid: {
+              //display: false
+            },
+            beginAtZero: true,
+            min: 0,
+            max: 1,
+            ticks: {
+              stepSize: 0.2
+            },
+            title: {
+              display: true,
+              text: 'Importance Score'
+          }
+          }
+        }
+      }
+    });
+  }
+  frequencyDistributionChart(): void {
+    if (!this.tokens || this.tokens.length === 0) {
+        console.log("No tokens available to create the chart.");
+        return;
+    }
+ 
+    const ctx = document.getElementById('myDistributionBarChart1') as HTMLCanvasElement;
+    if (!ctx) {
+        console.error("Canvas element not found.");
+        return;
+    }
+ 
+    console.log("Creating frequency distribution chart with tokens:", this.tokens);
+ 
+    // Group frequencies into specified ranges, starting with '0'
+    const ranges = ['0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0'];
+    const rangeCounts = { '0': 0, '0.1': 0, '0.2': 0, '0.3': 0, '0.4': 0, '0.5': 0, '0.6': 0, '0.7': 0, '0.8': 0, '0.9': 0, '1.0': 0 };
+ 
+    this.tokens.forEach((token: any) => {
+      const value = token.importance_value;
+      if (value === 0) {
+          rangeCounts['0']++;
+      } else if (value > 0 && value < 0.1) {
+          rangeCounts['0.1']++;
+      } else if (value >= 0.1 && value < 0.2) {
+          rangeCounts['0.2']++;
+      } else if (value >= 0.2 && value < 0.3) {
+          rangeCounts['0.3']++;
+      } else if (value >= 0.3 && value < 0.4) {
+          rangeCounts['0.4']++;
+      } else if (value >= 0.4 && value < 0.5) {
+          rangeCounts['0.5']++;
+      } else if (value >= 0.5 && value < 0.6) {
+          rangeCounts['0.6']++;
+      } else if (value >= 0.6 && value < 0.7) {
+          rangeCounts['0.7']++;
+      } else if (value >= 0.7 && value < 0.8) {
+          rangeCounts['0.8']++;
+      } else if (value >= 0.8 && value < 0.9) {
+          rangeCounts['0.9']++;
+      } else if (value >= 0.9 && value <= 1.0) {
+          rangeCounts['1.0']++;
+      }
+    });
+ 
+    const data = Object.values(rangeCounts) as number[];
+ 
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ranges,
+          datasets: [
+              {
+                  label: 'Distribution of Importance Scores',
+                  data: data,
+                  backgroundColor: '#1f77b4',
+                  borderColor: '#1f77b4',
+                  borderWidth: 1,
+                  order: 2 // This dataset is behind the line
+              },
+              {
+                  label: 'Frequency Line',
+                  data: data,
+                  type: 'line',
+                  borderColor: 'red',
+                  borderWidth: 2,
+                  fill: false,
+                  pointRadius: 0,
+                  tension: 0.4,
+                  order: 1 // This dataset is in front of the bars
+              }
+          ]
+      },
+      options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                generateLabels: function(chart) {
+                  return [
+                    {
+                      text: 'Distribution of Importance Scores', // Custom label for blue
+                      fillStyle: '#1f77b4', // Color of the bar (blue)
+                      strokeStyle: '#1f77b4', // Border color (blue)
+                    },
+                    {
+                      text: 'Frequency Line', // Custom label for red line
+                      fillStyle: 'red', // Color of the line (red)
+                      strokeStyle: 'red', // Border color (red)
+                    }
+                  ];
+                }
+              }
+          }
+          },
+          scales: {
+              x: {
+                  grid: {
+                      display: false
+                  },
+                  title: {
+                      display: true,
+                      text: 'Importance Score Range'
+                  }
+              },
+              y: {
+                  beginAtZero: true,
+                  min: 0,
+                  title: {
+                      display: true,
+                      text: 'Frequency'
+                  },
+                  ticks: {
+                      stepSize: 1
+                  }
+              }
+          }
+      }
+    });
   }
 }

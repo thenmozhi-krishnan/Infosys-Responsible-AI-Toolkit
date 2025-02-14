@@ -48,7 +48,7 @@ export class AddDataModelComponent {
   
   constructor(
     public dialogRef: MatDialogRef<AddDataModelComponent>,
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,public nonceService:NonceService
@@ -211,7 +211,7 @@ export class AddDataModelComponent {
       this.selectedDataFile = this.demoFile[i];
       fileData.append('DataFile', this.selectedDataFile);
     }
-    this.http.post(this.addData,fileData).subscribe((res: any)=>{
+    this.https.post(this.addData,fileData).subscribe((res: any)=>{
       this.resetForm();
       this.spinner = false;
       this._snackBar.open(res, "Close", {
@@ -258,7 +258,7 @@ export class AddDataModelComponent {
       this.selectedDataFile = this.demoFile[i];
       fileData.append('DataFile', this.selectedDataFile);
     }
-    this.http.patch(this.updateData,fileData).subscribe((res:any)=>{
+    this.https.patch(this.updateData,fileData).subscribe((res:any)=>{
       this.spinner = false;
       this.resetForm();
       this._snackBar.open("Data Updated", "Close", {

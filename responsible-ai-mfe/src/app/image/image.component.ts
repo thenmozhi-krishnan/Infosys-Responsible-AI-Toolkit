@@ -117,7 +117,7 @@ export class ImageComponent {
   constructor(
     private imageService: ImageService,
     public _snackBar: MatSnackBar,
-    private http: HttpClient,
+    private https: HttpClient,
     public dialog: MatDialog,
     private fb: FormBuilder,public nonceService:NonceService
   ) {
@@ -313,9 +313,15 @@ export class ImageComponent {
     fileData.append('magnification', 'false');
     fileData.append('rotationFlag', 'false');
     fileData.append('image', this.selectedFile);
-    fileData.append('portfolio', this.portfolioName_value);
-    fileData.append('account', this.accountName_value);
-    fileData.append('exclusionList', this.exclusionList_value);
+    if (this.portfolioName_value && this.portfolioName_value.trim() !== '') {
+      fileData.append('portfolio', this.portfolioName_value);
+    }
+    if (this.accountName_value && this.accountName_value.trim() !== '') {
+      fileData.append('account', this.accountName_value);
+    }
+    if (this.exclusionList_value && this.exclusionList_value.trim() !== '') {
+      fileData.append('exclusionList', this.exclusionList_value);
+      }
 
     profImagefileData.append('image', this.selectedFile);
     // for fairness
@@ -488,9 +494,13 @@ export class ImageComponent {
     const fileData1 = new FormData();
     this.selectedFile = this.demoFile[0];
     fileData1.append('image', this.selectedFile);
-    fileData1.append('portfolio', this.portfolioName_value);
-    fileData1.append('account', this.accountName_value);
-    this.http.post(this.profImageAnalyse, fileData1).subscribe(
+    if (this.portfolioName_value && this.portfolioName_value.trim() !== '') {
+      fileData1.append('portfolio', this.portfolioName_value);
+    }
+    if (this.accountName_value && this.accountName_value.trim() !== '') {
+      fileData1.append('account', this.accountName_value);
+    }
+    this.https.post(this.profImageAnalyse, fileData1).subscribe(
       (data: any) => {
         console.log(data);
         this.imageOutput = true;
@@ -520,7 +530,7 @@ export class ImageComponent {
     const fileData1 = new FormData();
     this.selectedFile = this.demoFile[0];
     fileData1.append('image', this.selectedFile);
-    this.http.post(this.imageExplainabilityUrl, fileData1).subscribe((data: any) => {
+    this.https.post(this.imageExplainabilityUrl, fileData1).subscribe((data: any) => {
       // this.imageOutput = true
       // this.imageOutput = false;
       this.imagePath = data.img;
@@ -572,7 +582,7 @@ export class ImageComponent {
         this.selectedFile = this.demoFile[i];
         attackForm.append('DataFile', this.selectedFile);
       }
-      this.http.post(this.security_yolo_attack, attackForm, { responseType: 'blob' }).subscribe((resp: Blob) => {
+      this.https.post(this.security_yolo_attack, attackForm, { responseType: 'blob' }).subscribe((resp: Blob) => {
         const filename = this.genFile();
         saveAs(resp, filename);
         const message = 'Your file has been downloaded. Please check your downloads folder.';
@@ -593,7 +603,7 @@ export class ImageComponent {
         this.selectedFile = this.demoFile[i];
         defenseForm.append('DataFile', this.selectedFile);
       }
-      this.http.post(this.security_yolo_defense, defenseForm, { responseType: 'blob' }).subscribe((resp: any) => {
+      this.https.post(this.security_yolo_defense, defenseForm, { responseType: 'blob' }).subscribe((resp: any) => {
         const filename = this.genFile();
         saveAs(resp, filename);
         this.spinner = false;
@@ -611,7 +621,7 @@ export class ImageComponent {
       this.openSnackBar('Please enter a prompt before submitting', 'Close',);
       return;
     }
-    this.http.post(this.fairness_image, formPayload).subscribe((res: any) => {
+    this.https.post(this.fairness_image, formPayload).subscribe((res: any) => {
       this.fairness_response = res;
       this.imgOp = true;
       this.spinner = false;
@@ -694,7 +704,7 @@ export class ImageComponent {
     this.file = this.files[0];
     console.log("Files[0]",this.files[0] )
     // to validate file SAST
-    const allowedTypes = ['image/png', 'image/jfif', 'image/jpg'];
+    const allowedTypes = ['image/png', 'image/jfif', 'image/jpg','image/jpeg'];
     for(let i =0; i< this.files.length; i++){
       if (!allowedTypes.includes(this.files[i].type)) {
         this.openSnackBar('Please upload a valid image file', 'Close');

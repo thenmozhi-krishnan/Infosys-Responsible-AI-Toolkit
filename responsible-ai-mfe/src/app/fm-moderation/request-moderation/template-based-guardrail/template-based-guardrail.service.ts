@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 export class TemplateBasedGuardrailService {
   apiEndpoints: any = {};
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   fetchApiUrl() {
     let { ip_port } = this.retrieveLocalStorageData();
@@ -36,16 +36,16 @@ export class TemplateBasedGuardrailService {
   }
 
   evalLLM(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.llm_eval, payload);
+    return this.https.post(this.apiEndpoints.llm_eval, payload);
   }
 
   multiModal(payload: any): Observable<any> {
     console.log('MultiModal Payload ', payload);
     console.log('URL Multimodal', this.apiEndpoints.multimodal);
-    return this.http.post(this.apiEndpoints.multimodal, payload);
+    return this.https.post(this.apiEndpoints.multimodal, payload);
   }
 
   contentDetector(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.textDetector, payload);
+    return this.https.post(this.apiEndpoints.textDetector, payload);
   }
 }

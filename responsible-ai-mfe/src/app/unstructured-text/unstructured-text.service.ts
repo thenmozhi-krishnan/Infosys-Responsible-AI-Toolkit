@@ -13,10 +13,10 @@ import { Observable } from 'rxjs';
 })
 export class UnstructuredTextService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   getallLotDetalils(url: any):Observable<any> {
-    return this.http.get(url)
+    return this.https.get(url)
   }
   
 }

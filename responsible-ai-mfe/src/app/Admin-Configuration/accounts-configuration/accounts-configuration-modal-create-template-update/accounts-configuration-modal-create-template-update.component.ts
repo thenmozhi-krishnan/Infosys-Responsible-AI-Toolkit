@@ -19,7 +19,7 @@ import { UserValidationService } from 'src/app/services/user-validation.service'
   styleUrls: ['./accounts-configuration-modal-create-template-update.component.css']
 })
 export class AccountsConfigurationModalCreateTemplateUpdateComponent {
-  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalCreateTemplateUpdateComponent>, public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,public nonceService:NonceService,private validationService:UserValidationService,
+  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalCreateTemplateUpdateComponent>, public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,public nonceService:NonceService,private validationService:UserValidationService,
      @Inject(MAT_DIALOG_DATA) public data: { id: any }) {
     this.fromCreation();
   }
@@ -202,8 +202,8 @@ selectRecognizertype3() {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    // this.http.patch("https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/rai/admin/addTempMap", payload, { headers }).subscribe((res:any)=>{
-    this.http.patch(this.template_admin_update_addTempMap, payload, { headers }).subscribe
+    // this.https.patch("https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/rai/admin/addTempMap", payload, { headers }).subscribe((res:any)=>{
+    this.https.patch(this.template_admin_update_addTempMap, payload, { headers }).subscribe
     ((res:any)=>{
       console.log("res===",res)
       // this.dialogRef.close();
@@ -229,9 +229,9 @@ selectRecognizertype3() {
   getTemplateDetail(){
     
     
-    // this.http.get(this.getUrl).subscribe
+    // this.https.get(this.getUrl).subscribe
     // const getTemplateDetailLocalUrl="http://10.68.120.127:30016/api/v1/rai/admin/getCustomeTemplate/"
-    this.http.get(this.customTemplateGetUrl+this.userId).subscribe
+    this.https.get(this.customTemplateGetUrl+this.userId).subscribe
     ((res: any) => {
      
       this.result = res
@@ -268,18 +268,14 @@ selectRecognizertype3() {
 
   getLogedInUser() {
     let role = localStorage.getItem('role');
-    console.log("role267===",role)
-    
-  
+    console.log("role267===",role)  
     if (window && window.localStorage && typeof localStorage !== 'undefined') {
-      const x = localStorage.getItem("userid")
+      const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
       if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
-        this.userId = JSON.parse(x)
-        console.log(" userId", this.userId)
-        return JSON.parse(x)
+        this.userId = x ;
       }
-
       console.log("userId", this.userId)
+      
     }
   }
 
@@ -311,8 +307,7 @@ selectRecognizertype3() {
 
   ngOnInit(): void {
     let ip_port: any
-
-    let user = this.getLogedInUser()
+    this.getLogedInUser()
 
     ip_port = this.getLocalStoreApi()
     
@@ -347,8 +342,8 @@ selectRecognizertype3() {
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-    // this.http.post("https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/rai/admin/getTempMap", body.toString(), { headers }).subscribe
-    this.http.post(this.template_admin_get_selected_getTempMap, body.toString(), { headers }).subscribe
+    // this.https.post("https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/rai/admin/getTempMap", body.toString(), { headers }).subscribe
+    this.https.post(this.template_admin_get_selected_getTempMap, body.toString(), { headers }).subscribe
     ((res:any)=>{
       // this.responseArr=res
       this.mapId=res[0].mapId

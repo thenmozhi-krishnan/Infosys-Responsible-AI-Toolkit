@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class methods {
 
 
-    constructor(private http: HttpClient, public _snackBar: MatSnackBar, private recognizerService: RecognizersService) { }
+    constructor(private https: HttpClient, public _snackBar: MatSnackBar, private recognizerService: RecognizersService) { }
 
     // static hi(): string {
     //     // Your date formatting logic here
@@ -19,13 +19,13 @@ export class methods {
     delete(api: any, headers: any, api2: any) {
         console.log("in delete method")
 
-        // this.http.delete(this.admin_list_rec_get_list_Delete_DataRecogGrp, options).subscribe
+        // this.https.delete(this.admin_list_rec_get_list_Delete_DataRecogGrp, options).subscribe
         this.recognizerService.deleteRecognizer(api, headers).subscribe
             ((res: any) => {
                 console.log("delete Resonce" + res.status)
                 if (res.status === "True") {
 
-                    // this.http.get(this.admin_list_rec_get_list).subscribe
+                    // this.https.get(this.admin_list_rec_get_list).subscribe
                     //     ((res: any) => {
                     //         this.dataSource = []
                     //         // this.showSpinner1=false;
@@ -93,7 +93,7 @@ export class methods {
 
     //  getRecognizers(api: any) {
     //     let dataSource: any = []
-    //     dataSource =  this.http.get(api).subscribe((res: any) => {
+    //     dataSource =  this.https.get(api).subscribe((res: any) => {
     //             let dataSource1:any = []
 
     //             res.RecogList.forEach((i: any) => {
@@ -135,7 +135,7 @@ export class methods {
 
     // getRecognizers(api: any) {
     //     let dataSource: any = []
-    //     dataSource = this.http.get(api).subscribe({
+    //     dataSource = this.https.get(api).subscribe({
     //         next: (res: any) => {
     //             let dataSource1: any = []
 
@@ -168,7 +168,7 @@ export class methods {
 
     async getDataSource(api: string): Promise<any[]> {
         try {
-            const res: any = await this.http.get(api).pipe(map((res: any) => {
+            const res: any = await this.https.get(api).pipe(map((res: any) => {
                 let dataSource: any = [];
                 res.RecogList.forEach((i: any) => {
                     console.log(i.isPreDefined + "i print");

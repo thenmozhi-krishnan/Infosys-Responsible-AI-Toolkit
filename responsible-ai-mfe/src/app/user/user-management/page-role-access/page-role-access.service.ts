@@ -12,12 +12,12 @@ import { Observable } from 'rxjs';
 })
 export class PageRoleAccessService {
   accessiblePages : any ;
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   // getAccessiblePages(url:any, selectedRole:any): Observable<any> {
   //   console.log("URL", url)
   //   console.log("Selected Role", selectedRole)
-  //   let xyz = this.http.get<any>(url, selectedRole);
+  //   let xyz = this.https.get<any>(url, selectedRole);
   //   console.log("xyz", xyz)
   //   return xyz;
   // }
@@ -25,7 +25,7 @@ export class PageRoleAccessService {
     // Add the selectedRole as a query parameter
     // url = "http://localhost:30019/v1/rai/backend/pageauthoritynew"
     const params = new HttpParams().set('role', selectedRole);
-    return this.http.get<any>(url, { params });
+    return this.https.get<any>(url, { params });
   }
 
   // updateRoleAccess(role: string, pages: any): void {
@@ -35,7 +35,7 @@ export class PageRoleAccessService {
   //     pages: pages
   //   };
 
-  //   this.http.patch(url, data, {
+  //   this.https.patch(url, data, {
   //     headers: {
   //       'Content-Type': 'application/json'
   //     }
@@ -55,7 +55,7 @@ export class PageRoleAccessService {
       pages: pages
     };
 
-    return this.http.patch(url, data, {
+    return this.https.patch(url, data, {
       headers: {
         'Content-Type': 'application/json'
       }

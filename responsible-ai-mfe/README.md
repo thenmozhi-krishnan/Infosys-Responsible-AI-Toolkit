@@ -50,6 +50,8 @@ After installing Node & following above steps, you should be able to run the fol
 
                     3.	AUTHORITY_API: Endpoint for the page authority from the backend module, e.g., http://localhost:5000/v1/rai/backend/pageauthoritynew.
 
+                    4. AUTH_TOKEN: Set the auth token to "Bearer None".
+
 5.	The runLocally() method configures all values locally, while setDataFromENV()
      fetches configuration values from Nginx during server deployment.
 

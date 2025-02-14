@@ -8,6 +8,7 @@ export const urlList = {
   dicomfielpathurl: 'DICOMFILEPATHURL',
   masterurl: 'MASTERURL',
   enableInternetSearch: 'ENABLESEARCH',
-  authorityAPI: 'AUTHORITY_API'
+  authorityAPI: 'AUTHORITY_API',
+  authToken: 'AUTH_TOKEN'
 };
 

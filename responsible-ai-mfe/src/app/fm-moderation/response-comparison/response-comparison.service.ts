@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 export class ResponseComparisonService {
   apiEndpoints: any = {};
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   // Get Local Storage Data
   fetchApiUrl() {
@@ -45,18 +45,18 @@ export class ResponseComparisonService {
 
   // HALLUCINATION APIS------------------
   hallucinateCOV(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.hall_cov, payload);
+    return this.https.post(this.apiEndpoints.hall_cov, payload);
   }
   hallucinateThot(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.hall_thot, payload);
+    return this.https.post(this.apiEndpoints.hall_thot, payload);
   }
   hallucinateCOT(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.hall_cot, payload);
+    return this.https.post(this.apiEndpoints.hall_cot, payload);
   }
 
   // OPEN AI APIS---------------------
   covgetApi(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.Moderationlayer_COV, {
+    return this.https.post(this.apiEndpoints.Moderationlayer_COV, {
       text: payload.text,
       complexity: payload.complexity,
       model_name: payload.model_name,
@@ -64,21 +64,21 @@ export class ResponseComparisonService {
     });
   }
   openAicotgetApi(payload :any): Observable<any> {
-    return this.http.post(this.apiEndpoints.Moderationlayer_openaiCOT, payload);
+    return this.https.post(this.apiEndpoints.Moderationlayer_openaiCOT, payload);
   }
   openAiTHOTApi(payload:any): Observable<any> {
-    return this.http.post(this.apiEndpoints.thotApi, payload);
+    return this.https.post(this.apiEndpoints.thotApi, payload);
   }
   tokenImportance(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.tokenImp, payload);
+    return this.https.post(this.apiEndpoints.tokenImp, payload);
   }
   serperResponse(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.serperApi,payload);
+    return this.https.post(this.apiEndpoints.serperApi,payload);
   }
   gotResponse(payload: any):Observable<any> {
-    return this.http.post(this.apiEndpoints.got,payload);
+    return this.https.post(this.apiEndpoints.got,payload);
   }
   llmExplain(payload: any): Observable<any> {
-    return this.http.post(this.apiEndpoints.llmExplain, payload);
+    return this.https.post(this.apiEndpoints.llmExplain, payload);
     }
 }

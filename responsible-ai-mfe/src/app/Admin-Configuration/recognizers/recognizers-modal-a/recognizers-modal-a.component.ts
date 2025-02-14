@@ -18,7 +18,7 @@ export class RecognizersModalAComponent {
   constructor(
     public dialogRef: MatDialogRef<RecognizersModalAComponent>,
     public _snackBar: MatSnackBar,
-    public http: HttpClient,
+    public https: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: { id: any; api: any; api2: any }
   ) {
     this.pagingConfig = {
@@ -45,7 +45,7 @@ export class RecognizersModalAComponent {
   getItemList(RecogGrpIdgg: any, api: any) {
     // this.copydataRecogGrpId = ""
     // this.copydataRecogGrpId = RecogGrpIdgg
-    this.http.post(api, { RecogId: RecogGrpIdgg }).subscribe(
+    this.https.post(api, { RecogId: RecogGrpIdgg }).subscribe(
       (res: any) => {
         console.log(res.DataEntities);
         this.dataSource1 = res.DataEntities;
@@ -78,8 +78,8 @@ export class RecognizersModalAComponent {
         EntityId: id,
       },
     };
-    // this.http.delete(this.admin_pattern_rec_delete_list, { headers }).subscribe
-    this.http.delete(this.data.api2, options).subscribe(
+    // this.https.delete(this.admin_pattern_rec_delete_list, { headers }).subscribe
+    this.https.delete(this.data.api2, options).subscribe(
       (res: any) => {
         console.log('delete Resonce' + res.status);
         if (res.status === 'True') {

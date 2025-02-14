@@ -33,7 +33,7 @@ export class TemplateMappingComponent {
   templateMappingGetUrl: any;
   Admin_getModMaps: any;
 
-  constructor (private fb: FormBuilder,public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,public validationService : UserValidationService){
+  constructor (private fb: FormBuilder,public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,public validationService : UserValidationService){
     this.form = this.fb.group({
       options: [null, Validators.required]
     });
@@ -589,7 +589,7 @@ subcategoryChange(event: MatSelectChange)
 
     console.log("payload===",payload)
     console.log("=============",this.templateMappingPostUrl)
-    this.http.post(this.templateMappingPostUrl,payload).subscribe((res)=>{
+    this.https.post(this.templateMappingPostUrl,payload).subscribe((res)=>{
       console.log("res=================",res)
       // this.CustomTemplateForm.reset()
       // this.tempalteArray=[]
@@ -633,9 +633,9 @@ subcategoryChange(event: MatSelectChange)
     // let urlx = `${url}${this.userId}`
     let urlx = `${this.customTemplateGetUrl}${this.userId}`
 
-    this.http.get(urlx, { params, headers: { 'accept': 'application/json' } })
+    this.https.get(urlx, { params, headers: { 'accept': 'application/json' } })
       .subscribe
-    // this.http.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
+    // this.https.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
     ((res: any) => {
      
       this.result = res
@@ -685,9 +685,9 @@ subcategoryChange(event: MatSelectChange)
     // let urlx = `${url}${this.userId}`
     let urlx = `${this.customTemplateGetUrl}${this.userId}`
 
-    this.http.get(urlx, { params, headers: { 'accept': 'application/json' } })
+    this.https.get(urlx, { params, headers: { 'accept': 'application/json' } })
       .subscribe
-    // this.http.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
+    // this.https.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
     ((res: any) => {
      
       this.result = res
@@ -737,9 +737,9 @@ subcategoryChange(event: MatSelectChange)
     // let urlx = `${url}${this.userId}`
     let urlx = `${this.customTemplateGetUrl}${this.userId}`
 
-    this.http.get(urlx, { params, headers: { 'accept': 'application/json' } })
+    this.https.get(urlx, { params, headers: { 'accept': 'application/json' } })
       .subscribe
-    // this.http.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
+    // this.https.get(this.customTemplateGetUrl+this.userId+this.category).subscribe
     ((res: any) => {
      
       this.result = res
@@ -784,20 +784,14 @@ subcategoryChange(event: MatSelectChange)
   getLogedInUser() {
     let role = localStorage.getItem('role');
     console.log("role267===",role)
-    
-  
     if (window && window.localStorage && typeof localStorage !== 'undefined') {
-      const x = localStorage.getItem("userid")
+      const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
       if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
-       const sanitizedUserId = JSON.parse(x)
-                // Sanitize userId
-                this.userId = JSON.parse(x)
-                console.log(" userId", this.userId)
-                return JSON.parse(x)
+        this.userId = x ;
       }
-
       console.log("userId", this.userId)
     }
+
   }
   sanitizeInput(input: any) {
      // Allow alphanumeric characters, @, and .
@@ -832,7 +826,7 @@ subcategoryChange(event: MatSelectChange)
       .set('portfolio',this.parPortfolio)
       .set('account', this.parAccount);
 
-    this.http.get(url, { params, headers: { 'accept': 'application/json' } })
+    this.https.get(url, { params, headers: { 'accept': 'application/json' } })
       .subscribe(
         (response:any) => {
           if (!response || (Array.isArray(response) && response.length === 0)) {
@@ -892,7 +886,7 @@ subcategoryChange(event: MatSelectChange)
     this.dropdownloader = true
     let ip_port: any
 
-    let user = this.getLogedInUser()
+  this.getLogedInUser()
 
     ip_port = this.getLocalStoreApi()
     

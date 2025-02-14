@@ -18,7 +18,7 @@ export class HomeComponent {
   master_url = urlList.masterurl;
   authorityAPI = urlList.authorityAPI;
   pages: any;
-  constructor(private elementRef: ElementRef,private renderer: Renderer2,public http: HttpClient,private homeService :HomeService,public roleService: RoleManagerService) {
+  constructor(private elementRef: ElementRef,private renderer: Renderer2,public https: HttpClient,private homeService :HomeService,public roleService: RoleManagerService) {
   }
   showSidebar = false;
   showComponent!:string;

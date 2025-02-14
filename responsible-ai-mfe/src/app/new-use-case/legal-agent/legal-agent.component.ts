@@ -36,7 +36,7 @@ export class LegalAgentComponent implements OnInit {
   totalItems: number = 0;
  
 
-  constructor (public _snackBar: MatSnackBar, private http: HttpClient, private snackBar: MatSnackBar,public nonceService:NonceService)
+  constructor (public _snackBar: MatSnackBar, private https: HttpClient, private snackBar: MatSnackBar,public nonceService:NonceService)
   {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
@@ -148,7 +148,7 @@ onTableDataChange(event: any) {
     this.selectedFile = this.files[0];
     fileData.append('file', this.selectedFile);
     fileData.append('user_id', this.user);
-    this.http.post(this.legalUpload ,fileData).subscribe((res: any)=>{
+    this.https.post(this.legalUpload ,fileData).subscribe((res: any)=>{
       this.getAllData();
       const message = res?.message;
       const action = "Close";
@@ -180,7 +180,7 @@ onTableDataChange(event: any) {
   }
   getAllData(){
     //this.getData = this.getData + '?user_id='+ this.user;
-    this.http.get(this.getData + '?user_id='+ this.user).subscribe
+    this.https.get(this.getData + '?user_id='+ this.user).subscribe
     ((res: any)=>{
       this.dataSource = res;
       this.onTableDataChange(this.currentPage);

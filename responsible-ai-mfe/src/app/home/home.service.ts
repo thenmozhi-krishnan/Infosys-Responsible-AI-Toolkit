@@ -12,11 +12,11 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 export class HomeService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   
   getConfigApiList(url:any): Observable<any> {
-    return this.http.get<any>(url);
+    return this.https.get<any>(url);
   }
 
 }

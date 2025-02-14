@@ -12,21 +12,21 @@ import { Observable } from 'rxjs';
 })
 export class RecognizersService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   deleteRecognizer(api:any ,headers: any): Observable<any> {
-    // return this.http.delete(`/api/recognizers/${id}`);
-    return this.http.delete(api,headers);
+    // return this.https.delete(`/api/recognizers/${id}`);
+    return this.https.delete(api,headers);
   }
 
    getRecognizers(api:any): Observable<any> {
-    return this.http.get<any>(api);
+    return this.https.get<any>(api);
    }
 
 
   // deletePost(api:any ,id: number): Observable<any> {
   //   console.log("in delete service")
-  //   return this.http.delete<any>(`${api}/posts/${id}`);
+  //   return this.https.delete<any>(`${api}/posts/${id}`);
   // }
 
 }

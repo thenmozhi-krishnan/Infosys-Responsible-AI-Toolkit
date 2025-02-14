@@ -22,7 +22,7 @@ export class RoleManagerService {
     accessiblePages: any;
     authorityAPI = urlList.authorityAPI;
     pages: any;
-    constructor(public http: HttpClient) { 
+    constructor(public https: HttpClient) { 
         // for AI PLATFORM
       if(localStorage.getItem("user") != null){
        const userRole = ["ROLE_ADMIN","ROLE_USER"]
@@ -103,7 +103,7 @@ export class RoleManagerService {
     }
     getPages(roles: string[]): Promise<string[]> {
         const promises = roles.map(role => {
-          return this.http.get<any>(`${this.authorityAPI}?role=${role}`)
+          return this.https.get<any>(`${this.authorityAPI}?role=${role}`)
             .toPromise()
             .then(response => {
               // Store pages in local storage

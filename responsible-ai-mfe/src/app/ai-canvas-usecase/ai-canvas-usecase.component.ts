@@ -61,7 +61,7 @@ export class AiCanvasUsecaseComponent implements OnChanges {
   constructor(private _snackBar: MatSnackBar,
     private _formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public http: HttpClient, private router: Router,
+    public https: HttpClient, private router: Router,
     private useCaseService:UseCaseServiceService,public nonceService:NonceService
     ) {
       // this.useCaseService.getAiCanvas.subscribe(msg => this.aicanvasEditData = msg)

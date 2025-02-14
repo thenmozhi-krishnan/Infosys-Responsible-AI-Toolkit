@@ -66,9 +66,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 <div *ngIf="roleService.checkPageExists('LLM-Benchmarking')">
                     <div class="custom-button d-flex align-items-center gap-2 p-3 px-3 homeNavOptions" (click)="toggleComponents('llm-benchmarking')">LLM BENCHMARKING</div>
                 </div>
-                <div *ngIf="roleService.checkPageExists('AI-Content-Detector')">
+                <!-- <div *ngIf="roleService.checkPageExists('AI-Content-Detector')">
                     <div class="custom-button d-flex align-items-center gap-2 p-3 px-3 homeNavOptions" (click)="toggleComponents('Ai-Content-Detector')">AI CONTENT DETECTOR</div>
-                </div>
+                </div> -->
                 <div *ngIf="roleService.checkPageExists('Document')">
                     <div class="custom-button d-flex align-items-center gap-2 p-3 px-3 homeNavOptions" (click)="toggleComponents('Document')">DOCUMENTS</div>
                 </div>

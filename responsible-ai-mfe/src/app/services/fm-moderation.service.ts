@@ -3,10 +3,11 @@
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */ 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { NonceService } from '../nonce.service';
+import { urlList } from '../urlList';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class FmModerationService {
   roleML: boolean = false;
   loggedINuserId: any;
 
-  constructor(private http: HttpClient,public nonceService:NonceService) { }
+  constructor(private https: HttpClient,public nonceService:NonceService) { }
 
   fetchApiUrl() {
     let { ip_port } = this.retrieveLocalStorageData();
@@ -153,23 +154,25 @@ export class FmModerationService {
 
   // APIS
   getTemplates() {
-    return this.http.get(this.apiEndpoints.GetTemplates+this.loggedINuserId);
-    // return this.http.get("http://10.66.155.13:30016/api/v1/rai/admin/getAccTemplate"+'/'+this.loggedINuserId);
+    return this.https.get(this.apiEndpoints.GetTemplates+this.loggedINuserId);
+    // return this.https.get("http://10.66.155.13:30016/api/v1/rai/admin/getAccTemplate"+'/'+this.loggedINuserId);
   }
 
   moderationGetTemplates() {
     console.log(this.apiEndpoints.Moderationlayer_getTemplates+'/'+this.loggedINuserId);
-    return this.http.get(this.apiEndpoints.Moderationlayer_getTemplates+'/'+this.loggedINuserId);
-    // return this.http.get("http://10.66.155.13:30016/api/v1/rai/admin/getAccTemplate"+'/'+this.loggedINuserId);
+    return this.https.get(this.apiEndpoints.Moderationlayer_getTemplates+'/'+this.loggedINuserId);
+    // return this.https.get("http://10.66.155.13:30016/api/v1/rai/admin/getAccTemplate"+'/'+this.loggedINuserId);
   }
 
-  getFMService(endpoint: string, data: any,fmlocalselected:any) {
+  getFMService(endpoint: string, data: any, fmlocalselected: any, p0?: unknown) {
     console.log(endpoint,"endpoint","DATA:", data,)
-
+    const value = urlList.authToken
+    const headers = new HttpHeaders
+    ({'Authorization': value });
     console.log("FM VALUE: ", fmlocalselected);
     if (fmlocalselected == false) {
       console.log("DEPLOYED API TRIGGERED");
-      return this.http.post(endpoint, data);
+      return this.https.post(endpoint, data,{ headers: headers});
     } else if (fmlocalselected == true) {
       console.log("LOCAL API TRIGGERED");
 

@@ -51,7 +51,7 @@ export class UseCaseParentComponent {
   constructor(private useCaseService: UseCaseServiceService,
     private _formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public http: HttpClient, private router: Router,
+    public https: HttpClient, private router: Router,
     private _snackBar: MatSnackBar,
 
   ) {
@@ -245,7 +245,7 @@ export class UseCaseParentComponent {
 
     this.creatUsecsse(payload, aiCanvaspayload, raiCanvasPayload, this.questionPayload)
 
-    // this.http.post(this.createUseCase, {
+    // this.https.post(this.createUseCase, {
 
   }
 
@@ -314,7 +314,7 @@ export class UseCaseParentComponent {
   }
 
   creatUsecsse(payload: any, aiCanvaspayload: any, raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.createUseCase, payload).subscribe(
+    this.https.post(this.createUseCase, payload).subscribe(
 
       (res: any) => {
         // console.log("Payload===",payload)
@@ -351,7 +351,7 @@ export class UseCaseParentComponent {
   }
 
   aiCanvasSubmit(aiCanvaspayload: any, raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.aiCanvasSubmitResponse, aiCanvaspayload).subscribe(
+    this.https.post(this.aiCanvasSubmitResponse, aiCanvaspayload).subscribe(
       (res: any) => {
         console.log("Successfully Added AI canvas====", res);
 
@@ -404,7 +404,7 @@ export class UseCaseParentComponent {
   }
 
   raiCanvasSubmit(raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.raiCanvasSubmitResponse, raiCanvasPayload).subscribe(
+    this.https.post(this.raiCanvasSubmitResponse, raiCanvasPayload).subscribe(
       (res: any) => {
         console.log(res);
         if (res == "Added Successfully" || res == " Updated Successfully...") {
@@ -458,7 +458,7 @@ export class UseCaseParentComponent {
       // "data":this.questionPayload
       "data": payload
     }
-    this.http.post(this.submit_Response, payload1).subscribe(
+    this.https.post(this.submit_Response, payload1).subscribe(
 
       (res: any) => {
         // console.log("Payload===",payload)

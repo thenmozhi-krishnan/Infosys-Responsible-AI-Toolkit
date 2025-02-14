@@ -32,7 +32,7 @@ export class AiContentDetectorComponent implements OnInit {
   isAIChecked: boolean = false;
   isHumanChecked: boolean = false;
   public safeTemplateData!: SafeHtml; 
-  constructor(private cdr: ChangeDetectorRef, private logger: NGXLogger, public http: HttpClient, private _snackBar: MatSnackBar,private sanitizer: DomSanitizer, ) { }
+  constructor(private cdr: ChangeDetectorRef, private logger: NGXLogger, public https: HttpClient, private _snackBar: MatSnackBar,private sanitizer: DomSanitizer, ) { }
 
   ngOnInit(): void {
     if (localStorage.getItem("res") != null) {
@@ -114,7 +114,7 @@ export class AiContentDetectorComponent implements OnInit {
           text: this.Prompt
         }
         this.logger.log("User provided payload", JSON.stringify(body));
-        this.http.post(this.textDetector, JSON.stringify(body), { headers: new HttpHeaders().set('Content-Type', 'application/json') }).subscribe(
+        this.https.post(this.textDetector, JSON.stringify(body), { headers: new HttpHeaders().set('Content-Type', 'application/json') }).subscribe(
           (res: any) => {
             this.logger.info("Api call has been successfull");
             this.response = res;

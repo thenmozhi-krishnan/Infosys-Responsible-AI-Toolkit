@@ -16,7 +16,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ApplicationConfigurationsComponent implements OnInit {
 
-  constructor(private _snackBar: MatSnackBar, public http: HttpClient, private modalservice: NgbModal,private cdr: ChangeDetectorRef) { }
+  constructor(private _snackBar: MatSnackBar, public https: HttpClient, private modalservice: NgbModal,private cdr: ChangeDetectorRef) { }
 
   public ip_port : any
 
@@ -39,7 +39,7 @@ export class ApplicationConfigurationsComponent implements OnInit {
     console.log(e.target.checked);
     console.log(roleV);
 
-    this.http.patch(this.admin_fm_admin_Update_OpenAiStatus,{isOpenAI: e.target.checked,role: roleV}).subscribe
+    this.https.patch(this.admin_fm_admin_Update_OpenAiStatus,{isOpenAI: e.target.checked,role: roleV}).subscribe
       ((res: any) => {
         
           if (res.isOpenAI == true) {
@@ -60,7 +60,7 @@ export class ApplicationConfigurationsComponent implements OnInit {
           }
           this.cdr.detectChanges();
 
-          this.http.get(this.admin_fm_admin_get_OpenAiStatusandRoll).subscribe
+          this.https.get(this.admin_fm_admin_get_OpenAiStatusandRoll).subscribe
       ((res: any) => {
         this.OpenAitoogleValue = res.isOpenAI
         this.dataSource = res.result
@@ -118,7 +118,7 @@ export class ApplicationConfigurationsComponent implements OnInit {
     this.OpenAitoogleNewValue = !e.target.checked;
     console.log(e.target.checked);
     console.log(roleV);
-    this.http.patch(this.admin_fm_admin_Update_OpenSelfReminderStatus,{selfReminder: e.target.checked,role: roleV}).subscribe // 
+    this.https.patch(this.admin_fm_admin_Update_OpenSelfReminderStatus,{selfReminder: e.target.checked,role: roleV}).subscribe // 
      ((res: any) => {
         
           if (res.isOpenAI == true) {
@@ -184,7 +184,7 @@ export class ApplicationConfigurationsComponent implements OnInit {
     this.admin_fm_admin_Update_OpenSelfReminderStatus =this.ip_port.result.Admin + this.ip_port.result.Admin_UpdateReminder     // + "/api/v1/rai/admin/UpdateReminder"
     this.admin_fm_admin_Update_OpenNemoStatus =this.ip_port.result.Admin + this.ip_port.result.Admin_UpdateReminder      //+ "/api/v1/rai/admin/UpdateNemo"
 
-    this.http.get(this.admin_fm_admin_get_OpenAiStatusandRoll).subscribe
+    this.https.get(this.admin_fm_admin_get_OpenAiStatusandRoll).subscribe
       ((res: any) => {
         this.OpenAitoogleValue = res.isOpenAI
         this.dataSource = res.result

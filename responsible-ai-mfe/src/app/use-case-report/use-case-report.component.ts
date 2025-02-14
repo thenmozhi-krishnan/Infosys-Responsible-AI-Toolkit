@@ -29,7 +29,7 @@ export class UseCaseReportComponent {
   constructor(private _snackBar: MatSnackBar,
     private _formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public http: HttpClient, private router: Router,
+    public https: HttpClient, private router: Router,
     private useCaseService:UseCaseServiceService) {}
 
   getAllBatches(){
@@ -38,10 +38,10 @@ export class UseCaseReportComponent {
 
   onSubmit() {
     console.log("the user id ", this.userId)
-    // this.http.get(this.getRiskDash+this.userId).subscribe
+    // this.https.get(this.getRiskDash+this.userId).subscribe
     // this.useCaseService.getMessage.subscribe(msg => this.UseCaseName = msg)
-    // this.http.get(this.Ques_Risk_Dashboard + '"' + this.userId + '"/'+this.UseCaseName).subscribe
-    this.http.get(this.Ques_Risk_Dashboard + '"' + this.userId + '"/'+this.useCaseName).subscribe
+    // this.https.get(this.Ques_Risk_Dashboard + '"' + this.userId + '"/'+this.UseCaseName).subscribe
+    this.https.get(this.Ques_Risk_Dashboard + '"' + this.userId + '"/'+this.useCaseName).subscribe
       ((res: any) => {
 
         if (res == "No Record Found...") {

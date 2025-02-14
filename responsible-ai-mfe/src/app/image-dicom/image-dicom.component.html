@@ -69,7 +69,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             <div class="mr-2">
                 <p class="outputLabel mb-1">Original Image</p>
                 <div class="card outputImageCard position-relative">
-                    <img src="{{res1}}" class="card-img" alt="...">
+                    <img [src]="res1" class="card-img" alt="...">
                     <button mat-icon-button class="expand-button position-absolute top-0 end-0" (click)="openDialog(res1)">
                         <mat-icon>fullscreen</mat-icon>
                     </button>
@@ -78,7 +78,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             <div>
                 <p class="outputLabel mb-1">Redacted Image</p>
                 <div class="card outputImageCard position-relative">
-                    <img src="{{res2}}" class="card-img" alt="...">
+                    <img [src]="res2" class="card-img" alt="...">
                     <button mat-icon-button class="expand-button position-absolute top-0 end-0" (click)="openDialog(res2)">
                         <mat-icon>fullscreen</mat-icon>
                     </button>

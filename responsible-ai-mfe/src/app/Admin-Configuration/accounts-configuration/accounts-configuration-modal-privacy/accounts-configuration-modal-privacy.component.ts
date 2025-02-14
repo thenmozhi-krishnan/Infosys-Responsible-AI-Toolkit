@@ -20,7 +20,7 @@ import { NonceService } from 'src/app/nonce.service';
   styleUrls: ['./accounts-configuration-modal-privacy.component.css']
 })
 export class AccountsConfigurationModalPrivacyComponent {
-  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalPrivacyComponent>, public _snackBar: MatSnackBar, public http: HttpClient,public nonceService:NonceService
+  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalPrivacyComponent>, public _snackBar: MatSnackBar, public https: HttpClient,public nonceService:NonceService
     , @Inject(MAT_DIALOG_DATA) public data: { id: any, ThresholdScore: any, }) {
       this.formCreation();
     this.pagingConfig = {
@@ -182,7 +182,7 @@ selectRecognizertype() {
     // element.activate = !element.activate;
 
 
-    this.http.post(this.admin_list_AccountMaping_Acc_PrivacyEncrypt, { accMasterId: this.data.id, dataRecogGrpId: RecogId, isHashify: element.checked }).subscribe
+    this.https.post(this.admin_list_AccountMaping_Acc_PrivacyEncrypt, { accMasterId: this.data.id, dataRecogGrpId: RecogId, isHashify: element.checked }).subscribe
       ((res: any) => {
         if (res.status === "True") {
 
@@ -212,7 +212,7 @@ selectRecognizertype() {
     let payload = {
       accMasterId: this.data.id
     }
-    this.http.post(this.admin_list_AccountMaping_AccMasterList_dataList, payload).subscribe((response: any) => {
+    this.https.post(this.admin_list_AccountMaping_AccMasterList_dataList, payload).subscribe((response: any) => {
       console.log(response);
       this.isLoading = false;
 
@@ -227,7 +227,7 @@ selectRecognizertype() {
     this.thresholdDisplay = valuex
     console.log("slide value",valuex)
     // this.showSpinner1 = true;
-    this.http.patch(this.admin_list_AccountMaping_Acc_ThresholdUpdate, { accMasterId: this.data.id, thresholdScore: valuex }).subscribe
+    this.https.patch(this.admin_list_AccountMaping_Acc_ThresholdUpdate, { accMasterId: this.data.id, thresholdScore: valuex }).subscribe
       ((res: any) => {
         if (res.status === "True") {
           // this.showSpinner1 = false;
@@ -290,7 +290,7 @@ selectRecognizertype() {
   // 
   editReconList:any[] = []
   addRecognizerInList() {
-    this.http.get(this.admin_list_rec_get_list).subscribe
+    this.https.get(this.admin_list_rec_get_list).subscribe
       ((res: any) => {
         this.editReconList = (getDifference(res.RecogList, this.dataSource2));
 
@@ -369,7 +369,7 @@ selectRecognizertype() {
       dataRecogGrpId: listShowlist1
     }
 
-    this.http.patch(this.admin_list_AccountMaping_AccMasterList_Update_Data, { dataGrpList: this.accountUpdateForm.value.updateRecList, accMasterId: this.data.id }).subscribe
+    this.https.patch(this.admin_list_AccountMaping_AccMasterList_Update_Data, { dataGrpList: this.accountUpdateForm.value.updateRecList, accMasterId: this.data.id }).subscribe
       ((res: any) => {
         console.log("vale updated in " + res.status)
         if (res.status === "True") {
@@ -438,7 +438,7 @@ selectRecognizertype() {
         accMasterId: this.data.id
       },
     };
-    this.http.delete(this.admin_list_AccountMaping_AccMasterList_Delete_Data, options).subscribe
+    this.https.delete(this.admin_list_AccountMaping_AccMasterList_Delete_Data, options).subscribe
       ((res: any) => {
         if (res.status === "True") {
           const message = "Account Data Deleted Successfully"

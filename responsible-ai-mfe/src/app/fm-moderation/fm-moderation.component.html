@@ -94,7 +94,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                       }" (click)="changeTab('Privacy Result')" *ngIf="((this.optionarr.includes('Privacy')) && this.optionFlag == true && (this.tenantarr.includes('Privacy')))">Privacy</p>
                     <p class="HeadingLabel" role="button" [ngClass]="{
                         'activeTab': activeTab === 'Profanity'
-                      }" (click)="changeTab('Profanity')" *ngIf="((this.optionarr.includes('Safety')) && this.optionFlag == true && (this.tenantarr.includes('Safety')))">Safety</p>
+                      }" (click)="changeTab('Profanity')" *ngIf="((this.optionarr.includes('Profanity')) && this.optionFlag == true && (this.tenantarr.includes('Profanity')))">Safety</p>
                     <p class="HeadingLabel" role="button" [ngClass]="{
                         'activeTab': activeTab === 'Explainability'
                       }" (click)="changeTab('Explainability')" *ngIf="((this.optionarr.includes('Explainability')) && this.optionFlag == true && (this.tenantarr.includes('Explainability')))">Explainability
@@ -383,7 +383,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                                 </div>
                                             </div>
                                         </div>
-                                        <div *ngIf="option == 'Safety'">
+                                        <div *ngIf="option == 'Profanity'">
                                             <!-- <div class="mb-2">
                                                 <input class="form-control shadow-none inputSMfont" type="text" name="portfolioNameProf" ngModel placeholder="Portfolio Name" />
                                             </div>

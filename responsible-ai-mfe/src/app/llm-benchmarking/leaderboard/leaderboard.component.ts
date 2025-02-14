@@ -16,7 +16,7 @@ export class LeaderboardComponent {
   isLoadingTable = true;
   LeaderboardLLMendpoint: any = '';
   constructor(
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
     // private logger: NGXLogger
@@ -39,8 +39,8 @@ export class LeaderboardComponent {
     this.LLMLeaderboardTruthfullness = this.ip_port.result.SecurityLLMLeaderboard + this.ip_port.result.SecurityLLMTruthfullnessLScore;
     this.LeaderboardLLMendpoint = this.ip_port.result.SecurityLLMLeaderboard + this.ip_port.result.LeaderboardEndpoint;
     this.getFairnessLeaderboard();
-    this.getExternalRobustnessScore();
-    this.getExternalAttackScore();
+    // this.getExternalRobustnessScore();
+    // this.getExternalAttackScore();
     this.getPrivacyScore();
     // this.getSafetyScore();
     this.getEthicsScore();
@@ -68,9 +68,9 @@ export class LeaderboardComponent {
     });
   }
 
-  activeTable = 'Model Robustness'
+  activeTable = 'Model Fairness'
   options = [
-    { name: 'Model Robustness', value: 'Model Robustness' },
+    // { name: 'Model Robustness', value: 'Model Robustness' },
     //{ name: 'Adversarial Robustness', value: 'Adversarial Robustness' },
     { name: 'Model Fairness', value: 'Model-Fairness' },
     { name: 'Model Truthfullness', value: 'Model-Truthfullness' },
@@ -100,7 +100,7 @@ export class LeaderboardComponent {
   fairnessKeys: string[] = []
   fairnessCol: string[] = [];
   getLeaderboard() {
-    this.http.get(this.securityLLM_getLeaderBoard).subscribe(
+    this.https.get(this.securityLLM_getLeaderBoard).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.leaderBoardData = res;
@@ -113,7 +113,7 @@ export class LeaderboardComponent {
     );
   }
   getAvailableDataSets() {
-    this.http.get(this.securityLLM_availableDatasets).subscribe(
+    this.https.get(this.securityLLM_availableDatasets).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.avaiableDataSetsVariable = res
@@ -169,7 +169,7 @@ export class LeaderboardComponent {
   getFairnessLeaderboard() {
     // https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/trustllm/scores/getScores?category=fairness
 
-    this.http.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=fairness').subscribe(
+    this.https.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=fairness').subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.fairness = res;
@@ -199,7 +199,7 @@ export class LeaderboardComponent {
   dataSourceRobustness: any[] = []
   dataSourceAttackScore: any[] = [];
   getExternalRobustnessScore() {
-    this.http.get(this.externalRobustnessScore).subscribe(
+    this.https.get(this.externalRobustnessScore).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceRobustness = res
@@ -211,7 +211,7 @@ export class LeaderboardComponent {
     )
   }
   getExternalAttackScore() {
-    this.http.get(this.externalAttackScore).subscribe(
+    this.https.get(this.externalAttackScore).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceAttackScore = res
@@ -222,7 +222,7 @@ export class LeaderboardComponent {
     )
   }
   getPrivacyScore() {
-    this.http.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=privacy').subscribe(
+    this.https.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=privacy').subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourcePrivacy = res
@@ -233,7 +233,7 @@ export class LeaderboardComponent {
     )
   }
   getSafetyScore() {
-    this.http.get(this.LLMleaderboardSafety).subscribe(
+    this.https.get(this.LLMleaderboardSafety).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceSafety = res
@@ -244,7 +244,7 @@ export class LeaderboardComponent {
     )
   }
   getEthicsScore() {
-    this.http.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=ethics').subscribe(
+    this.https.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=ethics').subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceMachineEthics = res
@@ -255,7 +255,7 @@ export class LeaderboardComponent {
     )
   }
   getTruthfullnessScore() {
-    this.http.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=truthfulness').subscribe(
+    this.https.get(this.LeaderboardLLMendpoint + 'scores/getScores?category=truthfulness').subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceTruthfullness = res

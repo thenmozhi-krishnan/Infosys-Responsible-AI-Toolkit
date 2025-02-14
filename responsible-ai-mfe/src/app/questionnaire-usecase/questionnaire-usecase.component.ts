@@ -87,7 +87,7 @@ export class QuestionnaireUsecaseComponent {
   constructor(private _snackBar: MatSnackBar,
     private _formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public http: HttpClient, private router: Router,
+    public https: HttpClient, private router: Router,
     private useCaseService:UseCaseServiceService,public nonceService:NonceService,
     private validationService:UserValidationService
   ) {}
@@ -157,15 +157,12 @@ export class QuestionnaireUsecaseComponent {
 
     getLogedInUser() {
       if (window && window.localStorage && typeof localStorage !== 'undefined') {
-        const x = localStorage.getItem("userid")
+        const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
         if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
-          this.userId = JSON.parse(x)
+          this.userId = x ;
           console.log(" userId", this.userId)
-          return JSON.parse(x)
         }
-  
-  
-        console.log("userId", this.userId)
+        return this.userId;
       }
     }
     getLocalStoreApi() {
@@ -204,8 +201,8 @@ export class QuestionnaireUsecaseComponent {
   // getDetails() is used to get all the questions and option from database using this.ques_Details api.....
   getDetails(){
     
-    // this.http.get(this.getUrl).subscribe
-    this.http.get(this.ques_Details).subscribe
+    // this.https.get(this.getUrl).subscribe
+    this.https.get(this.ques_Details).subscribe
     ((res: any) => {
       // this.OpenAitoogleValue = res.isOpenAI
       // this.dataSource = res.result
@@ -384,13 +381,13 @@ responseData(Id:any,QuestionId:any,OptionsValue:any,Question_Weightage:any,RAI_s
 
     this.creatUsecsse(payload, aiCanvaspayload, raiCanvasPayload, this.questionPayload)
 
-    // this.http.post(this.createUseCase, {
+    // this.https.post(this.createUseCase, {
 
   }
 
   
   creatUsecsse(payload: any, aiCanvaspayload: any, raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.createUseCase, payload).subscribe(
+    this.https.post(this.createUseCase, payload).subscribe(
 
       (res: any) => {
         // console.log("Payload===",payload)
@@ -427,7 +424,7 @@ responseData(Id:any,QuestionId:any,OptionsValue:any,Question_Weightage:any,RAI_s
   }
 
   aiCanvasSubmit(aiCanvaspayload: any, raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.aiCanvasSubmitResponse, aiCanvaspayload).subscribe(
+    this.https.post(this.aiCanvasSubmitResponse, aiCanvaspayload).subscribe(
       (res: any) => {
         console.log("Successfully Added AI canvas====", res);
 
@@ -480,7 +477,7 @@ responseData(Id:any,QuestionId:any,OptionsValue:any,Question_Weightage:any,RAI_s
   }
 
   raiCanvasSubmit(raiCanvasPayload: any, quesPayload: any) {
-    this.http.post(this.raiCanvasSubmitResponse, raiCanvasPayload).subscribe(
+    this.https.post(this.raiCanvasSubmitResponse, raiCanvasPayload).subscribe(
       (res: any) => {
         console.log(res);
         if (res == "Added Successfully" || res == " Updated Successfully...") {
@@ -534,7 +531,7 @@ responseData(Id:any,QuestionId:any,OptionsValue:any,Question_Weightage:any,RAI_s
       // "data":this.questionPayload
       "data": payload
     }
-    this.http.post(this.submit_Response, payload1).subscribe(
+    this.https.post(this.submit_Response, payload1).subscribe(
 
       (res: any) => {
         // console.log("Payload===",payload)
@@ -573,11 +570,11 @@ responseData(Id:any,QuestionId:any,OptionsValue:any,Question_Weightage:any,RAI_s
 
   getResubmitDetails(){
     
-    // this.http.get(this.getUrl).subscribe
+    // this.https.get(this.getUrl).subscribe
     // this.userId = localStorage.getItem("userid")
-    // this.http.get(this.getResetData+this.userId+"/"+this.UseCaseName).subscribe
+    // this.https.get(this.getResetData+this.userId+"/"+this.UseCaseName).subscribe
     console.log("====this.Ques_selectedResponse",this.Ques_selectedResponse)
-    this.http.get(this.Ques_selectedResponse+'"'+this.userId+'"'+"/"+this.UseCaseName).subscribe
+    this.https.get(this.Ques_selectedResponse+'"'+this.userId+'"'+"/"+this.UseCaseName).subscribe
     ((res: any) => {
       // this.OpenAitoogleValue = res.isOpenAI
       // this.dataSource = res.result

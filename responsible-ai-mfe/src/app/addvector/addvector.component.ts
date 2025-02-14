@@ -34,20 +34,20 @@ export class AddvectorComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AddvectorComponent>,
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,public nonceService:NonceService
   ){
     this.VectorForm = this.fb.group({
       vectorFileName : new FormControl('', [Validators.required]),
-      dataFileDropRef: new FormControl('', [Validators.required]),
+      fileDropRef: new FormControl('', [Validators.required]),
     })
     this.VectorUpdateForm =this.fb.group({
       userId: new FormControl(this.data.user, [Validators.required]),
       vectorFileId: new FormControl(this.data.vectorValue, [Validators.required]),
       vectorFileName : new FormControl(this.data.vectorName, [Validators.required]),
-      dataFileDropRef: new FormControl('', [Validators.required]),
+      fileDropRef: new FormControl('', [Validators.required]),
     })
   }
 
@@ -83,24 +83,40 @@ setApilist(ip_port: any) {
   closeDialog(){
     this.dialogRef.close();
   }
-  fileBrowseHandler(imgFile: any) {
+  fileBrowseHandler(imgFile: any): void {
+    // Prepare the files list
     this.prepareFilesList(imgFile.target.files);
     this.demoFile = this.files;
     this.file = this.files[0];
-    // to validate file SAST
-  const allowedTypes = ['application/octet-stream'];
-  for(let i =0; i< this.files.length; i++){
-    if (!allowedTypes.includes(this.files[i].type)) {
-     alert('Please upload a valid file');
-      this.files = [];
-      this.demoFile = [];
-      this.file ='';
-      return ;
+
+    console.log("File type:", this.file.type);
+
+    // Validate file extension and type
+    const allowedTypes = ['application/octet-stream', 'application/x-python-code']; // Add more if needed
+    const allowedExtensions = ['.pkl'];
+
+    // Check the file extension (for .pkl)
+    const fileExtension = this.file.name.split('.').pop()?.toLowerCase();
+
+    if (this.files.length > 0) {
+      for (let i = 0; i < this.files.length; i++) {
+        const currentFile = this.files[i];
+
+        // Check MIME type and file extension
+        if (!allowedTypes.includes(currentFile.type) && !allowedExtensions.includes(`.${fileExtension}`)) {
+          alert('Please upload a valid .pkl file');
+          this.files = [];
+          this.demoFile = [];
+          this.file = '';
+          return;
+        }
+      }
+
+      // If file is valid, patch the form
+      this.VectorForm.patchValue({
+        fileDropRef: this.files[0]
+      });
     }
-  }
-    this.VectorForm.patchValue({
-      dataFileDropRef: this.files[0]
-    });
   }
   uploadDocument(file:any) {
     let fileReader = new FileReader();
@@ -182,7 +198,7 @@ setApilist(ip_port: any) {
       this.selectedVectorFile = this.demoFile[i];
       fileData.append('PreprocessorFile', this.selectedVectorFile);
     }
-    this.http.post(this.addVector,fileData).subscribe((res: any)=>{
+    this.https.post(this.addVector,fileData).subscribe((res: any)=>{
       this.resetForm();
       this.spinner = false;
       this._snackBar.open(res, "Close", {
@@ -219,7 +235,7 @@ setApilist(ip_port: any) {
       this.selectedVectorFile = this.demoFile[i];
       fileData.append('PreprocessorFile', this.selectedVectorFile);
     }
-    this.http.patch(this.updateVector,fileData).subscribe((res:any)=>{
+    this.https.patch(this.updateVector,fileData).subscribe((res:any)=>{
       this.spinner = false;
       this.resetForm();
       this._snackBar.open("Data Updated", "Close", {

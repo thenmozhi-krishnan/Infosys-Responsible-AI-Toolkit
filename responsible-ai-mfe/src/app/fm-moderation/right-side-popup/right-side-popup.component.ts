@@ -20,7 +20,7 @@ export class RightSidePopupComponent {
   toxicityRes: any;
   profanityRes: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,public dialogRef: MatDialogRef<RightSidePopupComponent>,public _snackBar:MatSnackBar,private http : HttpClient) {
+  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,public dialogRef: MatDialogRef<RightSidePopupComponent>,public _snackBar:MatSnackBar,private https : HttpClient) {
     this.data = dialogData;
   }
 
@@ -117,7 +117,7 @@ export class RightSidePopupComponent {
     const options = {
       inputText: prompt,
     };
-    this.http.post(this.apiUrlList.privacyPopup, payload).subscribe(
+    this.https.post(this.apiUrlList.privacyPopup, payload).subscribe(
       (res: any) => {
         console.log(res.privacyCheck);
         this.privacyCheckRes = res.privacyCheck[0];
@@ -144,7 +144,7 @@ export class RightSidePopupComponent {
       };
       this.toxicityRes = [];
 
-      this.http.post(this.apiUrlList.fm_api_inf_ToxicityPopup, options).subscribe(
+      this.https.post(this.apiUrlList.fm_api_inf_ToxicityPopup, options).subscribe(
         (res: any) => {
           this.toxicityRes = res.toxicity;
         },
@@ -175,7 +175,7 @@ export class RightSidePopupComponent {
     };
     this.toxicityRes = [];
 
-    this.http.post(this.apiUrlList.fm_api_inf_ToxicityPopup, options).subscribe(
+    this.https.post(this.apiUrlList.fm_api_inf_ToxicityPopup, options).subscribe(
       (res: any) => {
         this.toxicityRes = res.toxicity;
       },
@@ -189,7 +189,7 @@ export class RightSidePopupComponent {
     const options = {
       text: inputText,
     };
-    this.http.post(this.apiUrlList.fm_api_inf_ProfanityPopup, options).subscribe(
+    this.https.post(this.apiUrlList.fm_api_inf_ProfanityPopup, options).subscribe(
       (res: any) => {
         if (res.profanity.length == 0) {
           const message = 'There are no Profane Words in the Input Text';

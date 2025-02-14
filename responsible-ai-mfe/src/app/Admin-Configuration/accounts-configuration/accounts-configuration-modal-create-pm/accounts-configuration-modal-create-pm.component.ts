@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./accounts-configuration-modal-create-pm.component.css']
 })
 export class AccountsConfigurationModalCreatePmComponent{
-  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalCreatePmComponent>,  public _snackBar: MatSnackBar, public http: HttpClient
+  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalCreatePmComponent>,  public _snackBar: MatSnackBar, public https: HttpClient
     , @Inject(MAT_DIALOG_DATA) public data: { x: any }) { 
       // this.pagingConfig = {
       //   itemsPerPage: this.itemsPerPage,

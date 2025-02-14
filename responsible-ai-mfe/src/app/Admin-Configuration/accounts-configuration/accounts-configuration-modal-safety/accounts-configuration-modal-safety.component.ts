@@ -16,7 +16,7 @@ import { NonceService } from 'src/app/nonce.service';
   styleUrls: ['./accounts-configuration-modal-safety.component.css']
 })
 export class AccountsConfigurationModalSafetyComponent  {
-  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalSafetyComponent>,  public _snackBar: MatSnackBar,private _fb: UntypedFormBuilder, public http: HttpClient,public nonceService:NonceService
+  constructor(public dialogRef: MatDialogRef<AccountsConfigurationModalSafetyComponent>,  public _snackBar: MatSnackBar,private _fb: UntypedFormBuilder, public https: HttpClient,public nonceService:NonceService
     , @Inject(MAT_DIALOG_DATA) public data: { id: any }) { 
       // this.fromCreation();
       this.fromCreation2();
@@ -152,7 +152,7 @@ export class AccountsConfigurationModalSafetyComponent  {
       "parameters": par,
       "value": v
     }
-    this.http.patch(this.Admin_SafetyUpdate, headers).subscribe
+    this.https.patch(this.Admin_SafetyUpdate, headers).subscribe
       ((res: any) => {
         // this.showSpinner1 = false
         console.log("value of res", res)
@@ -208,8 +208,8 @@ export class AccountsConfigurationModalSafetyComponent  {
     let payload = {
       accMasterId: this.data.id
     }
-    this.http.post(this.Admin_AccSafetyListAccountWise,payload)
-    // this.http.post("http://10.66.155.13:30016/api/v1/rai/admin/AccSafetyListAccountWise",payload)
+    this.https.post(this.Admin_AccSafetyListAccountWise,payload)
+    // this.https.post("http://10.66.155.13:30016/api/v1/rai/admin/AccSafetyListAccountWise",payload)
     .subscribe((response: any) => {
       console.log(response);
       let safetygetvalues = response;

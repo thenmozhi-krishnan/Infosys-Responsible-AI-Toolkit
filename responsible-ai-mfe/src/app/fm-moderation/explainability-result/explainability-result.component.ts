@@ -4,12 +4,13 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */ 
 import { Component, Input, OnInit, AfterViewInit  } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart } from  'chart.js/auto';;
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { RightSidePopupComponent } from '../right-side-popup/right-side-popup.component';
 import { urlList } from 'src/app/urlList';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-explainability-result',
@@ -74,8 +75,11 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
   metrics = ['uncertainty', 'coherence'];
   tokenImage1!: SafeUrl;
   tokenImage2!: SafeUrl;
-
-  constructor(private http: HttpClient, private dialog: MatDialog,private sanitizer: DomSanitizer) {}
+  topTokens: any[] = [];
+  tokens:any[] = [];
+  tokenImportanceShowErrorMessage: boolean = false;
+  firstClick= true;
+  constructor(private https: HttpClient, private dialog: MatDialog,private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.option= this.explainabilityOption;
@@ -93,7 +97,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
     this.OpenAI();
     //this.THOT();
     this.GOT();
-    this.TokenImportance();
+    // this.TokenImportance();
     }else if (this.explainabilityOption == 'RAG') {
      this.COVRAG();
      this.THOTRAG();
@@ -101,8 +105,9 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
   }
   //this.updateTopSentiments();
   this.topSentiments = this.explainabilityRes?.explanation?.[0]?.token_importance_mapping
-  this.createBarChart();
+  // this.createBarChart();
   }
+  
   getLocalStoreApi() {
     let ip_port;
     if (localStorage.getItem('res') != null) {
@@ -125,14 +130,16 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
   this.explApiUrl = ip_port.result.Explainability;
   }
   callLocalExplain(){
-    this.http.post(this.explApiUrl, { inputText: prompt, "explainerID": 1 }).subscribe((expRes) => {
+    this.https.post(this.explApiUrl, { inputText: prompt, "explainerID": 1 }).subscribe((expRes) => {
       this.explainabilityRes = expRes
       console.log(expRes)
     }, error => {
     })
   }
   ngAfterViewInit(): void {
-    this.createBarChart();
+    // this.createBarChart();
+    if(this.explainabilityOption == 'Sentiment'){this.createBarChart();}
+    this.TokenImportance();
   }
   createBarChart(): void {
     const ctx = document.getElementById('myBarChart') as HTMLCanvasElement;
@@ -209,6 +216,10 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
   }
   toggleArrow() {
     this.isArrowDown = !this.isArrowDown;
+    if(this.firstClick===true){
+    // this.TokenImportance();
+     }
+    this.firstClick= false;
   }
 
   // COV() {
@@ -220,7 +231,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
   //     text: this.prompt
   //   };
 
-  //   this.http.post(this.COVUrl, payload)
+  //   this.https.post(this.COVUrl, payload)
   //     .subscribe((response: any) => {
   //       console.log('API response:', response);
   //       this.covFinalAnswer = response.final_answer;
@@ -247,7 +258,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
       Prompt: this.prompt
     };
 
-    this.http.post(this.OpenAIUrl, payload1)
+    this.https.post(this.OpenAIUrl, payload1)
       .subscribe((response: any) => {
         console.log('API response:', response);
         this.openAIAnswer = response.text.replace(/\n\n/g, '<br>');
@@ -269,7 +280,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
       Prompt: this.prompt
     };
 
-    this.http.post(this.THOTUrl, payload2)
+    this.https.post(this.THOTUrl, payload2)
       .subscribe((response: any) => {
         console.log('API response:', response);
         let formattedText = response.text
@@ -313,7 +324,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
 
   Uncertanity(payload:any,thought:any) {
     this.isLoadingUncertainty = true;
-    this.http.post(this.UncertaintyUrl, payload)
+    this.https.post(this.UncertaintyUrl, payload)
       .subscribe((response: any) => {
         console.log('Uncertanity response:', response);  
         if(thought == "thot")  {
@@ -354,19 +365,27 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
 
   TokenImportance() {
     this.isLoadingTokenImportance = true;
+    this.tokenImportanceShowErrorMessage = false;
     const payload5 = {
       inputPrompt: this.prompt,
-      modelName: 'code',
+      modelName: 'GPT',
     };
-
-    this.http.post(this.TokenUrl, payload5)
+ 
+    this.https.post(this.TokenUrl, payload5)
       .subscribe((response: any) => {
         this.tokenImportanceResponse = response;
-        this.tokenImage1 = this.sanitizeImage(response.image_data[0]);
-        this.tokenImage2 = this.sanitizeImage(response.image_data[1]);
         this.isLoadingTokenImportance = false;
+        this.tokens= this.tokenImportanceResponse?.token_importance_mapping;
+        console.log("tokens:",this.tokens)
+        this.updatetopTokens();
+        this.createTokenBarChart()
+        //this.createFrequencyBarChart()        
+        this.frequencyDistributionChart();
+        this.tokenImportanceShowErrorMessage = false;
       }, error => {
+        console.error('API error:', error);
         this.isLoadingTokenImportance = false;
+        this.tokenImportanceShowErrorMessage = true;
       });
   }
   sanitizeImage(imageData: string): SafeUrl {
@@ -377,10 +396,10 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
     this.isLoadingGOT = true;
     const payload4 = {
       inputPrompt: this.prompt,
-      modelName: 'gpt-35-turbo',
+      modelName: 'gpt-35-turbo-16k',
     };
 
-    this.http.post(this.GOTUrl, payload4)
+    this.https.post(this.GOTUrl, payload4)
       .subscribe((response: any) => {
         this.apiResult = response;
         this.GOTAnswer = response.final_thought.replace(/\n/g, '<br>');
@@ -409,7 +428,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
       inputPrompt: this.prompt,
       llm_response: this.openAIAnswer,
     };
-    this.http.post(this.InternetUrl, payload6)
+    this.https.post(this.InternetUrl, payload6)
     .subscribe((response: any) => {
       this.InternetResponse = response;
       this.InternetSearchMetric = response.metrics[0];
@@ -431,7 +450,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
       vectorestoreid: this.ExplanabilityFileId?.id,
     };
 
-    this.http.post(this.COVRAGUrl, payload7)
+    this.https.post(this.COVRAGUrl, payload7)
       .subscribe((response: any) => {
         const covResponse = response.cov_response;      
         this.finalAnswer1 = covResponse.final_answer;      
@@ -455,7 +474,7 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
       vectorestoreid: this.ExplanabilityFileId?.id,
     };
 
-    this.http.post(this.THOTRAGUrl, payload8)
+    this.https.post(this.THOTRAGUrl, payload8)
       .subscribe((response: any) => {
         this.THOTRAGResponse = response.thot_response;
         this.THOTRAGSource = response['source-name'];
@@ -502,5 +521,226 @@ export class ExplainabilityResultComponent implements OnInit, AfterViewInit  {
     console.log('Explanation:', this.ThotRagExplanation);
 
   }
+  updatetopTokens() {
+    this.topTokens = this.tokens
+      .sort((a: any, b: any) => b.importance_score - a.importance_score);
+      this.topTokens = this.topTokens.slice(0, 10);
+      (console.log('topTokens:', this.topTokens));
+}
+createTokenBarChart(): void {
+  if (!this.tokens || this.tokens.length === 0) {
+      console.log("No tokens available to create the chart.");
+      return;
+  }
  
+  const ctx = document.getElementById('myTokenBarChart') as HTMLCanvasElement;
+  if (!ctx) {
+      console.error("Canvas element not found.");
+      return;
+  }
+ 
+  console.log("Creating token bar chart with tokens:", this.tokens);
+ 
+  // Extracting tokens and importance scores from tokens
+  const labels = this.tokens.map(token => token.token);
+  const data = this.tokens.map(token => token.importance_value);
+ 
+  const backgroundColorPlugin = {
+      beforeDraw: (chart: Chart) => {
+          const ctx = chart.canvas.getContext('2d');
+          if (ctx) {
+              const chartArea = chart.chartArea;
+              ctx.save();
+              ctx.globalCompositeOperation = 'destination-over';
+              ctx.fillStyle = '#c1d1f1a0';
+              ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+              ctx.restore();
+          }
+      }
+  };
+ 
+  new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: 'Tokens',
+              data: data,
+              backgroundColor: '#2ca02c',
+              borderColor: '#2ca02c',
+              borderWidth: 1
+          }]
+      },
+      options: {
+        plugins: {
+          legend: {
+              display: true,
+              position: 'top', // You can adjust position as per your preference (top, bottom, left, right)
+          labels: {
+          generateLabels: function(chart) {
+          return [{
+            text: 'Tokens', // Custom label for green bars
+            fillStyle: '#2ca02c', // Color of the bars (green)
+            strokeStyle: '#2ca02c', // Border color (green)
+          }];
+        }
+      }
+          }
+        },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: 'Tokens'
+        }
+        },
+        y: {
+          grid: {
+            //display: false
+          },
+          beginAtZero: true,
+          min: 0,
+          max: 1,
+          ticks: {
+            stepSize: 0.2
+          },
+          title: {
+            display: true,
+            text: 'Importance Score'
+        }
+        }
+      }
+    }
+  });
+}
+frequencyDistributionChart(): void {
+  if (!this.tokens || this.tokens.length === 0) {
+      console.log("No tokens available to create the chart.");
+      return;
+  }
+ 
+  const ctx = document.getElementById('myDistributionBarChart') as HTMLCanvasElement;
+  if (!ctx) {
+      console.error("Canvas element not found.");
+      return;
+  }
+ 
+  console.log("Creating frequency distribution chart with tokens:", this.tokens);
+ 
+  // Group frequencies into specified ranges, starting with '0'
+  const ranges = ['0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0'];
+  const rangeCounts = { '0': 0, '0.1': 0, '0.2': 0, '0.3': 0, '0.4': 0, '0.5': 0, '0.6': 0, '0.7': 0, '0.8': 0, '0.9': 0, '1.0': 0 };
+ 
+  this.tokens.forEach((token: any) => {
+    const value = token.importance_value;
+    if (value === 0) {
+        rangeCounts['0']++;
+    } else if (value > 0 && value < 0.1) {
+        rangeCounts['0.1']++;
+    } else if (value >= 0.1 && value < 0.2) {
+        rangeCounts['0.2']++;
+    } else if (value >= 0.2 && value < 0.3) {
+        rangeCounts['0.3']++;
+    } else if (value >= 0.3 && value < 0.4) {
+        rangeCounts['0.4']++;
+    } else if (value >= 0.4 && value < 0.5) {
+        rangeCounts['0.5']++;
+    } else if (value >= 0.5 && value < 0.6) {
+        rangeCounts['0.6']++;
+    } else if (value >= 0.6 && value < 0.7) {
+        rangeCounts['0.7']++;
+    } else if (value >= 0.7 && value < 0.8) {
+        rangeCounts['0.8']++;
+    } else if (value >= 0.8 && value < 0.9) {
+        rangeCounts['0.9']++;
+    } else if (value >= 0.9 && value <= 1.0) {
+        rangeCounts['1.0']++;
+    }
+  });
+ 
+  const data = Object.values(rangeCounts) as number[];
+ 
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ranges,
+        datasets: [
+            {
+                label: 'Distribution of Importance Scores',
+                data: data,
+                backgroundColor: '#1f77b4',
+                borderColor: '#1f77b4',
+                borderWidth: 1,
+                order: 2 // This dataset is behind the line
+            },
+            {
+                label: 'Frequency Line',
+                data: data,
+                type: 'line',
+                borderColor: 'red',
+                borderWidth: 2,
+                fill: false,
+                pointRadius: 0,
+                tension: 0.4,
+                order: 1 // This dataset is in front of the bars
+            }
+        ]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  generateLabels: function(chart) {
+                    return [
+                      {
+                        text: 'Distribution of Importance Scores', // Custom label for blue
+                        fillStyle: '#1f77b4', // Color of the bar (blue)
+                        strokeStyle: '#1f77b4', // Border color (blue)
+                      },
+                      {
+                        text: 'Frequency Line', // Custom label for red line
+                        fillStyle: 'red', // Color of the line (red)
+                        strokeStyle: 'red', // Border color (red)
+                      }
+                    ];
+                  }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Importance Score Range'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                min: 0,
+                title: {
+                    display: true,
+                    text: 'Frequency'
+                },
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+  });
+}
+isEmptyObject(obj: any) {
+  if (obj == null || obj == undefined) {
+    return true;
+  }
+  return Object.keys(obj).length === 0;
+}
 }

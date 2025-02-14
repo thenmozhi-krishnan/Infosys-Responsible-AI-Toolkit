@@ -33,7 +33,7 @@ export class VideoComponent implements OnInit{
   showFileInput = false;
   selectedOptions: string[] = [];
   
-  constructor(public _snackBar: MatSnackBar, private http: HttpClient, private dialog: MatDialog, private sanitizer: DomSanitizer) {
+  constructor(public _snackBar: MatSnackBar, private https: HttpClient, private dialog: MatDialog, private sanitizer: DomSanitizer) {
     this.form1 = new FormControl(null, this.fileSelectedValidator);
     this.form2 = new FormControl(null, this.optionSelectedValidator.bind(this));
 
@@ -159,7 +159,7 @@ export class VideoComponent implements OnInit{
   }
 
   getVideoFilesList() {
-    this.http.get(this.getFile + "/" + this.userId + "/video").subscribe
+    this.https.get(this.getFile + "/" + this.userId + "/video").subscribe
       ((res: any) => {
 
         this.result = res
@@ -246,7 +246,7 @@ export class VideoComponent implements OnInit{
     }
   }
   uploadFileApiCall(fileData: any) {
-    this.http.post(this.uploadFile, fileData).subscribe((res: any) => {
+    this.https.post(this.uploadFile, fileData).subscribe((res: any) => {
       this.result = res
       this.processing = "Complete"
       console.log("res======", res)
@@ -270,7 +270,7 @@ export class VideoComponent implements OnInit{
     })
   }
   // getfileContent(id:any){
-  //   this.http.post(this.DocProcessing_getFileContent+id,null).subscribe
+  //   this.https.post(this.DocProcessing_getFileContent+id,null).subscribe
   //       ((res: any) => {
   //         // this.showSpinner1=false
   //         console.log("video file name ",res[0].data)

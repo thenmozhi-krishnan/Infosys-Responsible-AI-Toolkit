@@ -22,7 +22,7 @@ import { NonceService } from 'src/app/nonce.service';
 })
 export class RecognizersComponent implements OnInit {
 
-  constructor(public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog, private _fb: UntypedFormBuilder, public recognizerService: RecognizersService,public nonceService:NonceService) {
+  constructor(public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog, private _fb: UntypedFormBuilder, public recognizerService: RecognizersService,public nonceService:NonceService) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -134,7 +134,7 @@ export class RecognizersComponent implements OnInit {
   }
 
   getRecognizerList() {
-    this.http.get(this.admin_list_rec_get_list).subscribe
+    this.https.get(this.admin_list_rec_get_list).subscribe
       ((res: any) => {
         this.dataSource = []
 
@@ -292,7 +292,7 @@ export class RecognizersComponent implements OnInit {
   }
 
   postDataRecogGroupApi(fileData: FormData) {
-    this.http.post(this.admin_list_rec, fileData).subscribe
+    this.https.post(this.admin_list_rec, fileData).subscribe
       ((res: any) => {
         console.log("res", res)
         this.getRecognizerList()
@@ -340,10 +340,10 @@ export class RecognizersComponent implements OnInit {
           RecogId: id
         },
       };
-      // const methodsInstance = new methods(this.http, this._snackBar, this.recognizerService);
+      // const methodsInstance = new methods(this.https, this._snackBar, this.recognizerService);
       // this.dataSource = methodsInstance.delete(this.admin_list_rec_get_list_Delete_DataRecogGrp, options,this.admin_list_rec_get_list);
-      // this.http.delete(this.admin_pattern_rec_delete_list, { headers }).subscribe
-      this.http.delete(this.admin_list_rec_get_list_Delete_DataRecogGrp, options).subscribe
+      // this.https.delete(this.admin_pattern_rec_delete_list, { headers }).subscribe
+      this.https.delete(this.admin_list_rec_get_list_Delete_DataRecogGrp, options).subscribe
         ((res: any) => {
           console.log("delete Resonce" + res.status)
           if (res.status === "True") {
@@ -351,7 +351,7 @@ export class RecognizersComponent implements OnInit {
 
             this.getRecognizerList()
 
-            // this.http.get(this.admin_list_rec_get_list).subscribe
+            // this.https.get(this.admin_list_rec_get_list).subscribe
             //   ((res: any) => {
             //     this.dataSource = []
             //     // this.showSpinner1=false;
@@ -420,7 +420,7 @@ export class RecognizersComponent implements OnInit {
   }
 
   clickgetRecognizers() {
-    const methodsInstance = new methods(this.http, this._snackBar, this.recognizerService);
+    const methodsInstance = new methods(this.https, this._snackBar, this.recognizerService);
     // this.dataSource = methodsInstance.getRecognizers(this.admin_list_rec_get_list);
     // methodsInstance.getDataSource(this.admin_list_rec_get_list).then((res: any) => {console.log("getRecognizers functionzzz",res)});
     console.log("getRecognizers function", this.dataSource);
@@ -429,7 +429,7 @@ export class RecognizersComponent implements OnInit {
   // clickDeleteRecognizerx(id: any, preDefined: any) {
   //   // Call the delete function from the method class here
   //   let a,b,c
-  //   const methodsInstance = new methods(this.http, this._snackBar, this.recognizerService);
+  //   const methodsInstance = new methods(this.https, this._snackBar, this.recognizerService);
   //   methodsInstance.delete(a,b,c);
   // }
 
@@ -451,7 +451,7 @@ export class RecognizersComponent implements OnInit {
     this.updateRecognizer(payload)
   }
   updateRecognizer(payload:any){
-    this.http.patch(this.admin_list_rec_get_list_Update_DataRecogGrp, payload).subscribe 
+    this.https.patch(this.admin_list_rec_get_list_Update_DataRecogGrp, payload).subscribe 
     ((res: any) => 
       {
         console.log("res",res)

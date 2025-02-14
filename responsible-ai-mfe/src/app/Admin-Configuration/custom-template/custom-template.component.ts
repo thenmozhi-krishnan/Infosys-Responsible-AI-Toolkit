@@ -70,7 +70,7 @@ export class CustomTemplateComponent implements OnInit, PagingConfig {
   map = new Map<String, String>();
   loadTemplate: any;
 
-  constructor (public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,private sharedService: SharedService,public nonceService:NonceService){
+  constructor (public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,private sharedService: SharedService,public nonceService:NonceService){
     this.formCreation()
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
@@ -259,7 +259,7 @@ else
     console.log("payload1======= template name" ,this.CustomTemplateForm.get('TemplateName')?.value)
 
     if(this.updatecall){
-      this.http.patch(this.customTemplatePatchUrl_updateCustomeTemplate,payload1).subscribe((res)=>{
+      this.https.patch(this.customTemplatePatchUrl_updateCustomeTemplate,payload1).subscribe((res)=>{
         console.log("res=================",res)
         // this.CustomTemplateForm.reset()
         this.showSpinner = false
@@ -288,7 +288,7 @@ else
   
       })
     }else{
-    this.http.post(this.customTemplatePostUrl,payload1).subscribe((res)=>{
+    this.https.post(this.customTemplatePostUrl,payload1).subscribe((res)=>{
       console.log("res=================",res)
       // this.CustomTemplateForm.reset()
       this.showSpinner = false
@@ -375,7 +375,7 @@ else
 
   LoadTemplateData(){
     console.log("fd:",this.loadTemplate+this.userId)
-    this.http.get(this.loadTemplate+this.userId).subscribe((res:any)=>{
+    this.https.get(this.loadTemplate+this.userId).subscribe((res:any)=>{
       console.log("res=================",res) 
     }, error => {
       // You can access status:
@@ -414,7 +414,7 @@ else
     this.customTemplateGetUrl=ip_port.result.Admin + ip_port.result.TemplateGet 
     this.customTemplateDeleteUrl=ip_port.result.Admin + ip_port.result.TemplateDelete 
     this.customTemplateUpdateUrl=ip_port.result.Admin + ip_port.result.TemplateUpdate 
-    this.loadTemplate=ip_port.result.Admin + ip_port.result.loadTemplate 
+    this.loadTemplate=ip_port.result.FM_Moderation + ip_port.result.loadTemplate 
 
     // this.Admin_uploadFile = ip_port.result.Admin_Rag + ip_port.result.Admin_uploadFile;
     // this.Admin_getFiles = ip_port.result.Admin_Rag + ip_port.result.Admin_getFiles;
@@ -444,7 +444,7 @@ else
     //   "templateName": templateName
     // }
 
-    this.http.delete(this.customTemplateDeleteUrl,options ).subscribe(
+    this.https.delete(this.customTemplateDeleteUrl,options ).subscribe(
       (res: any) => {
         // this.getBatches();
         
@@ -565,9 +565,9 @@ else
     let urlx = `${this.customTemplateGetUrl}${this.userId}`
     // let urlx = `${this.customTemplateGetUrl}${this.userId}`
 
-    this.http.get(urlx, { params, headers: { 'accept': 'application/json' } })
+    this.https.get(urlx, { params, headers: { 'accept': 'application/json' } })
       .subscribe
-      // this.http.get(this.customTemplateGetUrl+this.userId).subscribe
+      // this.https.get(this.customTemplateGetUrl+this.userId).subscribe
       ((res: any) => {
        
         this.result = res

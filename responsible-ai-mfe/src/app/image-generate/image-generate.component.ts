@@ -91,7 +91,7 @@ export class ImageGenerateComponent implements AfterViewInit {
   tooltipContentInsights: string = `Insights:\n\nWatermark: Detects the presence of a watermark in the image.\n\nBias: Identifies any potential bias types based on the analysis.\n\nStyle: Classifies the image's style (e.g., Cartoon, Anime, Photorealism) by analyzing visual elements and distinctive characteristics.`;
   tooltipContentMetrics: string = `Metrics:\n\nCreativity Score: Quantitatively evaluates an image's visual appeal based on composition, color harmony, texture, and subject matter.\n\nRelevance Score: Evaluates how well the generated image aligns with the given prompt, indicating its accuracy in matching the intended description or context.`;
 
-  constructor(public roleService: RoleManagerService, public http: HttpClient, public _snackBar: MatSnackBar, private dialog: MatDialog,public nonceService:NonceService) { }
+  constructor(public roleService: RoleManagerService, public https: HttpClient, public _snackBar: MatSnackBar, private dialog: MatDialog,public nonceService:NonceService) { }
 
   getLogedInUser() {
     if (localStorage.getItem("userid") != null) {
@@ -170,7 +170,7 @@ export class ImageGenerateComponent implements AfterViewInit {
 
   imageExplainability(fileData: any) {
     const localImageExplainabilityUrl = "http://10.68.120.142:31016/api/v1/rai/helm/imageGenerate"
-    this.http.post(this.imageExplainabilityUrl, fileData).subscribe((data: any) => {
+    this.https.post(this.imageExplainabilityUrl, fileData).subscribe((data: any) => {
       this.imageOutput = true
       this.imagePath = data.img;
       this.analyze = data
@@ -269,8 +269,12 @@ export class ImageGenerateComponent implements AfterViewInit {
     const fileData = new FormData();
     prompt = this.promptControl.value
     fileData.append('prompt', prompt);
+    if(this.portfolioName!=''){
     fileData.append('portfolio', this.portfolioName)
+    }
+    if(this.accountName!=''){
     fileData.append('account', this.accountName)
+    }
     if (this.selectType == 'explainability') {
       let queryFlag = false;
       const fileDataExp = new FormData();
@@ -305,7 +309,7 @@ export class ImageGenerateComponent implements AfterViewInit {
   }
 
   imageProfanity(fileData: any) {
-    this.http.post(this.imageGenerateUrl, fileData).subscribe((data: any) => {
+    this.https.post(this.imageGenerateUrl, fileData).subscribe((data: any) => {
       this.imageOutput = true
       this.imagePath = data.img;
       this.analyze = data.analyze
@@ -328,7 +332,7 @@ export class ImageGenerateComponent implements AfterViewInit {
   imageFairness(prompt: any) {
     const fileData = new FormData();
     fileData.append('prompt', prompt);
-    this.http.post(this.imageGenerateModeration, fileData, { responseType: 'text' }).subscribe((data: string) => {
+    this.https.post(this.imageGenerateModeration, fileData, { responseType: 'text' }).subscribe((data: string) => {
       // console.log(typeof data)
       // this.imagePath = data;
       // this.imageOutput = true
@@ -355,7 +359,7 @@ export class ImageGenerateComponent implements AfterViewInit {
       formPayload.append('prompt', prompt);
       formPayload.append('evaluator', "GPT_4o");
       formPayload.append('image', blob, 'image.jpg');
-      this.http.post(this.fairness_image, formPayload).subscribe((res: any) => {
+      this.https.post(this.fairness_image, formPayload).subscribe((res: any) => {
         this.fairnessRes.status = true;
         this.fairnessRes.report = res;
         console.log("fairnessRes.report", this.fairnessRes.report['Bias score'])
@@ -528,7 +532,7 @@ export class ImageGenerateComponent implements AfterViewInit {
       'accept': 'application/json'
     });
 
-    this.http.post(this.imageGenerateModeration, body.toString(), { headers, responseType: 'text' })
+    this.https.post(this.imageGenerateModeration, body.toString(), { headers, responseType: 'text' })
       .subscribe({
         next: (data: string) => {
           // Assuming the response is an HTML document, parse it to extract the image URL
@@ -559,7 +563,7 @@ export class ImageGenerateComponent implements AfterViewInit {
       'accept': 'multipart/form-data'
     });
   
-    this.http.post(this.image_explainability_analyze, formData, { headers })
+    this.https.post(this.image_explainability_analyze, formData, { headers })
       .subscribe({
         next: (response) => {
           console.log('Response:', response);

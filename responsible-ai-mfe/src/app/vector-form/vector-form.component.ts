@@ -31,7 +31,7 @@ export class VectorFormComponent {
   getVector:any;
   showSpinner1 = false;
 
-  constructor(private dialog: MatDialog,private http: HttpClient,public _snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog,private https: HttpClient,public _snackBar: MatSnackBar) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -67,7 +67,7 @@ export class VectorFormComponent {
   getBatches() {
     const formData =new FormData;
     formData.append("userId",this.user)
-    this.http.post(this.getVector , formData).subscribe(
+    this.https.post(this.getVector , formData).subscribe(
       (res: any) => {
         this.dataSource_getBatches = res;
         this.onTableDataChange(this.currentPage);
@@ -92,7 +92,7 @@ export class VectorFormComponent {
       body: params,
     };
     this.showSpinner1 = true;
-    this.http.delete(this.deleteVector, options).subscribe(
+    this.https.delete(this.deleteVector, options).subscribe(
       (res: any) => {
         this.getBatches();
         const message = 'Record Deleted Successfully';

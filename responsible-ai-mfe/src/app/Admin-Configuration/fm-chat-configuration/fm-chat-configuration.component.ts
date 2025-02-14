@@ -23,7 +23,7 @@ export class FMChatConfigurationComponent {
 
   form!: FormControl;
   createNewEmbeddingsform!: FormGroup;
-  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,private fb: FormBuilder,private validationService:UserValidationService,public nonceService:NonceService) {
+  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,private fb: FormBuilder,private validationService:UserValidationService,public nonceService:NonceService) {
     this.form = new FormControl(null, this.fileSelectedValidator);
     this.formCreation()
     this.pagingConfig = {
@@ -207,11 +207,11 @@ export class FMChatConfigurationComponent {
   
       let userIdvalue = this.getLogedInUser()
       let body = new URLSearchParams();
-      body.set('userId', userIdvalue.toString());
+      body.set('userId', userIdvalue!.toString());
       body.set('embName', name);
       body.set('docid', list);
 
-      this.http.post(this.Admin_setCache, body,{
+      this.https.post(this.Admin_setCache, body,{
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')}).subscribe(
         (res: any) => {
           this.formBased = false
@@ -244,18 +244,14 @@ export class FMChatConfigurationComponent {
     this.getembeddigns()
     this.getFilestList()
   }
-  getLogedInUser() {
+  getLogedInUser(): any {
     if (window && window.localStorage && typeof localStorage !== 'undefined') {
-      const x = localStorage.getItem("userid")
+      const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
       if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
-
-        this.userId = JSON.parse(x)
-        // console.log(" userId", this.userId)
-        // console.log(" JSON.parse(x)", JSON.parse(x))
-        return JSON.parse(x)
+        this.userId = x ;
       }
-
       console.log("userId", this.userId)
+      return this.userId;
     }
   }
   getLocalStoreApi() {
@@ -281,7 +277,7 @@ export class FMChatConfigurationComponent {
     let userIdvalue = this.getLogedInUser()
     let body = new URLSearchParams();
     body.set('userId', userIdvalue.toString());
-    this.http.post(this.Admin_getFiles, body, {
+    this.https.post(this.Admin_getFiles, body, {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }).subscribe(
       (res: any) => {
@@ -304,7 +300,7 @@ export class FMChatConfigurationComponent {
     let body = new URLSearchParams();
     body.set('userId', userIdvalue.toString());
 
-    this.http.post(this.Admin_getEmbedings, body, {
+    this.https.post(this.Admin_getEmbedings, body, {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }).subscribe(
       (res: any) => {
@@ -337,7 +333,7 @@ export class FMChatConfigurationComponent {
   
   }
   uploadFileApiCall(fileData: any) {
-    this.http.post(this.Admin_uploadFile, fileData).subscribe((res: any) => {
+    this.https.post(this.Admin_uploadFile, fileData).subscribe((res: any) => {
       this.formBased = false
       this.getFilestList()
     }, error => {
@@ -379,8 +375,8 @@ export class FMChatConfigurationComponent {
     body.set('userid', userIdvalue.toString());
     body.set('docid', fileId.toString());
     if(status == "N"){
-      // this.http.delete("https://rai-toolkit-rai.az.ad.idemo-ppc.com/api/v1/rai/admin/deleteFile",{body,headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')}).subscribe
-      this.http.delete(this.Admin_LLmExplain_deleteFile,{body,headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')}).subscribe
+      // this.https.delete("https://rai-toolkit-rai.az.ad.idemo-ppc.com/api/v1/rai/admin/deleteFile",{body,headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')}).subscribe
+      this.https.delete(this.Admin_LLmExplain_deleteFile,{body,headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')}).subscribe
       ((res: any) => {
         if (res.status == "Document Deleted Successfully") {
           const message = "Document Deleted Successfully"
@@ -399,7 +395,7 @@ export class FMChatConfigurationComponent {
 
         }
 
-        // this.http.get(this.admin_list_AccountMaping_AccMasterList).subscribe
+        // this.https.get(this.admin_list_AccountMaping_AccMasterList).subscribe
         this.getFilestList()
 
       }, error => {

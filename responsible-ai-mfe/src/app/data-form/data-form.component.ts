@@ -33,7 +33,7 @@ export class DataFormComponent implements PagingConfig{
   updateData:any;
   getData:any;
   showSpinner1 = false;
-  constructor(private dialog: MatDialog,private http: HttpClient,public _snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog,private https: HttpClient,public _snackBar: MatSnackBar) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -70,7 +70,7 @@ export class DataFormComponent implements PagingConfig{
   getBatches() {
     const formData =new FormData;
     formData.append("userId",this.user)
-    this.http.post(this.getData , formData).subscribe(
+    this.https.post(this.getData , formData).subscribe(
       (res: any) => {
         this.dataSource_getBatches = res;
         this.onTableDataChange(this.currentPage);
@@ -95,7 +95,7 @@ export class DataFormComponent implements PagingConfig{
       body: params,
     };
     this.showSpinner1 = true;
-    this.http.delete(this.deleteData, options).subscribe(
+    this.https.delete(this.deleteData, options).subscribe(
       (res: any) => {
         this.getBatches();
         const message = 'Record Deleted Successfully';

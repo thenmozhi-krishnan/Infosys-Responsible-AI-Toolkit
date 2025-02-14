@@ -221,7 +221,7 @@ export class FmModerationComponent {
   }
 
 
-  constructor(private imageService: ImageService, public roleService: RoleManagerService, private sharedDataService: SharedDataService, private sanitizer: DomSanitizer, private http: HttpClient, private fmService: FmModerationService, public _snackBar: MatSnackBar, public dialog: MatDialog,public nonceService:NonceService,private validationService:UserValidationService) { }
+  constructor(private imageService: ImageService, public roleService: RoleManagerService, private sharedDataService: SharedDataService, private sanitizer: DomSanitizer, private https: HttpClient, private fmService: FmModerationService, public _snackBar: MatSnackBar, public dialog: MatDialog,public nonceService:NonceService,private validationService:UserValidationService) { }
   ngOnInit(): void {
 
     this.roles = this.roleService.getLocalStoreUserRole()
@@ -385,19 +385,18 @@ export class FmModerationComponent {
         console.log(' Account_Role', Account_Role);
       }
     }
-    if (window && window.localStorage && typeof localStorage !== 'undefined') {
-      const x = localStorage.getItem("userid")
-      if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
-        this.loggedINuserId = JSON.parse(x)
-        console.log(" userId", this.loggedINuserId)
-        return JSON.parse(x)
-      }
     
+    if (window && window.localStorage && typeof localStorage !== 'undefined') {
+      const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
+      if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
+        this.loggedINuserId = x
+        console.log(" userId", this.loggedINuserId)
+      }
     }
     return { ip_port, Account_Role };
   }
   initializeUserRole(Account_Role: any) {
-    this.http.post(this.apiEndpoints.admin_fm_admin_UserRole, { role: Account_Role }).subscribe(
+    this.https.post(this.apiEndpoints.admin_fm_admin_UserRole, { role: Account_Role }).subscribe(
       (res: any) => {
         this.userRoleSettings.openAiStatusasperUserRole = res.isOpenAI;
         this.userRoleSettings.selfReminder = res.selfReminder;
@@ -595,7 +594,8 @@ export class FmModerationComponent {
       let portfolioNamePrivacy = this.selectedPortfolio;
       this.callPrivacyAPI(prompt, accountNamePrivacy, portfolioNamePrivacy, exclusionListPrivacy, fakeDataFlag);
     }
-    if (this.tenantarr.includes('Safety')) {
+    if (this.tenantarr.includes('Profanity')) {
+      console.log("insafety")
     let { exclusionListProf } = formData.value;
     let accountNameProf = this.selectedAccount;
     let portfolioNameProf = this.selectedPortfolio;
@@ -751,14 +751,14 @@ export class FmModerationComponent {
           active: this.useCaseSelectedFlag ? false : true,
           payload: {
             "inputPrompt": prompt,
-            "modelName": "code"
+            "modelName": "GPT"
           }
         }
         this.gotState = {
           active: this.useCaseSelectedFlag ? false : true,
           payload: {
             "inputPrompt": prompt,
-            "modelName": 'gpt-35-turbo'
+            "modelName": 'gpt-35-turbo-16k'
           }
         }
         this.llmExplainState = {
@@ -975,7 +975,7 @@ export class FmModerationComponent {
     const userIdvalue = this.loggedINuserId
     const body = new URLSearchParams();
     body.set('userId', userIdvalue.toString());
-    this.http.post(this.apiEndpoints.Admin_getEmbedings, body, {
+    this.https.post(this.apiEndpoints.Admin_getEmbedings, body, {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }).subscribe(
       (res: any) => {
@@ -1163,7 +1163,7 @@ export class FmModerationComponent {
       console.log("new  file upload comp.........", fileData)
     }
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiEndpoints.rag_FileUpload, fileData).subscribe(
+      this.https.post(this.apiEndpoints.rag_FileUpload, fileData).subscribe(
         (res: any) => {
           console.log("data sent to database" + res);
           this.selectedEmbeddedFileId = res;
@@ -1183,7 +1183,7 @@ export class FmModerationComponent {
       console.log("new  file upload comp.........", fileData)
     }
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiEndpoints.rag_FileUpload, fileData).subscribe(
+      this.https.post(this.apiEndpoints.rag_FileUpload, fileData).subscribe(
         (res: any) => {
           console.log("data sent to database" + res);
           this.ExplanabilityFileId = res;
@@ -1223,7 +1223,7 @@ export class FmModerationComponent {
     fileData.append('text',this.prompt);
     console.log("rag multi payload........", fileData)
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiEndpoints.rag_multimodal, fileData).subscribe(
+      this.https.post(this.apiEndpoints.rag_multimodal, fileData).subscribe(
         (res: any) => {
           this.RagMultiModalResponse.response.text = (res[0]?.replace(/\n\n/g, '<br>')).replace(/\n/g, '<br>');
           resolve(res);
@@ -1261,7 +1261,7 @@ export class FmModerationComponent {
     }
     this.sharedDataService.updateNaviTonemoderationRes("status", 'LOADING');
     console.log(payload)
-    this.http.post(this.apiEndpoints.llm_eval, payload).subscribe(
+    this.https.post(this.apiEndpoints.llm_eval, payload).subscribe(
       (res: any) => {
         let response = res.moderationResults.response[0]
         this.sharedDataService.updateNaviTonemoderationRes("analysis", response.analysis);
@@ -1280,12 +1280,40 @@ export class FmModerationComponent {
   callPrivacyAPI(prompt: any, accountName: any, portfolioName: any, exclusionList: any, fakeDataFlag: any) {
     accountName = this.selectedAccount;
     portfolioName = this.selectedPortfolio;
-    let payloadAnon;
-    let payloadAnalyze;
-    let payloadEncrypt = {
-      inputText: prompt
+    console.log("userloggedIN",this.loggedINuserId)
+    let payloadAnon: any = {
+      inputText: prompt,
+      portfolio: portfolioName,
+      account: accountName,
+      exclusionList: exclusionList,
+      user: this.loggedINuserId,
+      fakeData: fakeDataFlag ? true : false,
+      redactionType: "replace",
+      piiEntitiesToBeRedacted: null as string[] | null,
+      lotNumber:"1"
+    
     };
+ 
+    let payloadAnalyze: any = {
+      inputText: prompt,
+      portfolio: portfolioName,
+      account: accountName,
+      exclusionList: exclusionList,
+      user: this.loggedINuserId,
+      piiEntitiesToBeRedacted: null as string[] | null,
+      nlp: null as string | null
+    };    let payloadEncrypt = {
+      inputText: prompt,
+      portfolio: portfolioName,
+      account: accountName,
+      exclusionList: exclusionList,
+      user: this.loggedINuserId,
+      fakeData: fakeDataFlag ? true : false,
+      redactionType: "replace",
+      piiEntitiesToBeRedacted: null as string[] | null,
+      lotNumber:"1"    };
     let payloadDecrypt = prompt;
+    console.log("accountName::",accountName)
     if (accountName.length != 0 && portfolioName.length != 0) {
       payloadAnon = {
         inputText: prompt,
@@ -1297,9 +1325,8 @@ export class FmModerationComponent {
         user: this.loggedINuserId,
         fakeData: fakeDataFlag ? true : false,
         // fakeData: this.fakeDataStateValue, //IMPORTAMNT Slider
-        // "piiEntitiesToBeRedacted": [
-        //   "US_SSN"
-        // ],
+        "piiEntitiesToBeRedacted": [
+        ],
         "redactionType": "replace"
       }
       payloadAnalyze = {
@@ -1307,29 +1334,30 @@ export class FmModerationComponent {
         portfolio: portfolioName,
         account: accountName,
         exclusionList: exclusionList,
+        "piiEntitiesToBeRedacted": [
+        ],
         //exclusionList: '',
-
+ 
         user: this.loggedINuserId
       }
     } else {
-      payloadAnon = {
-        inputText: prompt,
-        // exclusionList: '',
-        user: this.loggedINuserId,
-        fakeData: fakeDataFlag ? true : false,
-        // "piiEntitiesToBeRedacted": [
-        //   "US_SSN"
-        // ],
-        "redactionType": "replace"
-      }
-      payloadAnalyze = {
-        inputText: prompt,
-        // exclusionList: desc.exclusion,
-        exclusionList: '',
-        user: this.loggedINuserId
-      }
-    }
+      payloadAnon.piiEntitiesToBeRedacted = []
+      payloadAnon.portfolio = null;
+      payloadAnon.account = null;
+      //payloadAnon.nlp = this.nlpOption;
+      payloadAnalyze.portfolio = null;
+      payloadAnalyze.account = null;
+      payloadAnalyze.piiEntitiesToBeRedacted = []
+     // payloadAnalyze.nlp = this.nlpOption;
+      payloadAnalyze.exclusionList = '';
+      payloadAnon.user = this.loggedINuserId;
+      payloadEncrypt.account =null;
+      payloadEncrypt.portfolio =  null;
 
+      
+    
+    }
+ 
     if (this.privacyOption == 'Choose Options') {
       this.callPrivacyAnalyze(payloadAnalyze);
       this.callPrivacyAnonymize(payloadAnon);
@@ -1342,14 +1370,10 @@ export class FmModerationComponent {
     } else if (this.privacyOption == 'Privacy-Highlight') {
       this.callPrivacyAnalyze(payloadAnalyze);
     }
+  }
     // else if(this.privacyOption == 'Privacy-Decrypt'){
     //   this.callPrivacyDecrypt(payloadDecrypt);
     // }/// privacy decrypt api is being directly called after encrypt api response is recived
-
-
-
-
-  }
   resetPrivacyResult() {
     this.privacyResponse = {};
   }
@@ -1358,14 +1382,14 @@ export class FmModerationComponent {
       inputText: prompt,
       user: this.loggedINuserId
     }
-    this.http.post(this.apiEndpoints.profAnzApiUrl, payload).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.profAnzApiUrl, payload).subscribe((res: any) => {
       console.log(res)
       this.profanityRes.AnazRes = res
     }
       , error => {
         this.handleError(error);
       })
-    this.http.post(this.apiEndpoints.profCenApiUrl, payload).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.profCenApiUrl, payload).subscribe((res: any) => {
       console.log(res)
       this.profanityRes.cenRes = res
       this.spinner = false;
@@ -1379,7 +1403,7 @@ export class FmModerationComponent {
   }
   callExplainabilityAPI(prompt: any) {
     if (this.explainabilityOption == 'Sentiment') {
-       this.http.post(this.apiEndpoints.explApiUrl, { inputPrompt: prompt }).subscribe((expRes) => {
+       this.https.post(this.apiEndpoints.explApiUrl, { inputPrompt: prompt }).subscribe((expRes) => {
       this.explainabilityRes = expRes;
       console.log(expRes)
       this.spinner = false;
@@ -1410,7 +1434,7 @@ export class FmModerationComponent {
       if (this.activeTab == '') {
         this.changeTab('Explainability');
       }
-      this.http.post(this.COVUrl, payload)
+      this.https.post(this.COVUrl, payload)
       .subscribe((response: any) => {
         this.spinner = false;
         
@@ -1438,7 +1462,7 @@ export class FmModerationComponent {
     let body = new URLSearchParams();
     body.set('response', prompt.toString());
     body.set('evaluator', this.fairnessEvaluator.toString());
-    this.http.post(this.apiEndpoints.FairnessApiUrl, body, {
+    this.https.post(this.apiEndpoints.FairnessApiUrl, body, {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }).subscribe((fairRes) => {
       this.fairnessRes = fairRes
@@ -1455,7 +1479,10 @@ export class FmModerationComponent {
     console.log("callFMApi");
     let data = payload ? payload : this.comp_Payload(prompt, tempStringValue, this.userRoleSettings.llmInteraction, this.selectPromptTemplate);
     // this.fmService.getFMService(this.apiEndpoints.fm_api, data)?.subscribe()
-    this.fmService.getFMService(this.apiEndpoints.fm_api, data, this.fmlocalselected)?.subscribe(
+    // Define the Authorization
+   
+    // this.fmService.getFMService(this.apiEndpoints.fm_api, data, this.fmlocalselected, {})?.subscribe(
+    this.fmService.getFMService(this.apiEndpoints.fm_api, data,this.fmlocalselected)?.subscribe(
         async (res: any) => {
           this.templateBasedPayload['status'] = true;
           // this.handle_FM_API_Response(res);
@@ -1624,7 +1651,7 @@ export class FmModerationComponent {
   callFMConfigApi(configPayload: any, accountName: any, portfolioName: any, tempStringValue: any, prompt: any) {
     accountName = this.selectedAccount;
     portfolioName = this.selectedPortfolio;
-    return this.http.post(this.apiEndpoints.fm_config_getAttributes, configPayload).pipe(
+    return this.https.post(this.apiEndpoints.fm_config_getAttributes, configPayload).pipe(
       catchError(error => {
         return throwError(error);
       }),
@@ -1648,7 +1675,7 @@ export class FmModerationComponent {
     );
   }
   callOpenAiApi(prompt: string, tempStringValue: string) {
-    this.http
+    this.https
       .post(this.apiEndpoints.fm_api_openAi, { Prompt: prompt, temperature: tempStringValue, model_name: this.selectedLlmModel })
       .subscribe(
         (res: any) => {
@@ -1682,7 +1709,7 @@ export class FmModerationComponent {
   // --------------------------Hallucination API------------------------------
   hallucinateRetrievalKepler(payload: any, prompt: any, tempStringValue: any, nemoGaurdrail: any, summaryStatus: any) {
     const tempSourceebar: any[] = [];
-    this.http.post(this.apiEndpoints.rag_Retrieval, payload).subscribe((data: any) => {
+    this.https.post(this.apiEndpoints.rag_Retrieval, payload).subscribe((data: any) => {
       console.log(this.hallucinateRetrievalKeplerRes)
       // this.showSpinner1 = false;
       const res = data.rag_response;
@@ -1755,8 +1782,8 @@ export class FmModerationComponent {
       "response": ragText,
       "sourcetext": page_content
     };
-    // this.http.post("http://100.78.13.150:8000/rai/v1/moderations/gEval",options).subscribe
-    this.http.post(this.apiEndpoints.RAG_gEval, options).subscribe(
+    // this.https.post("http://100.78.13.150:8000/rai/v1/moderations/gEval",options).subscribe
+    this.https.post(this.apiEndpoints.RAG_gEval, options).subscribe(
       (res: any) => {
         this.gEvalres = res;
       },
@@ -1767,7 +1794,7 @@ export class FmModerationComponent {
   }
 
   callFMTimeApi(hallucinationPostCall: boolean = false) {
-    this.http.get(this.apiEndpoints.fm_api_time).subscribe(
+    this.https.get(this.apiEndpoints.fm_api_time).subscribe(
       (res: any) => {
         console.log(res);
         if (hallucinationPostCall) {
@@ -1798,7 +1825,7 @@ export class FmModerationComponent {
   getModerationfornemo(prompt: string) {
     const fileData2 = new FormData();
     fileData2.append('text', prompt);
-    this.http.post(this.apiEndpoints.nemo_ModerationRail, fileData2).subscribe(
+    this.https.post(this.apiEndpoints.nemo_ModerationRail, fileData2).subscribe(
       (res: any) => {
         console.log(res)
         this.nemoModerationRailRes = res
@@ -1814,7 +1841,7 @@ export class FmModerationComponent {
   }
 
   callNemoCheckApi(apiUrl: string, fileData: any, statusProperty: string, timeProperty: string) {
-    this.http.post(apiUrl, fileData).subscribe(
+    this.https.post(apiUrl, fileData).subscribe(
       (res: any) => {
         console.log(res)
         this.nemoChecksApiResponses[statusProperty] = res['status'];
@@ -2027,7 +2054,7 @@ export class FmModerationComponent {
 
   callPrivacyAnalyze(payloadAnalyze: any) {
     let privacyAnalyzeApi = this.apiEndpoints.privacyAnalyzeApi;
-    this.http.post(privacyAnalyzeApi, payloadAnalyze).subscribe((priAnzRes) => {
+    this.https.post(privacyAnalyzeApi, payloadAnalyze).subscribe((priAnzRes) => {
       // this.edited = true;
       console.log(priAnzRes)
       this.privacyResponse.AnazRes = priAnzRes
@@ -2042,7 +2069,7 @@ export class FmModerationComponent {
   }
   callPrivacyAnonymize(payloadAnon: any) {
     let privacyAnonApi = this.apiEndpoints.privacyAnonApi;
-    this.http.post(privacyAnonApi, payloadAnon).subscribe((priAnonRes: any) => {
+    this.https.post(privacyAnonApi, payloadAnon).subscribe((priAnonRes: any) => {
       // this.edited = true;
       // IMPORTANT NEED TO HANDLE THIS
       // this.sanitizeResponseData();
@@ -2061,7 +2088,7 @@ export class FmModerationComponent {
   callPrivacyEncrypt(payloadEncrypt: any) {
     // this.apiEndpoints.privacyEncrypt= this.apiEndpoints.privacyEncrypt+'?language='+this.language;
     let privacyEncryptapi = this.apiEndpoints.privacyEncrypt;
-    this.http.post(privacyEncryptapi, payloadEncrypt).subscribe((priEncrypt) => {
+    this.https.post(privacyEncryptapi, payloadEncrypt).subscribe((priEncrypt) => {
       // this.edited = true;
       console.log(priEncrypt)
       this.privacyResponse.EncryptRes = priEncrypt
@@ -2076,7 +2103,7 @@ export class FmModerationComponent {
     })
   }
   callPrivacyDecrypt(payloadDecrypt: any) {
-    this.http.post(this.apiEndpoints.privacyDecrypt, payloadDecrypt).subscribe((priDecrypt) => {
+    this.https.post(this.apiEndpoints.privacyDecrypt, payloadDecrypt).subscribe((priDecrypt) => {
       // this.edited = true;
       console.log(priDecrypt)
 
@@ -2150,7 +2177,7 @@ export class FmModerationComponent {
   }
   translatedText!: any;
   postTranslateApi(payload: any) {
-    this.http.post(this.apiEndpoints.Moderationlayer_Translate, payload).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.Moderationlayer_Translate, payload).subscribe((res: any) => {
       console.log(res)
       this.tState = true
       this.tLoading = false
@@ -2279,7 +2306,7 @@ export class FmModerationComponent {
     // formPayload1.append('Restrictedtopics', "Terrorism,Explosives");
     // formPayload1.append('model_name', "gpt4O");
 
-    // this.http.post(this.apiEndpoints.multimodal, formPayload1)
+    // this.https.post(this.apiEndpoints.multimodal, formPayload1)
     //   .subscribe(response => {
     //     this.imagePromptInjection = response;
     //     if (this.imagePromptInjection?.result == "FAILED") {
@@ -2302,7 +2329,7 @@ export class FmModerationComponent {
     // formPayload2.append('model_name', "gpt4O");
 
 
-    // this.http.post(this.apiEndpoints.multimodal, formPayload2)
+    // this.https.post(this.apiEndpoints.multimodal, formPayload2)
     //   .subscribe(response => {
     //     this.imageJailbreak = response;
     //     if (this.imageJailbreak?.result == "FAILED") {
@@ -2326,7 +2353,7 @@ export class FmModerationComponent {
     // formPayload3.append('model_name', "gpt4O");
 
 
-    // this.http.post(this.apiEndpoints.multimodal, formPayload3)
+    // this.https.post(this.apiEndpoints.multimodal, formPayload3)
     //   .subscribe(response => {
     //     this.imageRestrictedTopic = response;
     //     if (this.imageRestrictedTopic?.result == "FAILED") {
@@ -2341,7 +2368,7 @@ export class FmModerationComponent {
     for (let [key, value] of formPayload.entries()) {
       console.log(`${key}: ${value}`);
     }
-    this.http.post(this.fairness_image, formPayload).subscribe((res: any) => {
+    this.https.post(this.fairness_image, formPayload).subscribe((res: any) => {
       this.fairness_response = res;
       this.fmService.updateMultiModalKeyVal('fairnessRes', res)
       if (this.tenantarr.includes('Fairness')) {
@@ -2427,7 +2454,7 @@ export class FmModerationComponent {
     fileData1.append('image', this.fileMultiModel);
     fileData1.append('portfolio', this.portfolioName_value);
     fileData1.append('account', this.accountName_value);
-    this.http.post(this.profImageAnalyse, fileData1).subscribe(
+    this.https.post(this.profImageAnalyse, fileData1).subscribe(
       (data: any) => {
         this.analyze = data.analyze;
         if (
@@ -2486,10 +2513,10 @@ export class FmModerationComponent {
   }
 
   getSelectedValues(): void {
-    this.selectedPortfolio = (window && window.localStorage && typeof localStorage !== 'undefined') ? localStorage.getItem('selectedPortfolio')! :'';
-    this.selectedAccount = (window && window.localStorage && typeof localStorage !== 'undefined') ? localStorage.getItem('selectedAccount')! :'';
+    this.selectedPortfolio = localStorage.getItem('selectedPortfolio') ?? '';
+    this.selectedAccount = localStorage.getItem('selectedAccount') ?? '';
     console.log('Selected Portfolio:', this.selectedPortfolio);
     console.log('Selected Account:', this.selectedAccount);
-  }
+}
 }
 

@@ -20,7 +20,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class CodePrivacyComponent {
   form: FormGroup;
-  constructor(private _snackBar: MatSnackBar, private cdr: ChangeDetectorRef, public http: HttpClient, private modalservice: NgbModal,private validationService:UserValidationService,public nonceService:NonceService,private sanitizer: DomSanitizer) {
+  constructor(private _snackBar: MatSnackBar, private cdr: ChangeDetectorRef, public https: HttpClient, private modalservice: NgbModal,private validationService:UserValidationService,public nonceService:NonceService,private sanitizer: DomSanitizer) {
     this.form = new FormGroup({
       file: new FormControl(null, Validators.required)
     });
@@ -152,7 +152,7 @@ export class CodePrivacyComponent {
     const headers = new HttpHeaders({ 'Accept': 'text/plain' });
 
     if(this.demoFile.length > 0 || this.sampleFileFlag === true) {
-    this.http.post(this.privacy_codefile_anonymize, fileData, { headers, observe: 'response', responseType: 'text' })
+    this.https.post(this.privacy_codefile_anonymize, fileData, { headers, observe: 'response', responseType: 'text' })
       .subscribe((res: any) => {
         this.showSpinner = false
 
@@ -181,7 +181,7 @@ export class CodePrivacyComponent {
         });
         return; // Exit the function if validation fails
     }
-      this.http.post(this.privacy_code_anonymize, this.textDesc, { headers, observe: 'response', responseType: 'text' } )
+      this.https.post(this.privacy_code_anonymize, this.textDesc, { headers, observe: 'response', responseType: 'text' } )
         .subscribe((res: any) => {
           this.showSpinner = false;
 

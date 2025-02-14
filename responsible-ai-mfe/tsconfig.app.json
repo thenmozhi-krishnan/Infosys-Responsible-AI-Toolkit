@@ -4,7 +4,8 @@
     "outDir": "./out-tsc/app",
     "types": [
       "@angular/localize",
-      "chrome"
+      "chrome",
+      "node"
     ]
   },
   "files": [

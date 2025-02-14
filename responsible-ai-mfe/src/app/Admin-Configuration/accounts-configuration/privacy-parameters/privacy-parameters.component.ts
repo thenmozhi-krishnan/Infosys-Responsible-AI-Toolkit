@@ -20,7 +20,7 @@ export class PrivacyParametersComponent {
   @Input() parPortfolio!: any;
   @Input() parAccount!: any;
 
-  constructor (public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog){
+  constructor (public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog){
     
   }
 
@@ -95,7 +95,7 @@ selectRecognizertype() {
     this.setPrivacyParameter(header)
   }
   setPrivacyParameter(header: any) {
-    this.http.post(this.Admin_SetPrivacyParameter, header).subscribe
+    this.https.post(this.Admin_SetPrivacyParameter, header).subscribe
         ((res: any) => {
           console.log("data sent to database" + res.status)
           if (res.status === "True") {
@@ -137,7 +137,7 @@ selectRecognizertype() {
   }
 
   getadmin_list_rec_get_list(){
-    this.http.get(this.admin_list_rec_get_list).subscribe
+    this.https.get(this.admin_list_rec_get_list).subscribe
     ((res: any) => {
       console.log("res",res)
       this.listReconList = res.RecogList

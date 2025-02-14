@@ -14,12 +14,12 @@ import { Observable } from 'rxjs';
 })
 export class DifferentialPrivacyService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   postData(api:any,data: any):Observable<any> {
-    return this.http.post(api, data);
+    return this.https.post(api, data);
   }
   postform(api:any,data: any):Observable<any> {
-    return this.http.post(api, data,{responseType: 'blob'});
+    return this.https.post(api, data,{responseType: 'blob'});
   }
 }

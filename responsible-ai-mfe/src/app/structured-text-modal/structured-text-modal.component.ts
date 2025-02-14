@@ -35,6 +35,7 @@ export interface Payload {
   predLabel?: string;
   favourableLabel?: string;
   sensitiveFeatures?:string[];
+  categorical_attributes?:string[]
 
 }
 @Component({
@@ -68,7 +69,8 @@ export class StructuredTextModalComponent {
     GenMitigate:'',
     MitigateDownload:'',
     inProcessGenerate:'',
-    inProcessDwnld:''
+    inProcessDwnld:'',
+    inProcessUpload:''
   }
   givenTitle = '';
   KValue = 5;
@@ -76,16 +78,15 @@ export class StructuredTextModalComponent {
   predLabel = '';
   selectedPrivList:any =[];
   senValues:any;
-  constructor(public dialogRef: MatDialogRef<StructuredTextModalComponent>, public structuredTextService: StructuredTextService, public _snackBar: MatSnackBar, public http: HttpClient,private validationService:UserValidationService) { }
+  constructor(public dialogRef: MatDialogRef<StructuredTextModalComponent>, public structuredTextService: StructuredTextService, public _snackBar: MatSnackBar, public https: HttpClient,private validationService:UserValidationService) { }
   // INITIAL DATA FETCHING
   ngOnInit(): void {
     console.log("STRUCTURED TEXT")
     if (window && window.localStorage && typeof localStorage !== 'undefined') {
-      const userid = localStorage.getItem("userid");
-      if (userid != null && (this.validationService.isValidEmail(userid) || this.validationService.isValidName(userid))) {
-        this.loggedin_userId = JSON.parse(userid)
+      const x = localStorage.getItem("userid") ? JSON.parse(localStorage.getItem("userid")!) : "NA";
+      if (x != null && (this.validationService.isValidEmail(x) || this.validationService.isValidName(x))) {
+        this.loggedin_userId = x
         console.log(" userId", this.loggedin_userId)
-        return JSON.parse(userid)
       }
     }
     let ip_port: any
@@ -118,6 +119,7 @@ export class StructuredTextModalComponent {
     this.apiEndpoints.MitigateDownload = ip_port.result.Fairness + ip_port.result.MitigateDownload;
     this.apiEndpoints.inProcessGenerate =  ip_port.result.Fairness + ip_port.result.inProcessGenerate;
     this.apiEndpoints.inProcessDwnld = ip_port.result.Fairness + ip_port.result.inProcessDwnld;
+    this.apiEndpoints.inProcessUpload = ip_port.result.Fairness + ip_port.result.InProcessUpload;
   }
   getLocalStoreApi() {
     let ip_port
@@ -133,7 +135,7 @@ export class StructuredTextModalComponent {
     // this.showSpinner1 = true;
     const formData = new FormData;
     formData.append("userId", this.loggedin_userId)
-    this.http.post(this.apiEndpoints.getAllModels, formData).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.getAllModels, formData).subscribe((res: any) => {
       this.allModels = (Array.isArray(res)) ? res : [];
       // this.showSpinner1 = false;
       console.log("ALL MODELS", this.allModels)
@@ -145,7 +147,7 @@ export class StructuredTextModalComponent {
   getDataFiles() {
     const formData = new FormData;
     formData.append("userId", this.loggedin_userId)
-    this.http.post(this.apiEndpoints.getAllData, formData).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.getAllData, formData).subscribe((res: any) => {
       this.allDataFiles = res;
       console.log(this.allDataFiles)
     }, error => {
@@ -155,7 +157,7 @@ export class StructuredTextModalComponent {
   getAllPreprocessor() {
     const formData = new FormData;
     formData.append("userId", this.loggedin_userId)
-    this.http.post(this.apiEndpoints.getVector, formData).subscribe(
+    this.https.post(this.apiEndpoints.getVector, formData).subscribe(
       (res: any) => {
         this.allVectors = res;
       }, (error: any) => {
@@ -164,7 +166,7 @@ export class StructuredTextModalComponent {
     )
   }
   getAllTenants() {
-    this.http.get(this.apiEndpoints.allTenantsApi).subscribe((res: any) => {
+    this.https.get(this.apiEndpoints.allTenantsApi).subscribe((res: any) => {
       this.allTenants = res;
     })
   }
@@ -178,7 +180,7 @@ export class StructuredTextModalComponent {
       "scope": null
     }
     if (this.tenantarr.includes('Security')) {
-      this.http.post(this.apiEndpoints.security_applicableAttacks, fdata).subscribe(
+      this.https.post(this.apiEndpoints.security_applicableAttacks, fdata).subscribe(
         (res: any) => {
           this.applicableAttack = res
           console.log(this.applicableAttack)
@@ -189,7 +191,7 @@ export class StructuredTextModalComponent {
       )
     }
     if (this.tenantarr.includes('Explainability')) {
-      this.http.post(this.apiEndpoints.ExplainMethods, payload).subscribe(
+      this.https.post(this.apiEndpoints.ExplainMethods, payload).subscribe(
         (data: any) => {
           this.applicableMethod = data.methods;
           // this.cdr.detectChanges();
@@ -708,16 +710,13 @@ export class StructuredTextModalComponent {
       payload.preProcessorId = this.selectedVectorId;
     }
     console.log("PAYLOADS::", payload)
-    this.http.post(this.apiEndpoints.batchGeneration, payload).subscribe((res: any) => {
+    this.https.post(this.apiEndpoints.batchGeneration, payload).subscribe((res: any) => {
       console.log
       this._snackBar.open("Batch Added Successful", "Close", {
         duration: 3000,
         horizontalPosition: 'center',
         panelClass: ['le-u-bg-black'],
       });
-      if (payload.tenetName.includes('Fairness') && this.fairnessType == 'inprocessing') {
-        this.callBatchGenerationFairness(res[0].BatchId)
-      }
       this.closeDialog()
     }, error => {
       this.handleError(error)
@@ -735,7 +734,7 @@ export class StructuredTextModalComponent {
               horizontalPosition: 'center',
               panelClass: ['le-u-bg-black'],
             });
-            this.http.get(this.apiEndpoints.inProcessDwnld + fileName, { responseType: 'blob' }).subscribe
+            this.https.get(this.apiEndpoints.inProcessDwnld + fileName, { responseType: 'blob' }).subscribe
             ((response: Blob)=>{
             //const blob = new Blob([response], { type: 'text/csv' });
              saveAs(response, fileName);
@@ -744,7 +743,7 @@ export class StructuredTextModalComponent {
           this.handleError(error)
         }
       })
-           // this.http.get(this.apiEndpoints.inProcessDwnld).subscribe(())
+           // this.https.get(this.apiEndpoints.inProcessDwnld).subscribe(())
     // if (this.selectTypeFairness == 'ANALYZE') {
     //   this.structuredTextService.api(this.apiEndpoints.GenAnalyze,{Batch_id:batchId}).subscribe({
     //     next: (data: any) => {
@@ -758,7 +757,7 @@ export class StructuredTextModalComponent {
     //     next: (data: any) => {
     //       console.log(data);
     //      const mitigatedFile = data[1]!;
-    //      this.http.get(this.apiEndpoints.MitigateDownload + mitigatedFile, { responseType: 'text' }).subscribe
+    //      this.https.get(this.apiEndpoints.MitigateDownload + mitigatedFile, { responseType: 'text' }).subscribe
     //         ((response: any)=>{
     //         const blob = new Blob([response], { type: 'text/csv' });
     //          saveAs(blob, mitigatedFile);
@@ -833,7 +832,7 @@ export class StructuredTextModalComponent {
 
 onChange(type: string){
    console.log("Type:",type)
-  const endpointUrl = "https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/fairness/Workbench/inprocessing_uploadfile"// this.apiEndpoints.PreAnalyze;
+  const endpointUrl =  this.apiEndpoints.inProcessUpload;
  const fileData = new FormData();
   fileData.append('fileId',this.fairSampleId);
   this.structuredTextService.api(endpointUrl, fileData).subscribe({

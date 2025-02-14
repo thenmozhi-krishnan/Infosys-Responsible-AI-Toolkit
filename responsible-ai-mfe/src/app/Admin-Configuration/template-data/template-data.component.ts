@@ -22,7 +22,7 @@ export class TemplateDataComponent {
 
   constructor(
     public dialogRef: MatDialogRef<TemplateDataComponent>,
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private fb: UntypedFormBuilder,
     private sanitizer: DomSanitizer,
@@ -93,7 +93,7 @@ export class TemplateDataComponent {
     }
 
     console.log("payload=================",payload)
-    this.http.patch(this.customTemplateUpdateUrl,payload).subscribe((res)=>{
+    this.https.patch(this.customTemplateUpdateUrl,payload).subscribe((res)=>{
       console.log("res=================",res)
       
       this._snackBar.open("Template Saved Successfully", "Close", {
@@ -166,7 +166,7 @@ export class TemplateDataComponent {
     }
 
     const localUrl = "http://10.68.120.127:30026/rai/v1/moderations/evalLLM"
-    this.http.post(this.testPromptUrl,payload).subscribe((res:any)=>{
+    this.https.post(this.testPromptUrl,payload).subscribe((res:any)=>{
 
       this.testAnalysis = res["moderationResults"]["response"][0]["analysis"]
       this.testResult = res["moderationResults"]["response"][0]["result"]

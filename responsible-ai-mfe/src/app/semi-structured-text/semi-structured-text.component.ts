@@ -40,7 +40,7 @@ export class SemiStructuredTextComponent implements OnInit{
   sampleFile = environment.imagePathurl + '/assets/samplefiles/Healthcare_Application.pdf';
   sampleFile2 = environment.imagePathurl + '/assets/samplefiles/Life_Insurance.pdf';
 
-  constructor(private fb: FormBuilder,  public dialog: MatDialog,  public _snackBar: MatSnackBar, private http: HttpClient, private sanitizer: DomSanitizer,public nonceService:NonceService) {
+  constructor(private fb: FormBuilder,  public dialog: MatDialog,  public _snackBar: MatSnackBar, private https: HttpClient, private sanitizer: DomSanitizer,public nonceService:NonceService) {
     this.form = this.fb.group({
       languageModel: ['', Validators.required],
     });
@@ -95,7 +95,7 @@ export class SemiStructuredTextComponent implements OnInit{
     formData.append('account', this.accountName_value);
     formData.append('exclusionList', this.exclusionList_value);
   
-    this.http.post(`${this.url}?ocrvalue=${encodeURIComponent(this.ocrvalue)}`, formData, { responseType: 'blob' }).subscribe(
+    this.https.post(`${this.url}?ocrvalue=${encodeURIComponent(this.ocrvalue)}`, formData, { responseType: 'blob' }).subscribe(
       response => {
         console.log('Upload successful', response);
         const blob = new Blob([response], { type: 'application/pdf' });

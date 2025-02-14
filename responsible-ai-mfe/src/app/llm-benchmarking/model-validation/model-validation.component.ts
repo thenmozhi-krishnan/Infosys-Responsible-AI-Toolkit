@@ -45,7 +45,7 @@ export class ModelValidationComponent {
   showResultTab: boolean = false;
   showResultLoader: boolean = false;
 
-  constructor(public http: HttpClient,
+  constructor(public https: HttpClient,
     private _snackBar: MatSnackBar,
     private dialog: MatDialog,public nonceService:NonceService
   ) { }
@@ -98,7 +98,7 @@ export class ModelValidationComponent {
     const a2 = '1';
     fData.append('datasetName', selectedDataSetValue);
     fData.append('numberOfEntries', a2);
-    this.http.post(this.apiUrlEndpoints.securityLLM_previewDataSet + '?datasetName=' + selectedDataSetValue + '&numberOfEntries=' + a2, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_previewDataSet + '?datasetName=' + selectedDataSetValue + '&numberOfEntries=' + a2, fData).subscribe(
       (res: any) => {
         this.datasetLength = res['length'];
         this.placeholder = 'MaxLimit - ' + this.datasetLength;
@@ -132,7 +132,7 @@ export class ModelValidationComponent {
       const options = { headers: headers, params: params };
       const modelName = model;
       const dataSet = dataSetName;
-      this.http.post(this.apiUrlEndpoints.securityLLM_validateModel + '?modelName=' + modelName + '&dataset=' + dataSet + '&numberOfSamples=' + s, JSON.stringify(a), options).subscribe(
+      this.https.post(this.apiUrlEndpoints.securityLLM_validateModel + '?modelName=' + modelName + '&dataset=' + dataSet + '&numberOfSamples=' + s, JSON.stringify(a), options).subscribe(
         (res: any) => {
           console.log("API CALL HAS BEEN SUCCESSFULL",res)
           this.modelValidateDataSource = res;
@@ -190,7 +190,7 @@ export class ModelValidationComponent {
     const fData = new FormData();
     fData.append('datasetName', dataSetName);
     fData.append('numberOfEntries', noOfEntries);
-    this.http.post(this.apiUrlEndpoints.securityLLM_previewDataSet + '?datasetName=' + dataSetName + '&numberOfEntries=' + noOfEntries, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_previewDataSet + '?datasetName=' + dataSetName + '&numberOfEntries=' + noOfEntries, fData).subscribe(
       (res: any) => {
         this.showSpinner1 = false;
         popOver.toggle()
@@ -232,7 +232,7 @@ export class ModelValidationComponent {
     fData.append('modelName', modelFileName);
     fData.append('modelFile', this.files[0]);
     //this.logger.log("User has added modelFile",this.selectedModelFile);
-    this.http.post(this.apiUrlEndpoints.securityLLM_addModel + '?modelName=' + modelFileName, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_addModel + '?modelName=' + modelFileName, fData).subscribe(
       (res: any) => {
         this.getAvailableModels();
         this.showSpinner1 = false;
@@ -277,7 +277,7 @@ export class ModelValidationComponent {
     fData.append('datasetName', dataSetName);
     fData.append('datasetFile', this.files2[0]);
     //this.logger.log("User added datafile",this.selectedDataFile);
-    this.http.post(this.apiUrlEndpoints.securityLLM_addDataSet + '?datasetName=' + dataSetName, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_addDataSet + '?datasetName=' + dataSetName, fData).subscribe(
       (res: any) => {
         this.getAvailableDataSets();
         this.showSpinner1 = false;
@@ -417,7 +417,7 @@ export class ModelValidationComponent {
   }
 
   getAvailableDataSets() {
-    this.http.get(this.apiUrlEndpoints.securityLLM_availableDatasets).subscribe(
+    this.https.get(this.apiUrlEndpoints.securityLLM_availableDatasets).subscribe(
       (res: any) => {
         this.availableDataSets = res;
         this.getListOfDataSets(res);
@@ -437,7 +437,7 @@ export class ModelValidationComponent {
     }
   }
   getAvailableModels() {
-    this.http.get(this.apiUrlEndpoints.securityLLM_availableModels).subscribe(
+    this.https.get(this.apiUrlEndpoints.securityLLM_availableModels).subscribe(
       (res: any) => {
         this.availableModels = res
         this.getListOfModels();
@@ -462,7 +462,7 @@ export class ModelValidationComponent {
   deleteModel(model: string) {
     const fData = new FormData();
     fData.append('modelName', model);
-    this.http.post(this.apiUrlEndpoints.securityLLM_deleteModel + '?modelName=' + model, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_deleteModel + '?modelName=' + model, fData).subscribe(
       (res: any) => {
         this.getAvailableModels();
         const message = "Model Deleted Successfully";
@@ -481,7 +481,7 @@ export class ModelValidationComponent {
   deleteDataSet(dataSet: string) {
     const fData = new FormData();
     fData.append('datasetName', dataSet);
-    this.http.post(this.apiUrlEndpoints.securityLLM_deleteDataSet + '?datasetName=' + dataSet, fData).subscribe(
+    this.https.post(this.apiUrlEndpoints.securityLLM_deleteDataSet + '?datasetName=' + dataSet, fData).subscribe(
       (res: any) => {
         this.getAvailableDataSets();
         const message = "DataSet Deleted Successfully";

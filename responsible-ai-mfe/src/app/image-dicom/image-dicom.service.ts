@@ -11,10 +11,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ImageDicomService {
-  constructor(private http:HttpClient) { }
+  constructor(private https:HttpClient) { }
 
   api(url:any,inputData:any):Observable<any>{
     // const options = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(url,inputData);
+    return this.https.post<any>(url,inputData);
 }
 }

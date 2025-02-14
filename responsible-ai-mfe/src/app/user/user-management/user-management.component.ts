@@ -72,7 +72,7 @@ export class UserManagementComponent {
   //
   // ...
 
-  constructor(private http: HttpClient,private fb: FormBuilder,public _snackBar: MatSnackBar
+  constructor(private https: HttpClient,private fb: FormBuilder,public _snackBar: MatSnackBar
     , public dialog: MatDialog) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
@@ -166,7 +166,7 @@ toggleSearch() {
     this.Backend_DeleteUser = ip_port.result.Backend + ip_port.result.Backend_DeleteUser
   }
   getUserData() {
-    this.http.get(this.Backend_Users).subscribe(
+    this.https.get(this.Backend_Users).subscribe(
       (response: any) => {
         // Handle successful response here
         console.log(response);
@@ -186,7 +186,7 @@ toggleSearch() {
 options = [];
 
 getListofAuthorities() {
-  this.http.get(this.Backend_authorities).subscribe((res:any)=>{
+  this.https.get(this.Backend_authorities).subscribe((res:any)=>{
     console.log(res);
     this.options = res;
   })
@@ -195,7 +195,7 @@ getListofAuthorities() {
     let x = this.Backend_DeleteUser
     let y = `${x}/delete?id=${id}`
     // console.log("http://10.66.155.13:30019/v1/rai/backend/users/delete?id="+id+"");
-    this.http.delete(y).subscribe({
+    this.https.delete(y).subscribe({
       next: (response:any) => {
         console.log('User deleted successfully', response);
         this.getUserData();
@@ -253,7 +253,7 @@ getListofAuthorities() {
   }
 
   updateUser(header: any) {
-    this.http.patch(this.Backend_UpdateUser, header).subscribe({
+    this.https.patch(this.Backend_UpdateUser, header).subscribe({
       next: (response) => {
 
         console.log('User updated successfully', response);

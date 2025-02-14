@@ -39,7 +39,7 @@ export class UnstructuredTextComponent implements OnInit, PagingConfig {
 
   p: number = 1;
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar, public roleService: RoleManagerService) {
+  constructor(private https: HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar, public roleService: RoleManagerService) {
     this.pagingConfig = {
       itemsPerPage: this.itemsPerPage,
       currentPage: this.currentPage,
@@ -178,7 +178,7 @@ export class UnstructuredTextComponent implements OnInit, PagingConfig {
     const getUrl = this.lot_details + user;
     // this.dataSource = this.test
     console.log("This .getUrl====", getUrl)
-    this.http.get(getUrl).subscribe(
+    this.https.get(getUrl).subscribe(
       (res: any) => {
         if (!Array.isArray(res)) {
           console.log("No Records Found");
@@ -324,8 +324,8 @@ export class UnstructuredTextComponent implements OnInit, PagingConfig {
     // }, 5000);
 
 
-    // this.http.post(this.workBenchPostApi,fileData).subscribe((res) =>{
-    this.http.post(this.Workbench_UploadFile, fileData).subscribe((res) => {
+    // this.https.post(this.workBenchPostApi,fileData).subscribe((res) =>{
+    this.https.post(this.Workbench_UploadFile, fileData).subscribe((res) => {
       // this.edited = true;
       // anonymize
       console.log("inside analyze=====", res)

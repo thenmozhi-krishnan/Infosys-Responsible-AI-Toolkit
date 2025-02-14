@@ -17,7 +17,7 @@ export class InfosysLeaderboardComponent {
   isLoadingTable = true;
   ///
   constructor(
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
   ){}
@@ -95,7 +95,7 @@ export class InfosysLeaderboardComponent {
   fairnessKeys:string[]=[]
   fairnessCol:string[]=[];
   getLeaderboard(){
-    this.http.get(this.securityLLM_getLeaderBoard).subscribe(
+    this.https.get(this.securityLLM_getLeaderBoard).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.leaderBoardData = res;
@@ -107,7 +107,7 @@ export class InfosysLeaderboardComponent {
     );
   }
   getAvailableDataSets(){
-    this.http.get(this.securityLLM_availableDatasets).subscribe(
+    this.https.get(this.securityLLM_availableDatasets).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.avaiableDataSetsVariable = res
@@ -160,7 +160,7 @@ export class InfosysLeaderboardComponent {
 }
   }
   getFairnessLeaderboard(){
-    this.http.get(this.securityLLMFairnesInfo_leaderboard).subscribe(
+    this.https.get(this.securityLLMFairnesInfo_leaderboard).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.fairness =res;
@@ -188,7 +188,7 @@ export class InfosysLeaderboardComponent {
   dataSourcePrivacy:any[]=[];
   dataSourceMachineEthics:any[]=[]
   getTruthfullnessScore(){
-    this.http.get(this.LLMLeaderboardTruthfullness).subscribe(
+    this.https.get(this.LLMLeaderboardTruthfullness).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceTruthfullness = res
@@ -200,7 +200,7 @@ export class InfosysLeaderboardComponent {
     )
   }
   getSafetyScore(){
-    this.http.get(this.LLMleaderboardSafety).subscribe(
+    this.https.get(this.LLMleaderboardSafety).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceSafety = res
@@ -213,7 +213,7 @@ export class InfosysLeaderboardComponent {
     )
   }
   getPrivacyScore(){
-    this.http.get(this.LLMleaderboardPrivacy).subscribe(
+    this.https.get(this.LLMleaderboardPrivacy).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourcePrivacy = res
@@ -225,7 +225,7 @@ export class InfosysLeaderboardComponent {
     )
   }
   getEthicsScore(){
-    this.http.get(this.LLMLeaderboardEthics).subscribe(
+    this.https.get(this.LLMLeaderboardEthics).subscribe(
       (res: any) => {
         // this.logger.info("Api call has been successfull");
         this.dataSourceMachineEthics = res

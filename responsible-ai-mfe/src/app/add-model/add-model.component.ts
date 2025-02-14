@@ -63,7 +63,7 @@ export class AddModelComponent {
   @ViewChild("fileDropRef", { static: false }) fileDropEl: any = ElementRef;
   constructor(
     public dialogRef: MatDialogRef<AddModelComponent>,
-    public http: HttpClient,
+    public https: HttpClient,
     private _snackBar: MatSnackBar,
     private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,public nonceService:NonceService
@@ -215,7 +215,7 @@ if(this.demoFile.length==1){
   }
   }
 
-this.http.post(this.addModels,fileData).subscribe((res: any)=>{
+this.https.post(this.addModels,fileData).subscribe((res: any)=>{
   this.spinner = false;
     this.resetForm();
     this._snackBar.open(res, "Close", {
@@ -263,7 +263,7 @@ for (let i = 0; i < this.demoFile.length; i++) {
   fileData.append('ModelFile', this.selectedModelFile);
 }
 }
-this.http.patch(this.updateModels,fileData).subscribe((res:any)=>{
+this.https.patch(this.updateModels,fileData).subscribe((res:any)=>{
   this.spinner = false;
     this.resetForm();
     this._snackBar.open(res, "Close", {

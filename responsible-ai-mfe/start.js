@@ -22,7 +22,8 @@ const URLDATA = {
     MASTERURL: null,
     ENABLESEARCH: null,
     NG_SERVE_CMD: null,
-    AUTHORITY_API: null
+    AUTHORITY_API: null,
+    AUTH_TOKEN: null
 };
 
 const readFile = filePath => {
@@ -77,65 +78,6 @@ const NgServeProxyConfig = () => {
     });
 };
 
-// const updateProxyConfig = async() => {
-//     return new Promise(async(resolve, reject) => {
-//         console.log('updating proxy config data');
-//         const proxyConfigFileData = await readFile(proxyConfigPath);
-//         const proxyConfigFileData2 = proxyConfigFileData
-//             .replace(/MFE_AUTHENTICATE/g, URLDATA.MFE_AUTHENTICATE)
-//             .replace(/MFE_ACCOUNT/g, URLDATA.MFE_ACCOUNT)
-//             .replace(/MFE_MANIFEST/g, URLDATA.MFE_MANIFEST)
-
-//         const writeRes = await writeFile(proxyConfigPath, proxyConfigFileData2);
-//         resolve(writeRes);
-//     });
-// };
-
-// const updateAngular = async() => {
-//     return new Promise(async(resolve, reject) => {
-//         console.log('updating Angular data');
-//         const angularFileData = await readFile(angularPath);
-//         const angularFileData2 = angularFileData.replace(/FRONTEND_URL/g, URLDATA.FRONTEND_URL);
-
-//         const writeRes = await writeFile(angularPath, angularFileData2);
-//         resolve(writeRes);
-//     });
-// };
-// const updateStyle = async() => {
-//     return new Promise(async(resolve, reject) => {
-//         console.log('updating Style data');
-//         const styleFileData = await readFile(stylePath);
-//         const styleFileData2 = styleFileData.replace(/HOST_URL/g, URLDATA.HOST_URL);
-
-//         const writeRes = await writeFile(stylePath, styleFileData2);
-//         resolve(writeRes);
-//     });
-// };
-
-// const updateAppConstant = async() => {
-//     return new Promise(async(resolve, reject) => {
-//         console.log('updating app constant data');
-//         const appConstantFileData = await readFile(appConstantPath);
-//         const appConstantFileData2 = appConstantFileData
-//             .replace(/LOGIN_USER_NAME/g, URLDATA.LOGIN_USER_NAME)
-//             .replace(/LOGIN_USER_PASSWORD/g, URLDATA.LOGIN_USER_PASSWORD)
-//         const writeRes = await writeFile(appConstantPath, appConstantFileData2);
-//         resolve(writeRes);
-//     });
-// };
-// const updateAppModuleConstant = async() => {
-//     return new Promise(async(resolve, reject) => {
-//         console.log('updating app constant data');
-//         const appModuleConstantFileData = await readFile(appmodulePath);
-//         const appModuleConstantFileData2 = appModuleConstantFileData
-//             .replace(/urlList.azure_clientid/g, URLDATA.AZURE_CLIENTID)
-//             .replace(/urlList.azure_redirecturi/g, URLDATA.AZURE_REDIRECTURI)
-//             .replace(/urlList.azure_authority/g, URLDATA.AZURE_AUTHORITY)
-//         const writeRes = await writeFile(appmodulePath, appModuleConstantFileData2);
-//         resolve(writeRes);
-//     });
-// };
-
 const updateEnvFile = async() => {
     return new Promise(async(resolve, reject) => {
         console.log('updating env data');
@@ -170,6 +112,7 @@ const updateURLlistTs = async() => {
             .replace(/MASTERURL/g, URLDATA.MASTERURL)
             .replace(/'ENABLESEARCH'/g, URLDATA.ENABLESEARCH)
             .replace(/AUTHORITY_API/g, URLDATA.AUTHORITY_API)
+            .replace(/AUTH_TOKEN/g, URLDATA.AUTH_TOKEN);
         const writeRes = await writeFile(urlListFilePath, updatedData);
         resolve(writeRes);
     });
@@ -181,7 +124,8 @@ const setDataFromENV = () => {
     (URLDATA['MASTERURL'] = process.env['MASTERURL']),
     (URLDATA['ENABLESEARCH'] = process.env['ENABLESEARCH']),
     (URLDATA['AUTHORITY_API'] = process.env['AUTHORITY_API']),
-    (URLDATA['NG_SERVE_CMD'] = process.env['NG_SERVE_CMD']);
+    (URLDATA['NG_SERVE_CMD'] = process.env['NG_SERVE_CMD']),
+    (URLDATA['AUTH_TOKEN'] = process.env['AUTH_TOKEN']);
 
 };
 
@@ -191,7 +135,8 @@ const runLocally = async() => {
     (URLDATA['MASTERURL'] = 'http://localhost:30016/api/v1/rai/admin/ConfigApi'),
     (URLDATA['ENABLESEARCH'] = false),
     (URLDATA['AUTHORITY_API'] = 'http://localhost:30019/v1/rai/backend/pageauthoritynew'),
-    (URLDATA['NG_SERVE_CMD'] = 'ng serve --host 0.0.0.0 --port 30055 --disable-host-check');
+    (URLDATA['NG_SERVE_CMD'] = 'ng serve --host 0.0.0.0 --port 30055 --disable-host-check'),
+    (URLDATA['AUTH_TOKEN'] = '<YOUR_AUTH_TOKEN>');
 };
 
 const runApplication = async function() {

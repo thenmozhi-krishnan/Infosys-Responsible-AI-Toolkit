@@ -16,7 +16,7 @@ import { NonceService } from 'src/app/nonce.service';
   styleUrls: ['./safety-parameters.component.css']
 })
 export class SafetyParametersComponent {
-  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private http: HttpClient, public dialog: MatDialog,public nonceService:NonceService) {
+  constructor(private _fb: UntypedFormBuilder, public _snackBar: MatSnackBar, private https: HttpClient, public dialog: MatDialog,public nonceService:NonceService) {
     this.fromCreation();
   }
 
@@ -60,7 +60,7 @@ export class SafetyParametersComponent {
   }
 
   safetySubmit(payload: any) {
-    this.http.post(this.Admin_SetSafetyParamter, payload).subscribe
+    this.https.post(this.Admin_SetSafetyParamter, payload).subscribe
       ((res: any) => {
         if (res.status === "Success") {
           const message = "Safety Parameter Set Successfully"
