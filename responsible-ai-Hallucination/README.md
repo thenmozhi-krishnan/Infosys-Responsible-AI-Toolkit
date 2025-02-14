@@ -47,7 +47,7 @@ To run the application, first we need to install Python and the necessary packag
 
 3. Navigate to the `RAG` directory:
     ```sh
-    cd RAG
+    cd Rag
     ```
 
 4. Create a virtual environment:
