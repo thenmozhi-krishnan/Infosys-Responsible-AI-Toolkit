@@ -17,6 +17,7 @@
     - [Bug Fixes](#bug-fixes)
     - [Changes:](#changes)
   - [Limitations](#limitations)
+  - [Known Issues](#known-issues)
   - [Telemetry](#telemetry)
   - [Roadmap](#roadmap)
   - [Contact](#contact)
@@ -98,7 +99,7 @@ and activate it by going to
       ```bash 
          python main_api.py 
       ```
-7. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running:`http://localhost:<portno>/api/v1/fairness/docs`
+7. Use the Port No that is mentioned in main.py file. Open the swagger URL in browser once server is running: `http://localhost:<portno>/api/v1/fairness/docs#/`
    
 ## Configurations
  1. Add required environment variables.
@@ -209,6 +210,22 @@ The source code for the project is licensed under the MIT license, which you can
    1. Reweighting can lead to overfitting on minority groups, potentially reducing overall model performance on the dataset.
    2. Adjusting weights can distort the original data distribution, leading to a loss of valuable information and potential misrepresentation of the data.
 3. As of now mitigating bias for preprocessing dataset.
+
+## Known Issues
+**MongoDB Report Download Issue When Connected to UI**
+**Impact**: Users who are using UI may experience problems downloading reports for analyze and audit functions when connected to MongoDB.
+
+**Current Status**: This is a known issue requiring code changes in `src\fairness\dao\workbench\FileStoreDb.py`.
+
+**Workarounds**:
+1. Azure Services Alternative:
+   - Use Azure Cosmos DB as your database
+   - Configure Azure Blob Storage for file storage
+   - This combination provides full report download functionality
+2. Manual Fix:
+   - If you need to maintain MongoDB connectivity, you can modify `FileStoreDb.py` 
+   - Refer to [API Documentation](responsible-ai-fairness/README.md#workbench-apis####BugFix)
+
 
 ## Telemetry
 1. Make tel_Falg as True.
