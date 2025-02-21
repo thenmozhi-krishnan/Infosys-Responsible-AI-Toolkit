@@ -69,6 +69,9 @@ Add the `help` flag on any command to see how you can use it. For example, `npm 
 
 The `npm run` command will list all of the scripts available to run for this project.
 
+ ### Known Issue:
+ If Token Importance Graph doesn't show up for explainability with Canvas not found error , then uncomment this.TokenImportance() in toggleArrow() method of src/app/fm- 
+ moderation/explainability-result.component.ts
 
 ### Using Angular CLI
 
