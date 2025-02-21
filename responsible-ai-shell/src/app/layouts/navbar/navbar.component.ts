@@ -318,7 +318,7 @@ this.router.events.subscribe(event => {
   accountDetail: any;
   portfolioArr :any =[]
   AccountForm!: FormGroup;
-  portfolioUrl= 'https://rai-toolkit-dev.az.ad.idemo-ppc.com/api/v1/rai/admin/getAccount';
+  portfolioUrl= 'http://localhost:<YOUR_ADMIN_PORT>/api/v1/rai/admin/getAccount';
 
   AccountFormCall(){
     this.AccountForm = new FormGroup({
