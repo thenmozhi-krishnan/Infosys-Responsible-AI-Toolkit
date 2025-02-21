@@ -51,6 +51,9 @@ To run the application, first we need to install Python and the necessary packag
 8. Go to the `requirement` directory where the `requirements.txt` file is present and install the requirements:
     ```sh
     pip install -r requirements.txt
+    pip install werkzeug==1.0.1
+
+    Note: Ensure you install versions of the packages that are compatible with your operating system and python environment.
     ```
 ## Set Configuration Variables
 
