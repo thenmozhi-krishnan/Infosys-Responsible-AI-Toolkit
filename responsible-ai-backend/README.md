@@ -53,7 +53,8 @@ To run the application, first we need to install Python and the necessary packag
     pip install -r requirements.txt
     pip install werkzeug==1.0.1
 
-    Note: Ensure you install versions of the packages that are compatible with your operating system and python environment.
+**Note:** 
+Ensure you install versions of the packages that are compatible with your operating system and python environment.
     ```
 ## Set Configuration Variables
 
