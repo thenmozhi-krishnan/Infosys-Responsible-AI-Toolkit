@@ -31,7 +31,7 @@ Hallucination in LLMs refers to the generation of text or predictions that devia
     This measure is implemented directly to counteract hallucinations. As a reminder, hallucinations occur when the LLM responds incorrectly but in a logically coherent manner to a prompt.
 
 ## Pre-requisite 
-Install the file storage respository by adding all the necessary required environment variables. Below are the two dependency which  must be present in the env file of the RAG to upload and get the document.
+Install the file storage respository by adding all the necessary required environment variables. Below are the two dependencies which  must be present in the env file of the RAG to upload and get the document.
     AZUREADDFILE = `http://localhost:[PORT_NUMBER]/api/v1/azureBlob/addFile"`
     AZUREBLOBNAME = `http://localhost:[PORT_NUMBER]/api/v1/azureBlob/getBlob?"`
 
