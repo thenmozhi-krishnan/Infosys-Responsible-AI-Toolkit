@@ -114,7 +114,7 @@ Once we have completed all the aforementioned steps, we can start the service.
 
 ## License
 
-The source code for the project is licensed under the MIT license, which you can find in the [License.md](License.md) file.
+The source code for the project is licensed under the MIT license, which you can find in the [License](License.md) file.
 
 ## Contact
 
