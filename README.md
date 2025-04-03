@@ -41,7 +41,7 @@ For technical details and usage instructions on the Infosys Responsible AI toolk
 ### Machine Learning Models
 | Security | Fairness | Explainability |
 |:--- |:--- |:----  |
-|* Simulate Adverserial Attacks<br>* Recommend Defense Mechanisms|* Bias Detection Methods:<br><i>- Statistical Parity Difference</i><br><i>- Disparate Imapct Ratio</i><br><i>- Four Fifth's Rule</i><br><i>- Cohen's D</i><br>* Mitigation Methods:<br><i>- Equalized Odds</i><br><i>- Re-weighing</i>|* Global Explainability using SHAP<br>* Local Explainability using LIME |
+|* Simulate Adverserial Attacks<br>* Recommend Defense Mechanisms|* Bias Detection Methods:<br><i>- Statistical Parity Difference</i><br><i>- Disparate Impact Ratio</i><br><i>- Four Fifth's Rule</i><br><i>- Cohen's D</i><br>* Mitigation Methods:<br><i>- Equalized Odds</i><br><i>- Re-weighing</i>|* Global Explainability using SHAP<br>* Local Explainability using LIME |
 
 ## Upcoming Features
 * Logic of Thoughts(LoT) for enhanced Explainability 
