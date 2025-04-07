@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug
+about: Found a bug? Open an issue using the label bug.
 title: ''
 labels: ''
 assignees: ''
@@ -8,7 +8,8 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of what the bug is. Tag it to @InfosysResponsibleAI with the appropriate label.
+
 
 **Guardrail Name**
 Please specify the name of the Guardrail where you encountered the bug.
