@@ -15,9 +15,9 @@ There are several ways you can contribute. Please share your contributions via t
 
 ✅ **Suggest Features**: Have a great idea? Share it in the [discussions](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/discussions) page with the `suggest` label. 
 
-✅ **Improve Documentation**: Spotted a typo? Help improve our documentation by creating an new issue with the [documentation](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/issues) label.   
+✅ **Improve Documentation**: Spotted a typo? Help improve our documentation by creating a new issue with the [documentation](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/issues) label.   
 
-✅ **Fix Bugs**: Help us squash bugs by submitting patches. Create new issue by selecting [Blank Issue](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/issues)Template and provide the bug fix with appropriate labels.
+✅ **Fix Bugs**: Help us squash bugs by submitting patches. Create new issue by selecting [Blank Issue](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/issues) Template and provide the bug fix with appropriate labels.
 
 ✅ **Add Features**: Implement new functionalities to enhance the project. Create new issue and select [Feature](https://github.com/Infosys/Infosys-Responsible-AI-Toolkit/issues) Template to suggest new Feature.
 
