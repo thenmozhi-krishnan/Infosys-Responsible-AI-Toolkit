@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-bench-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-llm-benchmarking
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-llm-benchmarking
+    spec:
+      containers:
+        - name: responsible-ai-llm-benchmarking
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-llm-benchmarking:latest
+          ports:
+            - containerPort: 8200
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-bench-service
+spec:
+  selector:
+    app: responsible-ai-llm-benchmarking
+  ports:
+    - protocol: TCP
+      port: 8200
+      targetPort: 8200

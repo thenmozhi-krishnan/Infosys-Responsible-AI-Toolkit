@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explain-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-explain
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-explain
+    spec:
+      containers:
+        - name: responsible-ai-explain
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-explain:latest
+          ports:
+            - containerPort: 8101
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: explain-service
+spec:
+  selector:
+    app: responsible-ai-explain
+  ports:
+    - protocol: TCP
+      port: 8101
+      targetPort: 8101

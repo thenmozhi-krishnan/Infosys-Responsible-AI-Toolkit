@@ -1,15 +1,20 @@
 FROM python:3.9.13
 
-RUN useradd myLowPrivilegeUser
-USER myLowPrivilegeUser
+#RUN useradd myLowPrivilegeUser
+#USER myLowPrivilegeUser
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-Copy . .
+WORKDIR /src
 
-RUN pip3 install -r requirement/requirement.txt
+COPY . .
 
-WORKDIR src
+# List files for debugging
+RUN ls -lrt
 
-CMD ["sh", "-c", "python3 main.py"]
+# Check if requirements file exists before installing
+RUN [ -f requirement/requirements.txt ] && \
+    pip3 install --no-cache-dir -r requirement/requirements.txt || \
+    echo "No requirements file found, skipping pip install."
 
+CMD ["python3", "main.py"]

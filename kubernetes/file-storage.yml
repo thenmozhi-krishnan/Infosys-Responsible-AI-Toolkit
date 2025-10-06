@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-storage-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-file-storage
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-file-storage
+    spec:
+      containers:
+        - name: responsible-ai-file-storage
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-file-storage:latest
+          ports:
+            - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: file-storage-service
+spec:
+  selector:
+    app: responsible-ai-file-storage
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000

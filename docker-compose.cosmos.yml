@@ -1,0 +1,24 @@
+services:
+  cosmosdb:
+    container_name: cosmosdb-emulator
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    tty: true
+    stdin_open: true
+    restart: always
+    mem_limit: 2g
+    cpu_count: 2
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 10
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+    ports:
+      - "8081:8081"       # Data Explorer / REST API
+      - "8900:8900"
+      - "8901:8901"
+      - "8979:8979"
+      - "10250-10255:10250-10255"
+      - "10350:10350"
+    volumes:
+      - cosmosdb-data:/tmp/cosmos
+
+volumes:
+  cosmosdb-data:

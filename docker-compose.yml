@@ -1,0 +1,182 @@
+x-service-defaults: &defaults
+  restart: unless-stopped
+  env_file: .env
+  networks:
+    - rai-net
+  healthcheck:
+    test: ["CMD", "sh", "-c", "${HEALTHCHECK_CMD:-echo ok}"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 15s
+
+services:
+  responsible-ai-admin:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-admin
+      dockerfile: responsible-ai-admin/Dockerfile
+    depends_on:
+      - responsible-ai-backend
+    ports:
+      - "${ADMIN_PORT:-8888}:8080"
+
+  responsible-ai-backend:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-backend
+      dockerfile: backend-rai/Dockerfile
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      # example: wire backends to storage, db, etc. via .env
+      FILE_STORAGE_URL: "${FILE_STORAGE_URL:-http://responsible-ai-file-storage:9000}"
+      MONGO_URI: "mongodb://mongo:27017/rainf"
+    depends_on:
+      - mongo
+
+  responsible-ai-explain:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-explain
+      dockerfile: responsible-ai-explain/Dockerfile
+    ports:
+      - "${EXPLAIN_PORT:-8101}:8101"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-fairness:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-fairness
+      dockerfile: responsible-ai-fairness/Dockerfile
+    ports:
+      - "${FAIRNESS_PORT:-8102}:8102"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-file-storage:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-file-storage
+      dockerfile: Dockerfile
+    ports:
+      - "${FILE_STORAGE_PORT:-9000}:9000"
+    volumes:
+      - rai_data:/data
+
+  responsible-ai-llm-benchmarking:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-llm-benchmarking
+      dockerfile: responsible-ai-benchmarking/Dockerfile
+    ports:
+      - "${LLM_BENCH_PORT:-8200}:8200"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-llm-explain:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-llm-explain
+      dockerfile: responsible-ai-llm-explain/Dockerfile
+    ports:
+      - "${LLM_EXPLAIN_PORT:-8201}:8201"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-mfe:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-mfe
+      dockerfile: Dockerfile
+    ports:
+      - "${MFE_PORT:-3333}:3000"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-model-detail:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-model-detail
+      dockerfile: workbench/Dockerfile
+    ports:
+      - "${MODEL_DETAIL_PORT:-8300}:8300"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-moderationlayer:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-moderationlayer
+      dockerfile: Dockerfile
+    ports:
+      - "${MODERATION_LAYER_PORT:-8400}:8400"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-moderationmodel:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-moderationmodel
+      dockerfile: Dockerfile
+    ports:
+      - "${MODERATION_MODEL_PORT:-8401}:8401"
+    depends_on:
+      - responsible-ai-moderationlayer
+
+  responsible-ai-privacy:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-privacy
+      dockerfile: responsible-ai-privacy/Dockerfile
+    ports:
+      - "${PRIVACY_PORT:-8500}:8500"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-reporting-tool:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-reporting-tool
+      dockerfile: wrapper/Dockerfile
+    ports:
+      - "${REPORTING_PORT:-8600}:8600"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-security:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-security
+      dockerfile: wrapper/Dockerfile
+    ports:
+      - "${SECURITY_PORT:-8700}:8700"
+    depends_on:
+      - responsible-ai-backend
+
+  responsible-ai-shell:
+    <<: *defaults
+    build:
+      context: ./responsible-ai-shell
+      dockerfile: Dockerfile
+    ports:
+      - "${SHELL_PORT:-8800}:8800"
+    depends_on:
+      - responsible-ai-backend
+    volumes:
+      - rai_data:/data
+
+  mongo:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+networks:
+  rai-net:
+
+volumes:
+  rai_data:
+  mongodb_data:

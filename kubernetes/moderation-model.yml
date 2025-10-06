@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moderation-model-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-moderationmodel
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-moderationmodel
+    spec:
+      containers:
+        - name: responsible-ai-moderationmodel
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-moderationmodel:latest
+          ports:
+            - containerPort: 8401
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-model-service
+spec:
+  selector:
+    app: responsible-ai-moderationmodel
+  ports:
+    - protocol: TCP
+      port: 8401
+      targetPort: 8401

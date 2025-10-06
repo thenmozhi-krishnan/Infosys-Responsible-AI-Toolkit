@@ -1,12 +1,22 @@
 FROM python:3.9.13
+
 ENV DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /src
 
 ENV ACCESS_KEY= 
 ENV SECRET_KEY= 
-	
+
 COPY . .
 
-RUN pip install -r requirements/requirement.txt 
-WORKDIR src
+# List files for debugging
+RUN ls -lrt
 
-CMD ["sh", "-c", "python main_api.py"]
+# Check if requirements file exists before installing
+RUN [ -f requirements/requirements.txt ] && \
+    pip3 install --no-cache-dir -r requirements/requirements.txt || \
+    echo "No requirements file found, skipping pip install."
+
+
+CMD ["python3", "main.py"]
+

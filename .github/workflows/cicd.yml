@@ -1,0 +1,180 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - "fix/docker"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        if: ${{ env.ACT != 'true' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-backend
+          dockerfile: backend-rai/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-backend:latest
+
+      - name: Build and push admin
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-admin
+          dockerfile: responsible-ai-admin/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-admin:latest
+
+      - name: Build and push explain
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-explain
+          dockerfile: responsible-ai-explain/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-explain:latest
+
+      - name: Build and push fairness
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-fairness
+          dockerfile: responsible-ai-fairness/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-fairness:latest
+
+      - name: Build and push file-storage
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-file-storage
+          dockerfile: Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-file-storage:latest
+
+      - name: Build and push llm-benchmarking
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-llm-benchmarking
+          dockerfile: responsible-ai-benchmarking/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-llm-benchmarking:latest
+
+      - name: Build and push llm-explain
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-llm-explain
+          dockerfile: responsible-ai-llm-explain/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-llm-explain:latest
+
+      - name: Build and push mfe
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-mfe
+          dockerfile: Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-mfe:latest
+
+      - name: Build and push model-detail
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-model-detail
+          dockerfile: workbench/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-model-detail:latest
+
+      - name: Build and push moderation-layer
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-moderationlayer
+          dockerfile: Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-moderationlayer:latest
+
+      - name: Build and push moderation-model
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-moderationmodel
+          dockerfile: Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-moderationmodel:latest
+
+      - name: Build and push privacy
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-privacy
+          dockerfile: responsible-ai-privacy/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-privacy:latest
+
+      - name: Build and push reporting-tool
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-reporting-tool
+          dockerfile: wrapper/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-reporting-tool:latest
+
+      - name: Build and push security
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-security
+          dockerfile: wrapper/Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-security:latest
+
+      - name: Build and push shell
+        uses: docker/build-push-action@v4
+        with:
+          context: ./responsible-ai-shell
+          dockerfile: Dockerfile
+          push: ${{ env.ACT != 'true' }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-shell:latest
+
+  deploy:
+    if: ${{ env.ACT != 'true' }}
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Kubernetes context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f kubernetes/database/mongo-config.yml
+          kubectl apply -f kubernetes/database/mongo-secret.yml
+          kubectl apply -f kubernetes/database/mongo.yml
+          kubectl apply -f kubernetes/backend-deployment.yml
+          kubectl apply -f kubernetes/backend-service.yml
+          kubectl apply -f kubernetes/admin.yml
+          kubectl apply -f kubernetes/explain.yml
+          kubectl apply -f kubernetes/fairness.yml
+          kubectl apply -f kubernetes/file-storage.yml
+          kubectl apply -f kubernetes/llm-benchmarking.yml
+          kubectl apply -f kubernetes/llm-explain.yml
+          kubectl apply -f kubernetes/mfe.yml
+          kubectl apply -f kubernetes/model-detail.yml
+          kubectl apply -f kubernetes/moderation-layer.yml
+          kubectl apply -f kubernetes/moderation-model.yml
+          kubectl apply -f kubernetes/privacy.yml
+          kubectl apply -f kubernetes/reporting-tool.yml
+          kubectl apply -f kubernetes/security.yml
+          kubectl apply -f kubernetes/shell.yml

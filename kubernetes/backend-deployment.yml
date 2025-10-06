@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-backend
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-backend
+    spec:
+      containers:
+        - name: responsible-ai-backend
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://<user>:<password>@mongo-service:27017/rainf"
+            - name: FILE_STORAGE_URL
+              value: "http://responsible-ai-file-storage:9000"

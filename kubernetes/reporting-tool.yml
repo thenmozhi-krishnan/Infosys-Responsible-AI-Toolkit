@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-tool-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-reporting-tool
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-reporting-tool
+    spec:
+      containers:
+        - name: responsible-ai-reporting-tool
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-reporting-tool:latest
+          ports:
+            - containerPort: 8600
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-tool-service
+spec:
+  selector:
+    app: responsible-ai-reporting-tool
+  ports:
+    - protocol: TCP
+      port: 8600
+      targetPort: 8600

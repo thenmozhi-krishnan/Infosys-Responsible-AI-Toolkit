@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privacy-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-privacy
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-privacy
+    spec:
+      containers:
+        - name: responsible-ai-privacy
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-privacy:latest
+          ports:
+            - containerPort: 8500
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: privacy-service
+spec:
+  selector:
+    app: responsible-ai-privacy
+  ports:
+    - protocol: TCP
+      port: 8500
+      targetPort: 8500

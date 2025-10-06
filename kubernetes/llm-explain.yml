@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-explain-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responsible-ai-llm-explain
+  template:
+    metadata:
+      labels:
+        app: responsible-ai-llm-explain
+    spec:
+      containers:
+        - name: responsible-ai-llm-explain
+          image: ${{ secrets.DOCKER_USERNAME }}/responsible-ai-llm-explain:latest
+          ports:
+            - containerPort: 8201
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-explain-service
+spec:
+  selector:
+    app: responsible-ai-llm-explain
+  ports:
+    - protocol: TCP
+      port: 8201
+      targetPort: 8201

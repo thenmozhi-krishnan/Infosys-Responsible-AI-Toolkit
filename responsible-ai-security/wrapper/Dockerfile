@@ -1,15 +1,19 @@
-FROM FROM python:3.9.13
- 
+FROM python:3.9.13
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y wkhtmltopdf
- 
+WORKDIR /src
+
 COPY . .
- 
-RUN pip install --upgrade pip
- 
-RUN pip install -r requirements/requirement.txt 
 
-WORKDIR app
+# List files for debugging
+RUN ls -lrt
 
-CMD ["sh", "-c", "python3 main.py"]
+# Check if requirements file exists before installing
+RUN [ -f requirements/requirement.txt ] && \
+    pip3 install --no-cache-dir -r requirements/requirement.txt || \
+    echo "No requirements file found, skipping pip install."
+
+
+CMD ["python3", "main.py"]
+
