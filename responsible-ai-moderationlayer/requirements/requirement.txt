@@ -31,3 +31,9 @@ boto3
 langchain-aws
 google-generativeai
 ../lib/better_profanity-2.0.0-py3-none-any.whl
+uvicorn==0.23.2
+langdetect==1.0.9
+sentencepiece==0.2.0
+transformers==4.41.2
+torch==2.3.1
+accelerate==0.31.0

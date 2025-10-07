@@ -7,57 +7,41 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-
-import os
-import requests
-from langcodes import *
+from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+from langdetect import detect
 from config.logger import CustomLogger
+
 log = CustomLogger()
-from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
-from azure.ai.translation.text.models import InputTextItem
-from azure.core.exceptions import HttpResponseError
 
-class Translate:
-    def translate(text):
+class ModelBasedTranslate:
+    def __init__(self):
         try:
-            #text = input()
-            source = "auto"
-            url = f'https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl=en&dt=t&dt=bd&dj=1&q={text}'
-            resp = requests.get(url)
-            # translated_text = resp.json()['sentences'][0]['trans']
-            translated_text_list = [l['trans'] for l in resp.json()['sentences']]
-            translated_text = "".join(translated_text_list)
-            langcode = resp.json()['src'].split('-')[0]
-            language = Language.make(language=langcode).display_name()
-            print("The translated text :",translated_text, ". & The language:",language)
-            return translated_text,language
+            self.model_name = "facebook/m2m100_418M"
+            self.model = M2M100ForConditionalGeneration.from_pretrained(self.model_name)
+            self.tokenizer = M2M100Tokenizer.from_pretrained(self.model_name)
         except Exception as e:
-            log.error(f"Exception: {e}")
-        
-    def azure_translate(text):
-        # set `<your-key>`, `<your-endpoint>`, and  `<region>` variables with the values from the Azure portal
-        key = os.getenv("AZURE_TRANSLATE_KEY")
-        endpoint = os.getenv("AZURE_TRANSLATE_ENDPOINT")
-        region = os.getenv("AZURE_TRANSLATE_REGION")
+            log.error(f"Failed to load model or tokenizer: {e}")
+            raise
 
-        credential = TranslatorCredential(key, region)
-        text_translator = TextTranslationClient(endpoint=endpoint, credential=credential)
-
+    def translate(self, text: str):
         try:
-            #source_language = "en"
-            target_languages = ["en"] #["es", "it"]
-            input_text_elements = [ InputTextItem(text = text) ]
+            # Detect language
+            lang_code = detect(text)
+            log.info(f"Detected language: {lang_code}")
 
-            response = text_translator.translate(content = input_text_elements, to = target_languages)#, from_parameter = source_language)
-            translation = response[0] if response else None
+            self.tokenizer.src_lang = lang_code
+            encoded_text = self.tokenizer(text, return_tensors="pt")
 
-            if translation:
-                langcode = translation['detectedLanguage']['language']
-                language = Language.make(language=langcode).display_name()
-                for translated_text in translation.translations:
-                    print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-                    return translated_text.text, language
+            # Generate translation to English
+            generated_tokens = self.model.generate(**encoded_text, forced_bos_token_id=self.tokenizer.get_lang_id("en"))
+            
+            # Decode tokens to text
+            translated_text = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
+            log.info(f"Translated text: {translated_text}")
+            
+            return translated_text, lang_code
 
-        except HttpResponseError as exception:
-            log.error(f"Error Code: {exception.error.code}")
-            log.error(f"Message: {exception.error.message}")
+        except Exception as e:
+            log.error(f"Exception during translation: {e}")
+            # Fallback or error handling
+            return text, "en" # Assume english on failure

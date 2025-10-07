@@ -1,7 +1,13 @@
 '''
 Copyright 2024-2025 Infosys Ltd.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including wi        if payload.choice == "model_based":
+            print("Inside Model Based Translate")
+            text,language = translator.translate(payload.Prompt)
+        elif payload.choice == "google":
+            raise NotImplementedError("Google Translate is no longer supported.")
+        elif payload.choice == "azure":
+            raise NotImplementedError("Azure Translate is no longer supported.")limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
@@ -30,7 +36,7 @@ from cov_gemini import CovGemini
 from geval import gEval
 from telemetry import telemetry
 import requests
-from translate import Translate
+from translate import ModelBasedTranslate
 from service.textTemplate_service import *
 from service.imageTemplate_service import *
 from service.recommend_service import *
@@ -47,6 +53,7 @@ app =  Blueprint('app', __name__)
 log=CustomLogger()
 load_dotenv()
 logcheck=os.getenv("LOGCHECK")
+translator = ModelBasedTranslate()
 
 
 class AttributeDict(dict):
@@ -244,7 +251,7 @@ def translate():
 
         if payload.choice == "google":
             print("Inside Google Translate")
-            text,language = Translate.translate(payload.Prompt)
+            text,language = translator.translate(payload.Prompt)
         elif payload.choice == "azure":
             print("Inside Azure Translate")
             text,language = Translate.azure_translate(payload.Prompt)
@@ -643,11 +650,11 @@ def generate_text9():
         log.info(f"Total time taken=======> {time.time()-st}")
         if payload.translate == "google":
            
-            translated_final_answer,language = Translate.translate(response['final_answer'])
+            translated_final_answer,language = translator.translate(response['final_answer'])
             response['translated_final_answer'] = translated_final_answer
         elif payload.translate == "azure":
             
-            translated_final_answer,language = Translate.azure_translate(response['final_answer'])
+            translated_final_answer,language = translator.translate(response['final_answer'])
             response['translated_final_answer'] = translated_final_answer
 
         final_respose =json.dumps(response)

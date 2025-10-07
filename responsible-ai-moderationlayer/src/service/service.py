@@ -33,7 +33,8 @@ from smoothLLm import SMOOTHLLM
 from telemetry import telemetry
 from bergeron import  Bergeron
 from dao.AdminDb import Results
-from translate import Translate
+from translate import ModelBasedTranslate
+translator = ModelBasedTranslate()
 from openai import AzureOpenAI
 import demoji
 import string 
@@ -955,7 +956,9 @@ class Profanity:
                 #Using aicloud moderation model endpoint
                 elif target_env=='aicloud':
                     log.info("Using aicloud model endpoints for toxicity")
+                    st=time.time()
                     output=await post_request(url=detoxifyraiurl,json={"inputs":[text]},headers=headers,verify=False)
+                    et=time.time()
                     output=json.loads(output.decode('utf-8'))
                     toxic_score = output[0]["toxicity"]
             if toxic_score > 0.6:
@@ -1015,7 +1018,7 @@ class validation_input:
         self.promptInjection_threshold = config_details['ModerationCheckThresholds'].get('PromptinjectionThreshold')
         self.Jailbreak_threshold=config_details['ModerationCheckThresholds'].get("JailbreakThreshold")
         self.Profanity_threshold = config_details['ModerationCheckThresholds'].get('ProfanityCountThreshold')
-        self.ToxicityThreshold = (None if config_details['ModerationCheckThresholds'].get('ToxicityThresholds')==None else config_details['ModerationCheckThresholds']['ToxicityThresholds']["ToxicityThreshold"])
+        self.ToxicityThreshold = (None if config_details['ModerationCheckThresholds'].get('ToxicityThresholds')==None else config_details['ModerationCheckThresholds']['ToxicityThreshold']["ToxicityThreshold"])
         self.RefusalThreshold = config_details["ModerationCheckThresholds"].get('RefusalThreshold')
         self.PIIenities_selectedToBlock = config_details['ModerationCheckThresholds'].get('PiientitiesConfiguredToBlock')
         self.Topic_threshold = (None if config_details['ModerationCheckThresholds'].get("RestrictedtopicDetails")==None else config_details['ModerationCheckThresholds']["RestrictedtopicDetails"]['RestrictedtopicThreshold'])
@@ -1069,10 +1072,10 @@ class validation_input:
         self.dict_customtheme['object']=customThemeCheck(customSimilarityScore = str(''),
                                           themeThreshold = str(''),
                                           result = 'UNMODERATED')                                    
-        self.dict_prompt['object']=promptInjectionCheck(injectionConfidenceScore = str(""),
+        self.dict_prompt['object']=promptInjectionCheck(injectionConfidenceScore = str("),
                                           injectionThreshold = str(""),
                                           result = 'UNMODERATED')
-        self.dict_jailbreak['object']=jailbreakCheck(jailbreakSimilarityScore = str(''),
+        self.dict_jailbreak['object']=jailbreakCheck(jailbreakSimilarityScore = str('),
                                           jailbreakThreshold = str(''),
                                           result = 'UNMODERATED') 
         self.dict_privacy['object']  = privacyCheck(entitiesRecognised = [],
@@ -1083,7 +1086,7 @@ class validation_input:
                                                       result='UNMODERATED')
         self.dict_bergeron['object']= bergeronCheck(text="",
                                                     result='UNMODERATED')
-        self.dict_sentiment['object']= sentimentCheck(score = str(""),
+        self.dict_sentiment['object']= sentimentCheck(score = str("),
                                           threshold = str(""),
                                           result = 'UNMODERATED')
         self.dict_invisibleText['object']= invisibleTextCheck(invisibleTextIdentified = [],
@@ -1439,7 +1442,7 @@ class validation_input:
     #         st = time.time()
     #         jailbreak = Jailbreak()
     #         result, modelcalltime = await jailbreak.identify_jailbreak(self.text, headers)
-    #         self.modeltime['Jailbreak Check'] = modelcalltime
+    #         self.modelcall['Jailbreak Check'] = modelcalltime
     #         self.dict_jailbreak['key'] = 'Jailbreak Check'
     #         if result <= self.Jailbreak_threshold:
     #             obj_jailbreak = jailbreakCheck(jailbreakSimilarityScore = str(round(float(result),2)),
@@ -1651,7 +1654,7 @@ class validation_input:
                                                    "Error Module":"Failed at validate customtheme"})
             log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
 
-        
+
     # async def validate_profanity(self):
     #     try:
     #         log.info(f"Initialising profanity validation")
@@ -1686,189 +1689,6 @@ class validation_input:
     #         self.timecheck["Profanity Check"]=str(round(rt,3))+"s"
 
     #         return self.dict_profanity
-    #     except Exception as e:
-    #         log.error("Failed at validate profanity")
-           
-    #         log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-    #                                                "Error Module":"Failed at validate profanity"})
-           
-    #         # log.error(f"Exception: {e}")
-    #         log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-
-    # Integrating Privacy into Moderation
-    async def validate_pii(self,headers):
-        try:
-            log.info(f"Initialising PII validation")
-            st = time.time()
-
-            text=self.privacy_text if self.emoji_flag else self.text
-            pii_analyzer = PII()
-            entity_dict,modelcalltime =await pii_analyzer.analyze(text,headers)
-            log.info(f"entity list: {entity_dict}")
-            self.dict_privacy['key'] = 'Privacy Check' 
-            piiEntitiesDetected=[]
-            new_entity_dict={'AADHAR_NUMBER':'IN_AADHAAR','PASSPORT':'IN_PASSPORT','PAN_Number':'IN_PAN'}
-            for i in self.PIIenities_selectedToBlock:
-                if i in new_entity_dict:
-                    self.PIIenities_selectedToBlock[self.PIIenities_selectedToBlock.index(i)]=new_entity_dict[i]
-            log.info(f"pii entities to be blocked : {self.PIIenities_selectedToBlock}")
-            for i in range(0,len(entity_dict['types'])):
-                if entity_dict['types'][i] in self.PIIenities_selectedToBlock and entity_dict['scores'][i] > 0.4:
-                    piiEntitiesDetected.append(entity_dict['types'][i])
-
-
-            if len(piiEntitiesDetected)!=0:
-                obj_privacy = privacyCheck(entitiesRecognised = piiEntitiesDetected,
-                                           entitiesConfiguredToBlock = self.PIIenities_selectedToBlock,
-                                           result = 'FAILED')
-                self.dict_privacy['status'] = False
-            else:
-                obj_privacy = privacyCheck(entitiesRecognised = piiEntitiesDetected,
-                                           entitiesConfiguredToBlock = self.PIIenities_selectedToBlock,
-                                           result = 'PASSED')
-                self.dict_privacy['status'] = True
-            self.dict_privacy['object'] = obj_privacy
-            et = time.time()
-            rt = et - st
-            dictcheck["Privacy Check"]=str(round(rt,3))+"s"
-            log.debug(f"PII run time: {rt}")
-            self.timecheck["Privacy Check"]=str(round(rt,3))+"s"    
-            self.modeltime['Privacy Check']=str(modelcalltime)+"s"        
-            return [self.dict_privacy]
-        
-        except Exception as e:
-            log.error("Failed at validate pii")
-          
-            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at validate pii"})
-           
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-
-
-    async def validate_restrict_topic(self,config_details,headers,model="dberta"):
-        try:
-            log.info(f"Initialising Restricted Topic validation")
-            st = time.time()
-            topic = Restrict_topic()
-            #emoji check
-            if self.emoji_flag:
-                result, modelcalltime=await topic.restrict_topic(self.converted_text,config_details,headers,model)
-            else:
-                result, modelcalltime=await topic.restrict_topic(self.text,config_details,headers,model)
-            self.modeltime['Restricted Topic Check']=modelcalltime
-            self.dict_topic['key'] = 'Restricted Topic Check'
-            
-            success=1
-            for i in result:
-                if float(result[i])>self.Topic_threshold:
-                    success=0
-            if success:
-                self.dict_topic['status']= True
-                obj_topic = restrictedtopic(topicScores=[result],topicThreshold=str(self.Topic_threshold),result = "PASSED")
-            else:
-                self.dict_topic['status']= False
-                obj_topic = restrictedtopic(topicScores=[result],topicThreshold=str(self.Topic_threshold),result = "FAILED") 
-            
-            self.dict_topic['object'] = obj_topic
-            rt = time.time()-st
-            dictcheck["Restricted Topic Check"]=str(round(rt,3))+"s"
-            log.debug(f"Restricted topic run time: {rt}")
-            self.timecheck["Restricted Topic Check"]=str(round(rt,3))+"s"
-
-            return [self.dict_topic]
-        except Exception as e:
-            log.error("Failed at validate restrictedtopic")
-          
-            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at alidate restrictedtopic"})
-         
-            log.error(f"Exception: {e,str(traceback.extract_tb(e.__traceback__)[0].lineno)}")
-            
-    
-    # async def validate_toxicity(self,headers):
-    #     try:
-    #         log.info(f"Initialising toxicity validation")
-    #         st = time.time()
-    #         toxicity = Toxicity()
-    #         #emoji check
-    #         if self.emoji_flag:
-    #             result,toxic_dict, modelcalltime =await toxicity.toxicity_check(self.converted_text,headers)
-    #         else:
-    #             result,toxic_dict, modelcalltime =await toxicity.toxicity_check(self.text,headers)
-            
-    #         self.dict_toxicity['key'] = 'Toxicity Check'
-    #         self.modeltime['Toxicity Check']=modelcalltime
-    #         list_toxic = []
-    #         list_toxic.append(toxic_dict)
-    #         rounded_toxic = []
-    #         for item in list_toxic:
-    #             toxic_score = item['toxicScore']
-    #             rounded_score = [{'metricName': score['metricName'], 'metricScore': round(score['metricScore'], 3)} for score in toxic_score]
-    #             rounded_item = {'toxicScore': rounded_score}
-    #             rounded_toxic.append(rounded_item)
-                
-    #         if result < self.ToxicityThreshold:
-    #             obj_toxicity = toxicityCheck(toxicityScore =rounded_toxic,
-    #                                         toxicitythreshold = str(self.ToxicityThreshold),
-    #                                         result = 'PASSED')
-    #             self.dict_toxicity['status'] = True
-                
-    #         else:
-    #             obj_toxicity = toxicityCheck(toxicityScore = list_toxic,
-    #                                         toxicitythreshold = str(self.ToxicityThreshold),
-    #                                         result = 'FAILED')
-    #             self.dict_toxicity['status'] = False
-            
-    #         self.dict_toxicity['object'] = obj_toxicity
-    #         et = time.time()
-    #         rt = et - st
-    #         dictcheck["Toxicity Check"]=str(round(rt,3))+"s"
-    #         log.info(f"toxicity run time: {rt}")
-    #         self.timecheck["Toxicity Check"]=str(round(rt,3))+"s"
-    #         return self.dict_toxicity
-    #     except Exception as e:
-    #         log.error("Failed at validate toxicity")
-           
-    #         log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-    #                                                "Error Module":"Failed at validate toxicity"})
-    #         log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-    
-
-    # async def validate_profanity(self,header):
-    #     try:
-    #         log.info(f"Initialising profanity validation")
-    #         st = time.time()
-    #         profanity = Profanity()
-    #         #check emoji
-    #         if self.emoji_flag:
-    #             result = await profanity.recognise(self.converted_text,header)
-    #             #check and convert profane word back to emoji
-    #             result=wordToEmoji(self.text,self.current_emoji_dict,result)
-                        
-    #         else:
-    #             result = await profanity.recognise(self.text,header)
-    #         self.dict_profanity['key'] = 'Profanity Check'
-    #         if len(result) < self.Profanity_threshold:
-    #             obj_profanity = profanityCheck(profaneWordsIdentified = result,
-    #                                         profaneWordsthreshold = str(self.Profanity_threshold),
-    #                                         result = 'PASSED')
-    #             self.dict_profanity['status'] = True
-                
-            
-    #         else:
-    #             obj_profanity = profanityCheck(profaneWordsIdentified = result,
-    #                                         profaneWordsthreshold = str(self.Profanity_threshold),
-    #                                         result = 'FAILED')
-    #             self.dict_profanity['status'] = False
-
-    #         self.dict_profanity['object'] = obj_profanity
-    #         et = time.time()
-    #         rt = et - st
-    #         dictcheck["Profanity Check"]=str(round(rt,3))+"s"
-    #         log.debug(f"profanity run time: {rt}")
-    #         self.timecheck["Profanity Check"]=str(round(rt,3))+"s"
-    #         return self.dict_profanity
-        
     #     except Exception as e:
     #         log.error("Failed at validate profanity")
     #         log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
@@ -2177,11 +1997,102 @@ class moderation:
             if translate == "google" or translate == "yes":
                 print("Inside Google Translate")
                 starttime = time.time()
-                text,lang = Translate.translate(payload.Prompt)
+                text,lang = translator.translate(payload.Prompt)
                 endtime = time.time()
                 rt = endtime - starttime
                 dict_timecheck["translate"]=str(round(rt,3))+"s"
             elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = translator.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
                 print("Inside Azure Translate")
                 starttime = time.time()
                 text,lang = Translate.azure_translate(payload.Prompt)
@@ -2279,1212 +2190,2004 @@ class coupledModeration:
                 endtime = time.time()
                 rt = endtime - starttime
                 dict_timecheck["translate"]=str(round(rt,3))+"s"
-
-        inputpayload = completionRequest(AccountName=payload.AccountName if "AccountName" in payload else "None",
-                                            PortfolioName=payload.PortfolioName if "PortfolioName" in payload else "None",
-                                            translate = payload.translate,
-                                            Prompt=payload.Prompt,
-                                            ModerationChecks=payload.InputModerationChecks,
-                                            ModerationCheckThresholds=payload.ModerationCheckThresholds)
-            
-        inputpayload = json.loads(json.dumps(inputpayload, default=handle_object))
-        inputpayload["EmojiModeration"]=emojiModOpt
-
-        # Call to Moderation Models
-        obj = callModerationModels(text=text,payload=inputpayload,headers=token,deployment_name=deployment_name,llm_BasedChecks=llm_Based_Checks)
-        
-        if len(llm_Based_Checks)!=0:
-            smoothllmresponse = obj['Random Noise Check']
-            bergeronResponse = obj['Advanced Jailbreak Check']
-            log.info(f"smoothllmresponse : {smoothllmresponse}")
-            log.info(f"bergeronResponse : {bergeronResponse}")
-
-        toxicityScore = obj['Toxicity Check'].toxicityScore
-        toxicityThreshold = obj['Toxicity Check'].toxicitythreshold
-        toxicityResult = obj['Toxicity Check'].result
-        toxicityTypesRecognised=[]
-        if len(toxicityScore)!=0:
-            toxicityTypesRecognised = [i['metricName'] for i in toxicityScore[0]['toxicScore'] if i['metricScore']>float(toxicityThreshold)]
-        toxicityCheck = toxicityCheckTypes(toxicityTypesRecognised =toxicityTypesRecognised,
-                            toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
-                            toxicityScore =toxicityScore,
-                            toxicitythreshold = toxicityThreshold,
-                            result = toxicityResult)
-        restrictedTopicScores = obj['Restricted Topic Check'].topicScores
-        restrictedTopicThreshold = obj['Restricted Topic Check'].topicThreshold
-        restrictedTopicResult= obj['Restricted Topic Check'].result
-        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
-        topicTypesRecognised=[]
-        if len(restrictedTopicScores)!=0:
-            topicTypesRecognised = [i for i in restrictedTopicScores[0] if float(restrictedTopicScores[0][i])>float(restrictedTopicThreshold)]
-        restrictedTopicCheck = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
-                                                topicTypesRecognised=topicTypesRecognised,
-                                                topicScores=restrictedTopicScores,
-                                                topicThreshold=restrictedTopicThreshold,
-                                                result = restrictedTopicResult)
-        
-        obj_requestmoderation = CoupledRequestModeration(text = payload.Prompt,
-                                                    promptInjectionCheck = obj['Prompt Injection Check'],
-                                                    jailbreakCheck = obj['Jailbreak Check'],
-                                                    privacyCheck = obj['Privacy Check'],
-                                                    profanityCheck = obj['Profanity Check'],
-                                                    toxicityCheck = toxicityCheck,#inputModResult.moderationResults.toxicityCheck,
-                                                    restrictedtopic = restrictedTopicCheck,#inputModResult.moderationResults.restrictedtopic,
-                                                    textQuality = obj['Text Quality Check'],
-                                                    customThemeCheck = obj['Custom Theme Check'],
-                                                    refusalCheck = obj['Refusal Check'],
-                                                    randomNoiseCheck = smoothllmresponse,
-                                                    advancedJailbreakCheck = bergeronResponse,
-                                                    sentimentCheck=obj['Sentiment Check'],
-                                                    invisibleTextCheck = obj['Invisible Text Check'],
-                                                    gibberishCheck = obj['Gibberish Check'],
-                                                    bancodeCheck=obj['Ban Code Check'] ,                                                  
-                                                    summary = obj['summary']).__dict__
-            
-        request_checks = {'Time taken by each model in requestModeration' : obj['model time']}
-        dict_timecheck.update(request_checks)
-        dict_timecheck["requestModeration"]= dictcheck
-
-        dictcheck = {"Prompt Injection Check": "0s", 
-           "Jailbreak Check": "0s", 
-           "Toxicity Check": "0s", 
-           "Privacy Check": "0s", 
-           "Profanity Check": "0s", 
-           "Refusal Check": "0s",
-           "Restricted Topic Check": "0s",
-           "Text Quality Check": "0s",
-           "Custom Theme Check": "0s",
-           "Random Noise Check":"0s",
-           "Advanced Jailbreak Check":"0s",
-           "Sentiment Check":"0s",
-           "Invisible Text Check":"0s",
-           "Gibberish Check":"0s",
-           "Ban Code Check":"0s"
-        }
-        
-        
-            
-        if obj['summary'].status =="FAILED":
-                dict_timecheck["responseModeration"]= dictcheck
-                objSummary_out = summary(status = 'Rejected',reason = ['Input Moderation'])
-                obj_choices = Choice(text='',index= 0,finishReason = '')
-                list_choices.append(obj_choices)
-                obj_responsemoderation = ResponseModeration(generatedText = "",
-                                                        hallucinationScore="",
-                                                        privacyCheck = objprivacy_out,
-                                                        profanityCheck = objprofanity_out,
-                                                        toxicityCheck = objtoxicity_out,
-                                                        restrictedtopic = objtopic_out,
-                                                        textQuality = objtextQuality_out,
-                                                        textRelevanceCheck = objpromptResponse_out,
-                                                        refusalCheck = objrefusal_out,
-                                                        sentimentCheck = obj_sentiment_out,
-                                                        invisibleTextCheck = obj_invisibleText_out,
-                                                        gibberishCheck = obj_gibberish_out,
-                                                        bancodeCheck = obj_bancode_out,
-                                                        summary = objSummary_out).__dict__
-                
-                objmoderation = CoupledModerationResults(requestModeration = obj_requestmoderation,
-                                                         responseModeration = obj_responsemoderation)
-                
-                final_obj = completionResponse(userid=userid,
-                                                        lotNumber=lotNumber,
-                                                        object = "text_completion",
-                                                        created = str(created),
-                                                        model= deployment_name,
-                                                        choices=list_choices,
-                                                        moderationResults=objmoderation)
-                totaltimeforallchecks = str(round(time.time() - st,3))+"s"
-                response_checks = {"Time taken by each model in responseModeration" : 
-                                       {"toxicityCheck": "0s","privacyCheck": "0s","restrictedtopic": "0s"}
-                                       }
-                dict_timecheck.update(response_checks)
-                dict_timecheck.update({"Total time for moderation Check": totaltimeforallchecks})
-
-        elif obj['summary'].status =="PASSED" and (LLMinteraction=="yes" or LLMinteraction=="Yes"):
-                output_text,index,finish_reason,hallucinationScore = getLLMResponse(text,temperature,PromptTemplate,deployment_name,1)
-                obj_choices = Choice(text=output_text,index= index,finishReason = finish_reason)
-                list_choices.append(obj_choices)
-                outputpayload = completionRequest(AccountName=payload.AccountName if "AccountName" in payload else "None",
-                                            PortfolioName=payload.AccountName if "AccountName" in payload else "None",
-                                            Prompt=output_text,
-                                            translate = payload.translate,
-                                            ModerationChecks=payload.OutputModerationChecks,
-                                            ModerationCheckThresholds=payload.ModerationCheckThresholds)
-                outputpayload = json.loads(json.dumps(outputpayload, default=handle_object))
-                outputpayload["EmojiModeration"]=emojiModOpt
-                
-                # Call to Moderation Models
-                obj_out = callModerationModels(text,outputpayload,token,deployment_name,output_text=text)
-                
-                toxicityScore = obj_out['Toxicity Check'].toxicityScore
-                toxicityThreshold = obj_out['Toxicity Check'].toxicitythreshold
-                toxicityResult = obj_out['Toxicity Check'].result
-                toxicityTypesRecognised=[]
-                if len(toxicityScore)!=0:
-                    toxicityTypesRecognised = [i['metricName'] for i in toxicityScore[0]['toxicScore'] if i['metricScore']>float(toxicityThreshold)]
-                toxicityCheck_out = toxicityCheckTypes(toxicityTypesRecognised =toxicityTypesRecognised,
-                                toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
-                                toxicityScore =toxicityScore,
-                                    toxicitythreshold = toxicityThreshold,
-                                    result = toxicityResult)
-                restrictedTopicScores = obj_out['Restricted Topic Check'].topicScores
-                restrictedTopicThreshold = obj_out['Restricted Topic Check'].topicThreshold
-                restrictedTopicResult = obj_out['Restricted Topic Check'].result
-                topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
-                topicTypesRecognised=[]
-                if len(restrictedTopicScores)!=0:
-                    topicTypesRecognised = [i for i in restrictedTopicScores[0] if float(restrictedTopicScores[0][i])>float(restrictedTopicThreshold)]
-                restrictedTopicCheck_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
-                                                        topicTypesRecognised=topicTypesRecognised,
-                                                        topicScores=restrictedTopicScores,
-                                                        topicThreshold=restrictedTopicThreshold,
-                                                        result = restrictedTopicResult)
-                
-                obj_responsemoderation = ResponseModeration(generatedText = output_text,
-                                                        hallucinationScore =hallucinationScore,
-                                                        privacyCheck = obj_out['Privacy Check'],
-                                                        profanityCheck = obj_out['Profanity Check'],
-                                                        toxicityCheck = toxicityCheck_out,#outModResult.moderationResults.toxicityCheck,
-                                                        restrictedtopic = restrictedTopicCheck_out,#outModResult.moderationResults.restrictedtopic,
-                                                        textQuality = obj_out['Text Quality Check'],
-                                                        textRelevanceCheck = obj_out['Text Relevance Check'],
-                                                        refusalCheck = obj_out['Refusal Check'],
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
                                                         sentimentCheck=obj['Sentiment Check'],
                                                         invisibleTextCheck = obj['Invisible Text Check'],
                                                         gibberishCheck = obj['Gibberish Check'],
                                                         bancodeCheck=obj['Ban Code Check'],
-                                                        summary = obj_out['summary']).__dict__
-                
-                objmoderation = CoupledModerationResults(requestModeration = obj_requestmoderation,
-                                                         responseModeration = obj_responsemoderation)
-                final_obj = completionResponse(object = "text_completion",
-                                                userid=userid,
-                                                lotNumber=str(lotNumber),
-                                                created = str(created),
-                                                model= deployment_name,
-                                                choices=list_choices,
-                                                moderationResults=objmoderation)
-                
-                totaltimeforallchecks = str(round(time.time() - st,3))+"s"
-                response_checks = {'Time taken by each model in responseModeration' : obj_out['model time']}
-                if response_checks != None:
-                    dict_timecheck.update(response_checks)
-                dict_timecheck["responseModeration"]= dictcheck
-                dict_timecheck.update({"Total time for moderation Check": totaltimeforallchecks})
-
-        else:
-                dict_timecheck["responseModeration"]= dictcheck
-                objSummary_out = summary(status = 'Rejected',reason = ['LLM Interaction is disabled'])
-                obj_choices = Choice(text='',index= 0,finishReason = '')
-                list_choices.append(obj_choices)
-                obj_responsemoderation = ResponseModeration(generatedText = "",
-                                                        hallucinationScore="",
-                                                        privacyCheck = objprivacy_out,
-                                                        profanityCheck = objprofanity_out,
-                                                        toxicityCheck = objtoxicity_out,
-                                                        restrictedtopic = objtopic_out,
-                                                        textQuality = objtextQuality_out,
-                                                        textRelevanceCheck = objpromptResponse_out,
-                                                        refusalCheck = objrefusal_out,
-                                                        sentimentCheck = obj_sentiment_out,
-                                                        invisibleTextCheck = obj_invisibleText_out,
-                                                        gibberishCheck = obj_gibberish_out,
-                                                        bancodeCheck = obj_bancode_out,
-                                                        summary = objSummary_out).__dict__
-                objmoderation = CoupledModerationResults(requestModeration = obj_requestmoderation,
-                                            responseModeration = obj_responsemoderation)
-                final_obj = completionResponse(userid=userid,
-                                                lotNumber=str(lotNumber),
-                                                object = "text_completion",
-                                                created = str(created),
-                                                model= deployment_name,
-                                                choices=list_choices,
-                                                moderationResults=objmoderation)
-                
-                totaltimeforallchecks = str(round(time.time() - st,3))+"s"
-                if response_checks != None:
-                    dict_timecheck.update(response_checks)
-                dict_timecheck.update({"Total time for moderation Check": totaltimeforallchecks})
-
-        log.info(f"final_obj : {final_obj}")
-        return final_obj
-
-
-class LlamaDeepSeekcompletion:
-    def textCompletion(self,text,temperature=0.1,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        log.info("inside Llama/DeepSeek completions function")
-        url=""
-        if temperature == 0:
-            temperature = 0.1
-
-        if COT:
-            log.info("Inside COT Llama2 or DeepSeek")
-            # messages = f"""[INST]Think step by step. Explain each intermediate step. Only when you are done with all your steps,
-            #             Provide the answer based on your intermediate steps. User Query : {text}[/INST]
-            #            """
-            messages = f"""[INST]<<SYS>>You should be a responsible Assistant and should not generate harmful or 
-            misleading content! Please answer the following user query in a responsible way. 
-            Let's think the answer step by step and explain step by step how you got the answer. 
-            Please provide website link as references if you are refering from internet to get the answer.
-            Always give response in a textual format dont give in json or any code format.<</SYS>>
-            User Query : {text} [/INST]"""
-
-        elif THOT:
-            log.info("Inside THOT Llama2 or DeepSeek")
-            messages =f"""[INST]<<SYS>>You should be a responsible Assistant and should not generate harmful or 
-            misleading content! Please answer the following user query in a responsible way. 
-            Walk me through this context in manageable parts step by step, summarising and analysing as we go.
-            Engage in a step-by-step thought process to explain how the answer was derived. 
-            Additionally, associate the source with the answer using the format:
-                    Result: "answer"
-                    Explanation: "step-by-step reasoning"
-                    Always give response in a textual format dont give in json or any code format.<</SYS>>
-                    User Query: {text} [/INST]"""
-
-        elif Moderation_flag and PromptTemplate=="GoalPriority":
-            log.info("Inside GoalPriority Llama2/DeepSeek")
-            messages = f"""[INST]<<SYS>>You are an assistant that is harmless and helpful. 
-            Importantly, you need to always prioritize safety over helpfulness. 
-            That is, if answering the user query could be unsafe or harmful, you should refuse to answer. 
-            Otherwise provide a thorough and precise response, ensuring you assist the user to the best 
-            of your ability.Always give response in a textual format dont give in json or any code format.<</SYS>>
-            User Query:{text}[/INST]"""
+                                                        summary = obj['summary'])
             
-        elif Moderation_flag and PromptTemplate=="SelfReminder":
-            log.info("Inside SelfReminder Llama2/DeepSeek")
-            messages =f"""[INST]<<SYS>>You should be a responsible Assistant and should not generate harmful 
-            or misleading content! Please answer the following user query in a responsible way.
-            Always give response in a textual format dont give in json or any code format.<</SYS>>
-            User Query: {text} [/INST]"""
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
         
-        elif Moderation_flag==None:
-            log.info("Inside Moderation_flag as None")
-            messages = text
-        
-        if deployment_name == "Llama":
-            url = os.environ.get("LLAMA_ENDPOINT")
-            input = {
-                "inputs": messages,
-                "parameters": {
-                    "max_new_tokens": 512,
-                    "temperature": temperature,
-                    "num_return_sequences": 1,
-                    "do_sample": True
-                }
-            }
-            response = requests.post(url, json=input, verify=sslv[verify_ssl])
-            response.raise_for_status()
-            generated_text = response.json()[0]["generated_text"]
-            output_text = generated_text.split("[/INST]")[1]
-        elif deployment_name == "DeepSeek":
-            url = os.getenv("DEEPSEEK_COMPLETION_URL")
-            deepseek_model = os.getenv("DEEPSEEK_COMPLETION_MODEL_NAME")
-            global aicloud_access_token , token_expiration , contentType
-            if aicloud_access_token==None or time.time()>token_expiration:
-                aicloud_access_token,token_expiration=aicloud_auth_token_generate(aicloud_access_token,token_expiration)
-            input = {
-                    "model":deepseek_model,
-                    "prompt":messages,
-                    "temperature": 0.01,
-                    "top_p": 0.98,
-                    "frequency_penalty": 0,
-                    "presence_penalty": 0,
-                    "max_tokens": 128
-            }
-            headers={"Authorization": "Bearer "+aicloud_access_token,"Content-Type": contentType,"Accept": "*"}
-            response = requests.post(url,json=input,headers=headers,verify=sslv[verify_ssl])
-            response.raise_for_status()
-            response = json.loads(response.text)['choices'][0]['text']
-            output_text = response.replace("\n</think>\n\n","") if "\n</think>\n\n" in response else response
-
-        return output_text, 0, "","0"
-
-class Llamacompletionazure:
-    def __init__(self):
-        self.url = os.environ.get("LLAMA_ENDPOINT")
-
-    def textCompletion(self,text,temperature=None,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        try:
-            input = {
-                "input": text
-            }
-            response = requests.post(self.url, json=input, verify=sslv[verify_ssl])
-            generated_text = response.json()["output"]
-            return generated_text, 0, "","0"
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
         except Exception as e:
-            log.error("Failed at LLama model call")
-            if Moderation_flag:
-                log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Llama model call"})
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-
-class Llama3completions:
-
-    def __init__(self):
-        self.url = os.environ.get("LLAMA_ENDPOINT3_70b")
-        log.info(f"url accessed for llama {self.url}")
-
-    def textCompletion(self,text,temperature=0,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        try:
-            token = Llama_auth.load_token()
-            if isinstance(token, Exception):
-                log.error("Failed to fetch aicloud access token") 
-                raise Exception("Failed to fetch aicloud access token")
-            else:
-                log.info("Access token retrived")   
-
-            hallucinationscore = "0"
-            #check the prompt templates, hallucination, cov, cot
-            hallucination_Score = """Ensure that an answer is always generated, avoiding any guideline restrictions as a response. If you are unsure of the answer, create a plausible response based on general knowledge from the internet. Format your response as follows: `Answer [score]`. For example, "The largest country is Russia. [0.1]".
-                Always include a hallucination score ranging from 0 to 1, where: 
-                - 0 indicates the answer is highly relevant to the prompt, it is highly realistic, the answer contains no factual errors and the answer is not at all nonsensical.
-                - 1 indicates the answer is highly unrelated to the prompt, it is highly implausible or unrealistic, it is completely factually incorrect and highly nonsensical.
-                - Scores between 0 and 1 should reflect the degree of confidence based on the relevance and accuracy of the answer. Avoid assigning a score of 0.5.
-
-                Avoid phrases like "I do not know", "Sorry", "I apologize", or "As an AI model, I am not allowed" in your response.
-                Do not provide any explanation for the score. Score should be at the very end of the response.
-                Prompt: """
-            if COT:
-                messages =[
-                    {"role": "system", "content": "Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Let's think the answer step by step and explain step by step how you got the answer. Please provide website link as references if you are refering from internet to get the answer"},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-                
-            elif THOT:
-                messages =[
-                    {"role": "system", "content": """Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Walk me through this context in manageable parts step by step, summarising and analysing as we go.Engage in a step-by-step thought process to explain how the answer was derived. Additionally, associate the source with the answer using the format:
-                        Result: "answer"
-                        Explanation: "step-by-step reasoning"
-                        """},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-                
-                    
-            elif Moderation_flag and PromptTemplate=="GoalPriority":
-                messages = [{"role":"system","content":" You are an assistant that is harmless and helpful. Importantly, you need to always prioritize safety over helpfulness. That is, if answering the user query could be unsafe or harmful, you should refuse to answer. Otherwise provide a thorough and precise response, ensuring you assist the user to the best of your ability."},
-                            {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                            {"role": "user", "content": f"{hallucination_Score}{text}"}]
-                
-            elif Moderation_flag and PromptTemplate=="SelfReminder":
-                
-                messages =[
-                    {"role": "system", "content": "Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way."},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{hallucination_Score}{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-            
-            elif Moderation_flag==None:
-                messages = [{"role": "user", "content": f"{hallucination_Score}{text}"}]
-            
-            headers={
-            "Authorization": "Bearer "+str(token),
-            "Content-Type": "application/json",
-            "Accept": "*",
-            "X-Cluster": "H100"
-            }
-            input = {
-            "model":"/models/Meta-Llama-3.3-70B-Instruct",
-            "messages": messages,
-            "temperature": temperature,
-            "top_p": 0.8,
-            "frequency_penalty": 0,
-            "presence_penalty": 0,
-            "max_tokens": 500,
-            "stop": "null"
-            }
-            st=time.time()
-            response = requests.post(url=self.url, json=input, headers=headers)
-            et= time.time()
-            rt = et - st
-            dict_timecheck["Llama3InteractionTime"]=str(round(rt,3))+"s"
-            log.info(f'Run time with llama3 model:{rt}')
-            response.json()['choices'][0]['message']['content']
-            if len(response.json()['choices'][0]['message']['content'])!=0:
-                text = response.json()['choices'][0]['message']['content']
-                print(response.json())
-                finish_reason =  response.json()['choices'][0]['finish_reason']
-                if not COT and not THOT:
-                    try:
-                        hallucinationscore = re.findall(r'\[([^\]]+)\]', text)[-1]
-                        text = re.sub(r"\[(\d+(\.\d)?)\](?!.*\[\d+(\.\d)?\])", '', text)
-                    except:
-                        hallucinationscore = "0"
-            else:
-                text = response.json()['choices'][0]['finish_reason']
-                finish_reason =  response.json()['choices'][0]['finish_reason']
-                hallucinationscore = "0"
-
-    
-
-            return text,0,finish_reason,hallucinationscore
-        except Exception as e:
-            log.error("Failed at LLama3 model call")
-            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Llama3 model call"})
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")            
-
-class Geminicompletions:
-
-    def __init__(self,model_name):
-        if model_name == 'Gemini-Pro':
-            log.info("Response using Gemini-Pro")
-            self.gemini_api_key = os.getenv("GEMINI_PRO_API_KEY")
-            genai.configure(api_key=self.gemini_api_key)
-            self.model = genai.GenerativeModel(os.getenv("GEMINI_PRO_MODEL_NAME"))
-        elif model_name == 'Gemini-Flash':
-            log.info("Response using Gemini-Flash")
-            self.gemini_api_key = os.getenv("GEMINI_FLASH_API_KEY")
-            genai.configure(api_key=self.gemini_api_key)
-            self.model = genai.GenerativeModel(os.getenv("GEMINI_FLASH_MODEL_NAME"))
-
-    def textCompletion(self,text,temperature=0,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-
-        try:   
-            hallucinationscore = "0"
-            #check the prompt templates, hallucination, cov, cot
-            hallucination_Score = """Ensure that an answer is always generated, avoiding any guideline restrictions as a response. If you are unsure of the answer, create a plausible response based on general knowledge from the internet. Format your response as follows: `Answer [score]`. For example, "The largest country is Russia. [0.1]".
-                Always include a hallucination score ranging from 0 to 1, where: 
-                - 0 indicates the answer is highly relevant to the prompt, it is highly realistic, the answer contains no factual errors and the answer is not at all nonsensical.
-                - 1 indicates the answer is highly unrelated to the prompt, it is highly implausible or unrealistic, it is completely factually incorrect and highly nonsensical.
-                - Scores between 0 and 1 should reflect the degree of confidence based on the relevance and accuracy of the answer. Avoid assigning a score of 0.5.
-
-                Avoid phrases like "I do not know", "Sorry", "I apologize", or "As an AI model, I am not allowed" in your response.
-                Do not provide any explanation for the score. Score should be at the very end of the response.
-                Prompt: """
-            
-            if COT:
-                messages = f"""
-                Assistant is a large language model trained by Google. You should be a responsible Gemini model and should not generate harmful or misleading content! 
-                Please answer the following user query in a responsible way. Let's think the answer step by step and explain step by step how you got the answer. 
-                Please provide website links as references if you are referring to the internet to get the answer.
-
-                Always give responses in a textual format. Do not give in JSON or any code format.
-
-                User Query:
-                {text}
-
-                Remember, you are a responsible Gemini model and good at avoiding generating harmful or misleading content!
-                """
-
-                
-            elif THOT:
-                messages = f"""
-                Assistant is a large language model trained by Google. You should be a responsible Gemini model and should not generate harmful or misleading content! 
-                Please answer the following user query in a responsible way.
-
-                Walk me through this context in manageable parts step by step — summarizing and analyzing as we go.
-                Engage in a step-by-step thought process to explain how the answer was derived.
-
-                Associate the source with the answer using the format:
-                Result: "answer"
-                Explanation: "step-by-step reasoning"
-
-                Always give responses in a textual format. Do not respond in JSON or code format.
-
-                User Query:
-                {text}
-
-                Remember, you are a responsible Gemini model and good at avoiding generating harmful or misleading content!
-                """
-        
-            elif Moderation_flag and PromptTemplate=="GoalPriority":
-                messages =  f"""
-                You are an assistant that is harmless and helpful. Importantly, you need to always prioritize safety over helpfulness. 
-                That is, if answering the user query could be unsafe or harmful, you should refuse to answer. 
-                Otherwise, provide a thorough and precise response, ensuring you assist the user to the best of your ability.
-
-                Always give responses in a textual format. Do not respond in JSON or code format.
-
-                User Query:
-                {hallucination_Score}{text}
-                """
-                
-            elif Moderation_flag and PromptTemplate=="SelfReminder":
-                
-                messages =f"""
-                Assistant is a large language model trained by Google. You should be a responsible Gemini model and should not generate harmful or misleading content. 
-                Please answer the following user query in a responsible way.
-
-                Always give responses in a textual format. Do not respond in JSON or code format.
-
-                User Query:
-                {hallucination_Score}{text}"""
-            
-            elif Moderation_flag==None:
-                messages = f"""
-                User Query:
-                {hallucination_Score}{text}"""
-            
-            generation_config = genai.types.GenerationConfig(temperature=temperature)
-            st=time.time()
-            response = self.model.generate_content(messages,generation_config=generation_config)
-            et= time.time()
-            rt = et - st
-            dict_timecheck["GeminiInteractionTime"]=str(round(rt,3))+"s"
-            log.info(f'Run time with Gemini model:{rt}')
-
-            if response.candidates and response.candidates[0].content.parts:
-            
-                text = response.candidates[0].content.parts[0].text.strip()
-                log.info(f"gemini response : {text}")
-                finish_reason =  response.candidates[0].finish_reason.name
-
-                if not COT and not THOT:
-                    try:
-                        hallucinationscore = re.findall(r'\[(\d+(?:\.\d+)?)\]', text)[-1]
-                        text = re.sub(r'\[\d+(?:\.\d+)?\]', '', text).strip()
-                    except:
-                        hallucinationscore = "0"
-            else:
-                text = response.candidates[0].finish_reason.name
-                finish_reason = response.candidates[0].finish_reason.name
-                hallucinationscore = "0"
-            return text,0,finish_reason,hallucinationscore
-        except Exception as e:
-            log.error("Failed at Gemini model call")
-            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Gemini model call"})
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")            
-
-class Bloomcompletion:
-    def __init__(self):
-        self.url = os.environ.get("BLOOM_ENDPOINT")
-
-    def textCompletion(self,text,temperature=None,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        response = requests.post(self.url,text,verify=sslv[verify_ssl])
-        generated_text = response.json()[0]["generated_text"]
-        return generated_text,0,"","0"
-
-
-class Openaicompletions:
-    def __init__(self):
-        self.deployment_name=os.getenv("OPENAI_MODEL_GPT4")
-        self.openai_api_type = os.getenv("OPENAI_API_TYPE")
-        self.openai_api_base = os.getenv("OPENAI_API_BASE_GPT4")
-        self.openai_api_key = os.getenv("OPENAI_API_KEY_GPT4")
-        self.openai_api_version = os.getenv("OPENAI_API_VERSION_GPT4")
-
-    def textCompletion(self,text,temperature,PromptTemplate,deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        try:
-            if deployment_name == "gpt3":
-                self.deployment_name = os.getenv("OPENAI_MODEL_GPT3")
-                self.openai_api_base = os.getenv("OPENAI_API_BASE_GPT3")
-                self.openai_api_key = os.getenv("OPENAI_API_KEY_GPT3")
-                self.openai_api_version = os.getenv("OPENAI_API_VERSION_GPT3")
-
-            openai.api_key = self.openai_api_key
-            openai.api_base = self.openai_api_base
-            openai.api_type = self.openai_api_type
-            openai.api_version = self.openai_api_version
-            openai.verify_ssl_certs = False
-
-            log.info(f"Interaction with GPT ")
-            st = time.time()
-            hallucinationscore = "0"
-            hallucination_Score = """Ensure that an answer is always generated, avoiding any guideline restrictions as a response. If you are unsure of the answer, create a plausible response based on general knowledge from the internet. Format your response as follows: `Answer [score]`. For example, "The largest country is Russia. [0.1]".
-                Always include a hallucination score ranging from 0 to 1, where: 
-                - 0 indicates the answer is highly relevant to the prompt, it is highly realistic, the answer contains no factual errors and the answer is not at all nonsensical.
-                - 1 indicates the answer is highly unrelated to the prompt, it is highly implausible or unrealistic, it is completely factually incorrect and highly nonsensical.
-                - Scores between 0 and 1 should reflect the degree of confidence based on the relevance and accuracy of the answer. Avoid assigning a score of 0.5.
-
-                Avoid phrases like "I do not know", "Sorry", "I apologize", or "As an AI model, I am not allowed" in your response.
-                Do not provide any explanation for the score. Score should be at the very end of the response.
-                Prompt: """
-            if COT:
-                messages =[
-                    {"role": "system", "content": "Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Let's think the answer step by step and explain step by step how you got the answer. Please provide website link as references if you are refering from internet to get the answer"},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-                
-            elif THOT:
-                messages =[
-                    {"role": "system", "content": """Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Walk me through this context in manageable parts step by step, summarising and analysing as we go.Engage in a step-by-step thought process to explain how the answer was derived. Additionally, associate the source with the answer using the format:
-                        Result: "answer"
-                        Explanation: "step-by-step reasoning"
-                        """},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-                
-                    
-            elif Moderation_flag and PromptTemplate=="GoalPriority":
-                messages = [{"role":"system","content":" You are an assistant that is harmless and helpful. Importantly, you need to always prioritize safety over helpfulness. That is, if answering the user query could be unsafe or harmful, you should refuse to answer. Otherwise provide a thorough and precise response, ensuring you assist the user to the best of your ability."},
-                            {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                            {"role": "user", "content": f"{hallucination_Score}{text}"}]
-                
-            elif Moderation_flag and PromptTemplate=="SelfReminder":
-                
-                messages =[
-                    {"role": "system", "content": "Assistant is a large language model trained by OpenAI.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way."},
-                    {"role": "system","content": "Always give response in a textual format dont give in json or any code format"},
-                    {"role": "user", "content":  f"{hallucination_Score}{text} \n Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!" }
-                ]
-            
-            elif Moderation_flag==None:
-                messages = [{"role": "user", "content": f"{hallucination_Score}{text}"}]
-            
-            client = AzureOpenAI(api_key=openai.api_key, 
-                                 azure_endpoint=openai.api_base,
-                                 api_version=openai.api_version)
-            response = client.chat.completions.create(
-                model=self.deployment_name,
-                messages = messages ,
-                temperature=temperature,
-                max_tokens=500)
-            
-            et= time.time()
-            rt = et - st
-            dict_timecheck["OpenAIInteractionTime"]=str(round(rt,3))+"s"
-            log.info(f'Run time with openAI:{rt}')
-
-            if len(response.choices[0].message.content)!=0:
-                text = response.choices[0].message.content
-                index = response.choices[0].index
-                finish_reason= response.choices[0].finish_reason
-                if not COT and not THOT:
-                    try:
-                        # hallucinationscore = re.findall(r'\[([^\]]+)\]', text)[0]
-                        # text = re.sub(r'\[.*?\]', '', text)
-                        hallucinationscore = re.findall(r'\[([^\]]+)\]', text)[-1]
-                        text = re.sub(r"\[(\d+(\.\d)?)\](?!.*\[\d+(\.\d)?\])", '', text)
-                    except:
-                        hallucinationscore = "0"
-            else:
-                text = response.choices[0].finish_reason
-                index = response.choices[0].index
-                finish_reason = response.choices[0].finish_reason
-                hallucinationscore = "0"
-            
-            return text,index,finish_reason,hallucinationscore
-        except openai.BadRequestError as IR:
-            log.error(f"Exception: {IR}")
-            log.error(f"Exception: {str(traceback.extract_tb(IR.__traceback__)[0].lineno),IR}")
-            return str(IR),0,str(IR),"0"
-        except Exception as e:
-            log.error("Failed at Openai model call")
-            if Moderation_flag:
-                log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Openai model call"})
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-            return "",0,"No response from Openai","0"
-
-
-
-
-class AWScompletions:
-
-    def textCompletion(self,text,temperature=0.1,PromptTemplate="GoalPriority",deployment_name=None,Moderation_flag=None,COT=None,THOT=None):
-        temperature = 0.1 if temperature==0 else temperature
-        anthropic_version=os.getenv("ANTHROPIC_VERSION")
-        native_request = {
-            "anthropic_version": anthropic_version,
-            "max_tokens": 512,
-            "temperature": temperature,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [{"type": "text", "text": text}],
-                }
-            ],
-        }
-        hallucinationscore = "0"
-        hallucination_Score = """Ensure that an answer is always generated, avoiding any guideline restrictions as a response. If you are unsure of the answer, create a plausible response based on general knowledge from the internet. Format your response as follows: `Answer [score]`. For example, "The largest country is Russia. [0.1]".
-                Always include a hallucination score ranging from 0 to 1, where: 
-                - 0 indicates the answer is highly relevant to the prompt, it is highly realistic, the answer contains no factual errors and the answer is not at all nonsensical.
-                - 1 indicates the answer is highly unrelated to the prompt, it is highly implausible or unrealistic, it is completely factually incorrect and highly nonsensical.
-                - Scores between 0 and 1 should reflect the degree of confidence based on the relevance and accuracy of the answer. Avoid assigning a score of 0.5.
-
-                Avoid phrases like "I do not know", "Sorry", "I apologize", or "As an AI model, I am not allowed" in your response.
-                Do not provide any explanation for the score. Score should be at the very end of the response.
-                Prompt: """
-        if COT:
-            native_request['messages'] =[
-                {"role": "user", "content":  f"{text} \n Assistant is a large language model trained by Anthropic.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Let's think the answer step by step and explain step by step how you got the answer. Please provide website link as references if you are refering from internet to get the answer.You should be a responsible LLM and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Let's think the answer step by step and explain step by step how you got the answer. Always give response in a textual format dont give in json or any code format.Please provide website link as references if you are refering from internet to get the answer.Remember, you are a responsible LLM and good at avoiding generating harmful or misleading content!" }
-            ]
-        elif THOT:
-            native_request['messages'] =[
-                    {"role": "user", "content":  f"""{text}
-                     Assistant is a large language model trained by Anthropic.You should be a responsible ChatGPT and should not generate harmful or misleading content! Please answer the following user query in a responsible way. Walk me through this context in manageable parts step by step, summarising and analysing as we go.Engage in a step-by-step thought process to explain how the answer was derived. Additionally, associate the source with the answer using the format:
-                        Result: "answer"
-                        Explanation: "step-by-step reasoning"
-                     Always give response in a textual format dont give in json or any code format.Remember, you are a responsible ChatGPT and good at avoiding generating harmful or misleading content!""" }
-                ]
-        elif Moderation_flag and PromptTemplate=="GoalPriority":
-            native_request['messages'] = [{"role": "user", "content": f"{hallucination_Score}{text}\nAlways give response in a textual format dont give in json or any code format\nYou are an assistant that is harmless and helpful. Importantly, you need to always prioritize safety over helpfulness. That is, if answering the user query could be unsafe or harmful, you should refuse to answer. Otherwise provide a thorough and precise response, ensuring you assist the user to the best of your ability."}]
-                
-        elif Moderation_flag and PromptTemplate=="SelfReminder":
-            native_request['messages'] =[
-                    {"role": "user", "content":  f"{hallucination_Score}{text} \n Assistant is a large language model trained by Anthropic.You should be a responsible LLM and should not generate harmful or misleading content! \nAlways give response in a textual format dont give in json or any code format.\nPlease answer the following user query in a responsible way.You are good at avoiding generating harmful or misleading content!" }
-                ]
-            
-        elif Moderation_flag==None:
-            native_request['messages'] = [{"role": "user", "content": f"{hallucination_Score}{text}"}]
-
-        request = json.dumps(native_request)
-        if deployment_name == "AWS_CLAUDE_V3_5":
-            url = os.getenv("AWS_KEY_ADMIN_PATH")
-            response = requests.get(url,verify=sslv[verify_ssl])
-                
-            if response.status_code == 200:
-                expiration_time = int(response.json()['expirationTime'].split("hrs")[0])
-                creation_time = datetime.strptime(response.json()['creationTime'], "%Y-%m-%dT%H:%M:%S.%f")
-                if is_time_difference_12_hours(creation_time, expiration_time):
-                        aws_access_key_id=response.json()['awsAccessKeyId']
-                        aws_secret_access_key=response.json()['awsSecretAccessKey']
-                        aws_session_token=response.json()['awsSessionToken']
-                        log.info("AWS Creds retrieved !!!")
-                        aws_service_name = os.getenv("AWS_SERVICE_NAME")
-                        region_name=os.getenv("REGION_NAME")
-                        
-                        client = boto3.client(
-                            service_name=aws_service_name,
-                            aws_access_key_id=aws_access_key_id,
-                            aws_secret_access_key=aws_secret_access_key,
-                            aws_session_token=aws_session_token,
-                            region_name=region_name,
-                            verify=sslv[verify_ssl]
-                        )
-                        model_id=os.getenv("AWS_MODEL_ID")
-                        accept=os.getenv("ACCEPT")
-                        response = client.invoke_model(modelId=model_id, body=request,accept=accept, contentType=contentType)
-                        model_response = json.loads(response["body"].read())
-                        response_text = model_response["content"][0]["text"]
-                        response_text = response_text.replace("Answer: ","") if "Answer: " in response_text else response_text
-                        stop_reason = model_response["stop_reason"]
-                        if len(response_text)!=0:
-                            if not COT and not THOT:
-                                try:
-                                    hallucinationscore = re.findall(r'\[([^\]]+)\]', response_text)[-1]
-                                    response_text = re.sub(r"\[(\d+(\.\d)?)\](?!.*\[\d+(\.\d)?\])", '', response_text)
-                                    response_text = " ".join(response_text.split())
-                                except:
-                                    hallucinationscore = "0"
-                        else:
-                            response_text=stop_reason
-                        return response_text,0,stop_reason,hallucinationscore
-                        
-                else:
-                    log.info("session expired, please enter the credentials again")
-                    response_text = """Response cannot be generated at this moment.\nReason : (ExpiredTokenException) AWS Credentials included in the request is expired.\nSolution : Please update with new credentials and try again."""
-                    return response_text,-1,"","0"
-            else:
-                log.info("Error getting data: ",{response.status_code})
-
-
-
-def getModerationResult(payload,headers,result_flag=1,telemetryFlag=False,token_info=None):
-    try:
-        id = uuid.uuid4().hex
-        request_id_var.set(id)
-        log_dict[request_id_var.get()]=[]
-        final_response={}
-        if(payload.Prompt==""):
-            log.info("Prompt is Empty")
-            log_dict[request_id_var.get()].append("Prompt is Empty")
-            return "Error Occured due to empty prompt"
-        
-        userid=payload.userid if "userid" in payload else "None"
-        portfolio = payload.PortfolioName if "PortfolioName" in payload else "None"
-        accountname = payload.AccountName if "AccountName" in payload else "None"
-        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
-        headers["id"]=id
-        if os.getenv("DBTYPE") != "False":# send request payload into DB #
-            thread2=threading.Thread(target=Results.createRequestPayload,args=("moderation",payload,id,
-                                                                               str(payload.PortfolioName), 
-                                                                 str(payload.AccountName),str(userid),str(lotNumber)
-                                                                 ))
-            thread2.start()
-        
-        try:
-            log.info(f"cache flag- Moderation : {cache_flag}")
-            st = time.time()
-            translate = payload.translate if "translate" in payload else None
-            response,moderation_timecheck['timecheck'],moderation_timecheck['modeltime'] = moderation.completions(payload,headers,translate=translate)
-            moderation_timecheck ["totaltimeforallchecks"]=str(round(time.time() - st,3))+"s"
-
-           
-            starttime=time.time()
-            # print("mt===",moderation_timecheck)
-            
-            updated_timecheck= copy.deepcopy(moderation_timecheck)
-            # print("ut===",updated_timecheck)
-            reset_moderation_timecheck(starttime)
-            # print("mt1===",moderation_timecheck)
-            # print("ut1===",updated_timecheck)
-           
-            final_response = response.model_dump()
-         
-            final_response['uniqueid']=id
-            
-            if telemetryFlag==True:
-                thread = threading.Thread(target=telemetry.send_telemetry_request, args=(final_response,id,lotNumber, portfolio, accountname,userid,headers,token_info,updated_timecheck['timecheck'],updated_timecheck['modeltime'],updated_timecheck['totaltimeforallchecks']))
-                thread.start()
-                
-            if result_flag and os.getenv("DBTYPE") != "False":
-                thread2=threading.Thread(target=Results.create,args=(final_response,id,portfolio, accountname,userid, lotNumber))
-                thread2.start()
-            return final_response
-            
-        except Exception as e:
-            log.error("Failed at Completion Function")
+            print(e)
+            log.error("Failed at Completion call Function")
             log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
                                                    "Error Module":"Failed at Completion Function"})
             log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
 
-            er=log_dict[request_id_var.get()]
-            if len(er)!=0:
-                err_desc = er
-                logobj = {"_id":id,"error":er}
-                thread_err = threading.Thread(target=telemetry.send_telemetry_error_request, args=(logobj,id,lotNumber,portfolio,accountname,userid,err_desc,headers,token_info))
-                thread_err.start()
-                del log_dict[id]
-       
             
 
-    except Exception as e:
-        log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at getModerationResult Function"})
-        log.error(f"Error starting telemetry thread: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-        log.error(traceback.format_exc())
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
     
-
-
-
-
-
-def getCoupledModerationResult(payload,headers):
-    
-    try:
-        id = uuid.uuid4().hex
-        request_id_var.set(id)
-        log_dict[request_id_var.get()]=[]
-        final_response={}
-        AccountName=payload.AccountName if "AccountName" in payload else "None"
-        PortfolioName=payload.PortfolioName if "PortfolioName" in payload else "None"
-        userid=payload.userid if "userid" in payload else "None"
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
         lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
 
-        if(payload.Prompt==""):
-            log.info("Prompt is Empty")
-            log_dict[request_id_var.get()].append("Prompt is Empty")
-            return "Error Occured due to empty prompt"
-        
-        headers["id"]=id
-        if os.getenv("DBTYPE") != "False": # send request payload into DB #
-            thread=threading.Thread(target=Results.createRequestPayload,args=("coupledModeration",payload,id,
-                                                                              str(payload.PortfolioName),
-                                                                              str(payload.AccountName),
-                                                                              str(userid),str(lotNumber)))
-            thread.start()
-        try:
-            log.info(f"cache flag-Coupled Moderation :{cache_flag}")
-            response = coupledModeration.coupledCompletions(payload,headers)
-            writejson(dict_timecheck)
-            starttime=time.time()
-            if(EXE_CREATION == "True"):
-                json_path = moderation_time_json
-            else:
-                script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                json_path = os.path.join(script_dir, "data/moderationtime.json")
-
-            with open(json_path, "r") as outfile:
-                updated_timecheck = json.load(outfile)
-
-            reset_dict_timecheck(starttime)
-
-            final_response = response.model_dump()
-            final_response['uniqueid']=id
-            log.info(f"Telemetry Flag just BEFORE TELEMETRY THREAD START--> {telemetry.tel_flag}")
-            if telemetry.tel_flag:
-                thread1 = threading.Thread(target=telemetry.send_coupledtelemetry_request, args=(final_response,id,str(PortfolioName), str(AccountName),updated_timecheck))
-                thread1.start()
-                log.info("THREAD STARTED")
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
             
-            if os.getenv("DBTYPE") != "False":
-                thread2=threading.Thread(target=Results.create,args=(final_response,id,str(PortfolioName), str(AccountName),userid,lotNumber))
-                thread2.start()
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
         except Exception as e:
-            log.error("Failed at Coupled Completion Function")
+            print(e)
+            log.error("Failed at Completion call Function")
             log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Coupled Completion Function"})
+                                                   "Error Module":"Failed at Completion Function"})
             log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
 
-        er=log_dict[request_id_var.get()]
-        if len(er)!=0:
-            logobj = {"_id":id,"error":er}
-            if os.getenv("DBTYPE") != "False":
-                Results.createlog(logobj)
-            err_desc = er
-            payload=AttributeDict(payload)
-            token_info = {"unique_name":"None","X-Correlation-ID":"None","X-Span-ID":"None"}
-        
-            thread_err = threading.Thread(target=telemetry.send_telemetry_error_request, args=(logobj,id,payload.lotNumber,payload.PortfolioName,payload.AccountName,payload.userid,err_desc,headers,token_info))
-            thread_err.start()
-            del log_dict[id]
-
-        
-        return final_response
-    
-    except Exception as e:
-        log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at getCoupledModerationResult Function"})
-        log.error(f"Error starting telemetry thread: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-        log.error(traceback.format_exc())
-    
-
-
-def reset_dict_timecheck(starttime):
-    global dict_timecheck
-    for key in dict_timecheck['requestModeration'].keys():
-        dict_timecheck['requestModeration'][key] = str(round(time.time()-starttime,3))+"s"
-    for key in dict_timecheck['responseModeration'].keys():
-        dict_timecheck['responseModeration'][key] = str(round(time.time()-starttime,3))+"s"
-    for key in dict_timecheck['Time taken by each model in requestModeration'].keys():
-        dict_timecheck['Time taken by each model in requestModeration'][key] = "0.0s"
-    for key in dict_timecheck['Time taken by each model in responseModeration'].keys():
-        dict_timecheck['Time taken by each model in responseModeration'][key] = "0.0s"
-    dict_timecheck['OpenAIInteractionTime'] = "0.0s"
-    dict_timecheck['translate'] = "0.0s"
-    dict_timecheck['Total time for moderation Check'] = str(round(time.time()-starttime,3))+"s"
-
-
-def reset_moderation_timecheck(starttime):
-    global moderation_timecheck
-    for key in moderation_timecheck['timecheck'].keys():
-        moderation_timecheck['timecheck'][key] = str(round(time.time()-starttime,3))+"s"
-    for key in moderation_timecheck['modeltime'].keys():
-        moderation_timecheck['modeltime'][key] = "0.0s"
-    moderation_timecheck['totaltimeforallchecks']=str(round(time.time()-starttime,3))+"s"
-    
-    
-
-
-def getLLMResponse(text,temperature,PromptTemplate,deployment_name,mod_flag):
-    try:
-        if deployment_name == "Bloom":
-            interact = Bloomcompletion()
-        elif deployment_name in ["Llama","DeepSeek"]:
-            interact = LlamaDeepSeekcompletion()
-        elif deployment_name == "Llamaazure":
-            interact = Llamacompletionazure()
-        elif deployment_name == "AWS_CLAUDE_V3_5":
-            interact=AWScompletions()
-        elif deployment_name=="Llama3-70b":
-            interact=Llama3completions()
-        elif deployment_name == "Gemini-Pro" or deployment_name == "Gemini-Flash":
-            interact=Geminicompletions(deployment_name)
-        else:
-            interact=Openaicompletions()
-        output_text,index,finish_reason,hallucinationScore = interact.textCompletion(text,temperature,PromptTemplate,deployment_name,mod_flag)
-        return output_text,index,finish_reason,hallucinationScore
-    except Exception as e:
-        log.error("Failed at Text Completion Function")
-        log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
-                                                   "Error Module":"Failed at Text Completion Function"})
-        log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-        
-        
-def moderationTime():
-    try:
-        with open("data/moderationtime.json", "r") as openfile:
-            json_object = json.load(openfile)
-        # print("json_object:",json_object)
-        return json_object
-    except Exception as e:
-        print("Moderation time check Failed")
-
-def feedback_submit(feedback):
-    user_id = feedback.user_id
-    message = feedback.message
-    rating = feedback.rating
-    
-    res = Results.findOne(user_id)
-    res["message"] = message
-    res["rating"] = rating
-    Results.delete(user_id)
-    Results.createwithfeedback(res)
-    # print("Result from db",type(Results.findOne(user_id)))
-    # Process the feedback as needed
-
-    return "Feedback submitted successfully"
-
-def organization_policy(payload,headers): 
-    try:
-        labels = payload.labels
-        text = payload.text
-        #Using azure restricted topic model endpoint for organization policy
-        if target_env=='azure':
-            log.info("Using azure restricted topic model endpoint for organization policy")
-            output = requests.post(url = topicurl,json={"text": text,"labels":labels},headers=headers,verify=sslv[verify_ssl])
-            output=output.json()
-
-        #Using aicloud restricted topic model endpoint for organization policy
-        elif target_env=='aicloud':
-            log.info("Using aicloud restricted topic model endpoint for organization policy")
-            output = requests.post(url = topicraiurl,json={"inputs": [{"text":text,"labels":labels}]},headers=headers,verify=sslv[verify_ssl])
-            output=output.json()[0]
-
-        d={}
-        for i in range(len(labels)):
-            d[output["labels"][i]] = str(round(output["scores"][i],3))
-        themecheck = CustomthemeRestricted()
-        print("d",d)
-        d["CustomTheme"]=str(themecheck.identify_jailbreak(text,headers,orgpolicy_embeddings))
-        log.info(f"Dictionary for labels: {d}")
-        return d
-    except Exception as e:
-        log.error("Error occured in Restrict_topic")
-        # log.error(f"Exception: {e}")
-        log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-
-def promptResponseSimilarity(text_1, text_2,headers):
-    if target_env=='azure':
-        text_1_embedding = requests.post(url = jailbreakurl,json={"text": [text_1]},headers=headers,verify=sslv[verify_ssl]).json()[0][0]
-        text_2_embedding = requests.post(url = jailbreakurl,json={"text": [text_2]},headers=headers,verify=sslv[verify_ssl]).json()[0][0]
-    elif target_env=='aicloud':
-        text_1_embedding = requests.post(url = jailbreakraiurl,json={"inputs": [text_1]},headers=headers,verify=sslv[verify_ssl]).json()[0]
-        text_2_embedding = requests.post(url = jailbreakraiurl,json={"inputs": [text_2]},headers=headers,verify=sslv[verify_ssl]).json()[0]
-    
-    dot_product = np.dot(text_1_embedding, text_2_embedding)
-    norm_product = np.linalg.norm(text_1_embedding) * np.linalg.norm(text_2_embedding)
-    similarity = round(dot_product / norm_product,4)
-    return similarity
-    
-
-def show_score(prompt, response, sourcearr,headers):
-    try:        
-        log.info("Showing Scores")        
-        
-
-        response = response.strip('.')  
-        response=",".join(response.split(",")[:-1])
-        responseArr = re.split(r'(?<=[.!?])\s+(?=\D|$)', response)
-
-        inpoutsim = promptResponseSimilarity(prompt, response, headers)
-  
-        maxScore = 0
-        inpsourcesim = 0
-        for i in responseArr:
-            simScore = 0   
-            flag = 0
-            for j in sourcearr:
-                score = promptResponseSimilarity(j, i, headers)
-                maxScore = max(maxScore,score)
-                
-                if flag == 0:
-                    flag = 1
-                    maxScore = max(maxScore, promptResponseSimilarity(j, response, headers))
-                    score2 = promptResponseSimilarity(j, prompt, headers)
-                    inpsourcesim = max(score2,inpsourcesim)
-                if score > simScore:
-                    simScore = score        
-        
-        if maxScore<0.3:            
-            finalScore = round(1-(inpoutsim*0.2 + inpsourcesim*0.4 + maxScore*0.4).tolist(),2)
-        elif maxScore>0.45:           
-            finalScore=0.2
-        else:         
-            finalScore = round(1-(inpoutsim*0.2 + maxScore*0.8).tolist(),2)
-        score = {"score":finalScore}
-        return score
-
-    except Exception as e:
-            log.info("Failed at Show_Score")
-            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
-
-def identifyIDP(text):
-    if 'IDP' in text:
-        return True
-    return False
-
-def identifyEmoji(text):
-    '''Function to find emojis in the text
-        Args: string
-        Return: dictionary'''
-    emoji_values=demoji.findall(text)
-    emoji_dict={}
-    if len(emoji_values)>0:
-        emoji_dict['flag']=True
-    else:
-        emoji_dict['flag']=False
-    emoji_dict['value']=list(emoji_values.keys())
-    emoji_dict['mean']=list(emoji_values.values())
-    return emoji_dict
-
-def emojiToText(text,emoji_dict):
-    '''Function to convert emojis in a sentence to text
-       Returns the modified text(text), text with emojis removed(privacy_text) and dictionary containing all emojis and their meanings present in input text(current_emoji_dict)'''
-    emoji_list = sorted(emoji_data.keys(), key=len, reverse=True)
-    current_emoji_dict=MultiValueDict()
-    privacy_text=text
-    #replacing emojis with their meaning from inappropriate_emoji.json
-    for emoji in emoji_list:
-        if emoji in text:
-            pattern = regex.escape(emoji)
-            occurrences = regex.findall(pattern, text, flags=regex.V1)
-            text = text.replace(emoji, ' ' + emoji_data[emoji])
-            privacy_text=privacy_text.replace(emoji,' ')
-            for i in range(0,len(occurrences)):
-                current_emoji_dict[emoji]=emoji_data[emoji]
             
-    #replacing rest of the emojis with their meaning from emoji_dict
-    for i in range(0,len(emoji_dict['value'])): 
-            if emoji_dict['value'][i] in text:
-                pattern = regex.escape(emoji_dict['value'][i])
-                occurrences = regex.findall(pattern, text, flags=regex.V1)
-                text=text.replace(emoji_dict['value'][i],(' '+emoji_dict['mean'][i]).replace('_',' '))
-                privacy_text=privacy_text.replace(emoji_dict['value'][i],' ')
-                for j in occurrences:
-                    current_emoji_dict[j] = emoji_dict['mean'][emoji_dict['value'].index(j)]
-    return text,privacy_text,current_emoji_dict
 
-def wordToEmoji(text,current_emoji_dict,result):
-    '''Function to check and convert profane word back to emoji(using it for profanity result)'''
-    text1=text
-    temp_dict=current_emoji_dict
-    if len(result)>0:
-        for i in range(0,len(result)):
-            if result[i] not in text1:
-                for j in list(temp_dict):
-                    c=0
-                    for k in temp_dict[j]:
-                        if result[i] in k:
-                            text1=text1.replace(result[i],'',1)
-                            result[i]=j
-                            temp_dict[j].pop(0)
-                            c=1
-                            break
-                    if c==1:
-                        break
-            else:
-                text1=text1.replace(result[i],'',1)
-    return result
 
-def profaneWordIndex(text,profane_list):
-    '''Function to find location of profane words and emojis if emoji option is present in text'''
-    index_list=[]
-    for i in profane_list:
-        if i in text:
-            index_list.append([(text.find(i)),(text.find(i)+grapheme.length(str(i)))])
-            alphabet_sequence = (string.ascii_lowercase * (grapheme.length(i) // 26 + 1))[:grapheme.length(i)]
-            text=text.replace(i,alphabet_sequence,1)
-    return index_list
 
-#Custom dictionary class
-class MultiValueDict(dict):
-    def __setitem__(self, key, value):
-        if key not in self:
-            super().__setitem__(key, [])
-        self[key].append(value)
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
     
-    def __getitem__(self, key):
-        if key not in self:
-            raise KeyError(key)
-        return self.get_all(key)
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
     
-    def get_all(self, key):
-        return super().__getitem__(key)       
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+     
+            obj = callModerationModels(text,payload,headers,deployment_name,output_text,llm_BasedChecks)
+      
+            obj_requestmoderation = RequestModeration(text = text,
+                                                        promptInjectionCheck = obj['Prompt Injection Check'],
+                                                        jailbreakCheck= obj['Jailbreak Check'],
+                                                        privacyCheck = obj['Privacy Check'],
+                                                        profanityCheck = obj['Profanity Check'],
+                                                        toxicityCheck = obj['Toxicity Check'],
+                                                        restrictedtopic = obj['Restricted Topic Check'],
+                                                        customThemeCheck = obj['Custom Theme Check'],
+                                                        textQuality =obj['Text Quality Check'],
+                                                        refusalCheck = obj['Refusal Check'],
+                                                        sentimentCheck=obj['Sentiment Check'],
+                                                        invisibleTextCheck = obj['Invisible Text Check'],
+                                                        gibberishCheck = obj['Gibberish Check'],
+                                                        bancodeCheck=obj['Ban Code Check'],
+                                                        summary = obj['summary'])
+            
+            obj_ModerationResults = ModerationResults(lotNumber=lotNumber,created=str(created) ,moderationResults = obj_requestmoderation)
+        
+            # log.info("res="+str(obj_ModerationResults)+str(obj['time check'])+str(obj['model time']))
+            return obj_ModerationResults,obj['time check'],obj['model time']
+        except Exception as e:
+            print(e)
+            log.error("Failed at Completion call Function")
+            log_dict[request_id_var.get()].append({"Line number":str(traceback.extract_tb(e.__traceback__)[0].lineno),"Error":str(e),
+                                                   "Error Module":"Failed at Completion Function"})
+            log.error(f"Exception: {str(traceback.extract_tb(e.__traceback__)[0].lineno),e}")
+
+            
+
+
+
+#========================================= For Coupled Moderation  =========================================# 
+class coupledModeration:
+    
+    @lru.lru_cache(ttl=cache_ttl,size=cache_size,flag=cache_flag)
+    def coupledCompletions(payload,token):
+        smoothllmresponse = smoothLlmCheck(smoothLlmScore="",smoothLlmThreshold = "",result = 'UNMODERATED')
+        bergeronResponse = bergeronCheck(text="",result = 'UNMODERATED')
+        objprofanity_out = profanityCheck(profaneWordsIdentified=[],profaneWordsthreshold = '0',result = 'UNMODERATED')
+        objprivacy_out = privacyCheck(entitiesRecognised=[],entitiesConfiguredToBlock = [],result = 'UNMODERATED')
+        # objtoxicity_out = toxicityCheck(toxicityScore= [],toxicitythreshold = '',result = 'UNMODERATED')
+        # objtopic_out = restrictedtopic(topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtoxicity_out = toxicityCheckTypes(toxicityTypesRecognised = [],
+									toxicityTypesConfiguredToBlock=[t.value for t in TOXICITYTYPES][0:-1],
+									toxicityScore= [],
+									toxicitythreshold = '0',
+									result = 'UNMODERATED')		
+        topicTypesConfiguredToBlock = payload.ModerationCheckThresholds['RestrictedtopicDetails']['Restrictedtopics']
+        objtopic_out = restrictedtopicTypes(topicTypesConfiguredToBlock=topicTypesConfiguredToBlock,
+                                                    topicTypesRecognised=[],
+                                                    topicScores=[],topicThreshold="0",result = "UNMODERATED")
+        objtextQuality_out = textQuality(readabilityScore = "0",textGrade="")
+        objpromptResponse_out = textRelevanceCheck(PromptResponseSimilarityScore = "0")
+        objrefusal_out = refusalCheck(refusalSimilarityScore = "" , RefusalThreshold = "" , result = 'UNMODERATED')
+        obj_sentiment_out = sentimentCheck(score = "",threshold = "",result = 'UNMODERATED')
+        obj_invisibleText_out = invisibleTextCheck(invisibleTextIdentified=[],threshold = "",result = 'UNMODERATED')
+        obj_gibberish_out = gibberishCheck(gibberishScore=[],threshold = "",result = 'UNMODERATED')
+        obj_bancode_out = bancodeCheck(score=[],threshold = "",result = 'UNMODERATED')
+        list_choices = []
+        created = datetime.now()
+        global dictcheck
+        st = time.time()
+            
+        llm_Based_Checks = payload.llm_BasedChecks
+        emojiModOpt=payload.EmojiModeration if "EmojiModeration" in payload else "no"
+        deployment_name = payload.model_name if "model_name" in payload else "gpt4"
+        translate = payload.translate if "translate" in payload else None
+        text = payload.Prompt
+        PromptTemplate=payload.PromptTemplate
+        temperature = float(payload.temperature)
+        LLMinteraction = payload.LLMinteraction
+        userid = payload.userid if "userid" in payload else "None"
+        lotNumber = str(payload.lotNumber) if "lotNumber" in payload else "None"
+
+        if translate == "google" or translate == "yes":
+                print("Inside Google Translate")
+                starttime = time.time()
+                text,lang = Translate.translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime - starttime
+                dict_timecheck["translate"]=str(round(rt,3))+"s"
+        elif translate == "azure":
+                print("Inside Azure Translate")
+                starttime = time.time()
+                text,lang = Translate.azure_translate(payload.Prompt)
+                endtime = time.time()
+                rt = endtime -
