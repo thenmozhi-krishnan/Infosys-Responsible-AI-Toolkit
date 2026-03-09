@@ -8,6 +8,7 @@
 - [Set Configuration Variables](#set-configuration-variables)
 - [Models Required](#models-required)
 - [Running the Application](#running-the-application)
+- [Docker Image](#Docker-image)
 - [License](#license)
 - [Contact](#contact)
   
@@ -22,14 +23,14 @@ To run the application, first we need to install Python and the necessary packag
 
 1. Install Python (version 3.11.x) from the [official website](https://www.python.org/downloads/) and ensure it is added to your system PATH.
 
-2. Clone the repository : responsible-ai-mm-flask:
+2. Clone the repository : Infosys-Responsible-AI-Toolkit:
     ```sh
     git clone <repository-url>
     ```
 
-3. Navigate to the `responsible-ai-mm-flask` directory:
+3. Navigate to the `responsible-ai-moderationmodel` directory:
     ```sh
-    cd responsible-ai-mm-flask
+    cd responsible-ai-moderationmodel
     ```
 
 4. Create a virtual environment:
@@ -133,7 +134,7 @@ Name the folder as 'bancode'.
 Files required to download here are : vocab.json, tokenizer.json,config.json,merges.txt,pytorch_model.bin, tokenizer_config.json,special_tokens_map.json.
 Name the folder as 'nli-MiniLM2-L6-H768'.
 
-Place the above folders in a folder named 'models' in the following way: 'responsible-ai-mm-flask/models'.
+Place the above folders in a folder named 'models' in the following way: 'responsible-ai-moderationmodel/models'.
 
 ## Running the Application
 Once we have completed all the aforementioned steps, we can start the service.
@@ -154,6 +155,9 @@ Once we have completed all the aforementioned steps, we can start the service.
 1. To address the issue where the Passport Number is not recognized in Privacy, modify the "piiEntitiesToBeRedacted" field in the privacy() under service.py file (line no: 98) from None to an empty list []. This adjustment ensures that the Passport Number is correctly identified.
 
 2. Do not use this Moderation Model repository as a standalone repository. It serves as the base or dependency for the Moderation Layer repository, which provides the 'Guardrail' functionality, so access this repository APIs through Moderation layer.
+
+## Docker Image
+The Docker image for the ModerationModel module has been published on Docker Hub. You can access it here: [ModerationModel image](https://hub.docker.com/repository/docker/infosysresponsibleaitoolkit/responsible-ai-moderationmodel)
   
 ## License
 The source code for the project is licensed under the MIT license, which you can find in the [LICENSE.txt](LICENSE.txt) file.
