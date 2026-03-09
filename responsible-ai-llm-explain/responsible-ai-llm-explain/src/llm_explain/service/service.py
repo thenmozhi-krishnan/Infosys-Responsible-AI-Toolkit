@@ -405,15 +405,15 @@ class ExplainService:
                 # Define the mapping of methods to their corresponding request functions
                 method_to_request = {
                     "Token-Importance": lambda: METHODS_MAPPING["Token-Importance"](TokenImportanceRequest(inputPrompt=inputPrompt, modelName='GPT', endpointDetails=endpointDetails)),
-                    "Evalution-Metrics": lambda: METHODS_MAPPING["Evalution-Metrics"](UncertainityRequest(inputPrompt=inputPrompt, response=response, endpointDetails=endpointDetails)),
+                    "Evalution-Metrics": lambda: METHODS_MAPPING["Evalution-Metrics"](UncertainityRequest(inputPrompt=inputPrompt, response=response, endpointDetails=endpointDetails,modelName='GPT4')),
                     "ThoT": lambda: METHODS_MAPPING["ThoT"](openAIRequest(inputPrompt=inputPrompt, modelName='GPT4', endpointDetails=endpointDetails, temperature="0.1")),
                     "ReRead-ThoT": lambda: METHODS_MAPPING["ReRead-ThoT"](rereadRequest(inputPrompt=inputPrompt, modelName='GPT4', endpointDetails=endpointDetails)),
                     "CoT": lambda: METHODS_MAPPING["CoT"](openAIRequest(inputPrompt=inputPrompt, modelName='GPT4', endpointDetails=endpointDetails, temperature="0.1")),
                     "CoV": lambda: METHODS_MAPPING["CoV"](CoVRequest(inputPrompt=inputPrompt, modelName='GPT4', endpointDetails=endpointDetails, complexity="simple", translate="no")),
                     "LoT": lambda: METHODS_MAPPING["LoT"](lotRequest(inputPrompt=inputPrompt, llmResponse=response, modelName='GPT4', endpointDetails=endpointDetails)),
-                    "Sentiment-Analysis": lambda: METHODS_MAPPING["Sentiment-Analysis"](SentimentAnalysisRequest(inputPrompt=inputPrompt)),
+                    "Sentiment-Analysis": lambda: METHODS_MAPPING["Sentiment-Analysis"](SentimentAnalysisRequest(inputPrompt=inputPrompt,modelName='GPT4')),
                     "GoT": lambda: METHODS_MAPPING["GoT"](GoTRequest(inputPrompt=inputPrompt, modelName='gpt4')),
-                    "Safe-Search": lambda: METHODS_MAPPING["Safe-Search"](SafeSearchRequest(inputPrompt=inputPrompt, llm_response=response))
+                    "Safe-Search": lambda: METHODS_MAPPING["Safe-Search"](SafeSearchRequest(inputPrompt=inputPrompt, llm_response=response,modelName='GPT4'))
                 }
                 for method in selected_methods:
                     try:
